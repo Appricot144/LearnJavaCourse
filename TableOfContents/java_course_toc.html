@@ -1,336 +1,902 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Java基本構文コース 目次</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Java基本構文コース 目次</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9;
-      color: #2d3748;
-      padding: 40px 20px;
-    }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+      }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
 
-    header {
-      text-align: center;
-      margin-bottom: 40px;
-    }
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
 
-    header h1 {
-      font-size: 2rem;
-      color: #1a365d;
-      margin-bottom: 8px;
-    }
+      header h1 {
+        font-size: 2rem;
+        color: #1a365d;
+        margin-bottom: 8px;
+      }
 
-    header p {
-      color: #718096;
-      font-size: 0.95rem;
-    }
+      header p {
+        color: #718096;
+        font-size: 0.95rem;
+      }
 
-    .summary-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      margin-bottom: 48px;
-    }
+      .summary-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 48px;
+      }
 
-    .summary-table thead {
-      background: #2b6cb0;
-      color: white;
-    }
+      .summary-table thead {
+        background: #2b6cb0;
+        color: white;
+      }
 
-    .summary-table thead th {
-      padding: 12px 16px;
-      text-align: left;
-      font-size: 0.9rem;
-    }
+      .summary-table thead th {
+        padding: 12px 16px;
+        text-align: left;
+        font-size: 0.9rem;
+      }
 
-    .summary-table tbody tr {
-      border-bottom: 1px solid #e2e8f0;
-      transition: background 0.15s;
-    }
+      .summary-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: background 0.15s;
+      }
 
-    .summary-table tbody tr:hover {
-      background: #ebf8ff;
-    }
+      .summary-table tbody tr:hover {
+        background: #ebf8ff;
+      }
 
-    .summary-table tbody tr.total-row {
-      background: #edf2f7;
-      font-weight: bold;
-    }
+      .summary-table tbody tr.total-row {
+        background: #edf2f7;
+        font-weight: bold;
+      }
 
-    .summary-table tbody td {
-      padding: 11px 16px;
-      font-size: 0.9rem;
-    }
+      .summary-table tbody td {
+        padding: 11px 16px;
+        font-size: 0.9rem;
+      }
 
-    .chapters {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
+      .summary-table tbody td a {
+        color: #36c;
+        text-decoration: none;
+      }
 
-    .chapter-card {
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      overflow: hidden;
-    }
+      .chapters {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
 
-    .chapter-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      background: #2b6cb0;
-      color: white;
-    }
+      .chapter-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+      }
 
-    .chapter-header h2 {
-      font-size: 1rem;
-      font-weight: 600;
-    }
+      .chapter-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #2b6cb0;
+        color: white;
+      }
 
-    .chapter-header .stars {
-      font-size: 0.95rem;
-      letter-spacing: 2px;
-    }
+      .chapter-header h2 {
+        font-size: 1rem;
+        font-weight: 600;
+      }
 
-    .section-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+      .chapter-header .stars {
+        font-size: 0.95rem;
+        letter-spacing: 2px;
+      }
 
-    .section-table thead {
-      background: #ebf8ff;
-    }
+      .section-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
 
-    .section-table thead th {
-      padding: 9px 20px;
-      text-align: left;
-      font-size: 0.82rem;
-      color: #2b6cb0;
-      font-weight: 600;
-    }
+      .section-table thead {
+        background: #ebf8ff;
+      }
 
-    .section-table tbody tr {
-      border-bottom: 1px solid #e2e8f0;
-    }
+      .section-table thead th {
+        padding: 9px 10px;
+        text-align: left;
+        font-size: 0.82rem;
+        color: #2b6cb0;
+        font-weight: 600;
+      }
 
-    .section-table tbody tr:last-child {
-      border-bottom: none;
-    }
+      .section-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
 
-    .section-table tbody td {
-      padding: 10px 20px;
-      font-size: 0.88rem;
-    }
+      .section-table tbody tr:last-child {
+        border-bottom: none;
+      }
 
-    .section-num {
-      color: #a0aec0;
-      font-size: 0.82rem;
-      width: 60px;
-    }
+      .section-table tbody td {
+        padding: 10px 10px;
+        font-size: 0.88rem;
+      }
 
-    .q-count {
-      text-align: right;
-      color: #718096;
-      font-size: 0.82rem;
-      width: 60px;
-    }
+      .section-table tbody td a {
+        color: #36c;
+        text-decoration: none;
+      }
 
-    footer {
-      text-align: center;
-      margin-top: 48px;
-      color: #a0aec0;
-      font-size: 0.82rem;
-    }
-  </style>
-</head>
-<body>
-<div class="container">
+      .section-num {
+        color: #a0aec0;
+        font-size: 0.82rem;
+        width: 60px;
+      }
 
-  <header>
-    <h1>☕ Java基本構文コース</h1>
-    <p>全14章 · 42節 · 139問</p>
-  </header>
+      .q-count {
+        text-align: right;
+        color: #718096;
+        font-size: 0.82rem;
+        width: 60px;
+      }
 
-  <!-- 概要テーブル -->
-  <table class="summary-table">
-    <thead>
-      <tr>
-        <th>章</th>
-        <th>タイトル</th>
-        <th>節数</th>
-        <th>問題数</th>
-        <th>難易度</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>第1章</td><td>変数とデータ型</td><td>3節</td><td>9問</td><td>⭐☆☆☆☆</td></tr>
-      <tr><td>第2章</td><td>演算子</td><td>3節</td><td>9問</td><td>⭐⭐☆☆☆</td></tr>
-      <tr><td>第3章</td><td>条件分岐</td><td>3節</td><td>10問</td><td>⭐⭐☆☆☆</td></tr>
-      <tr><td>第4章</td><td>繰り返し処理</td><td>3節</td><td>10問</td><td>⭐⭐⭐☆☆</td></tr>
-      <tr><td>第5章</td><td>配列</td><td>3節</td><td>10問</td><td>⭐⭐⭐☆☆</td></tr>
-      <tr><td>第6章</td><td>メソッド</td><td>3節</td><td>11問</td><td>⭐⭐⭐☆☆</td></tr>
-      <tr><td>第7章</td><td>クラスとオブジェクト</td><td>3節</td><td>11問</td><td>⭐⭐⭐⭐☆</td></tr>
-      <tr><td>第8章</td><td>オブジェクト指向の概念</td><td>3節</td><td>10問</td><td>⭐⭐⭐⭐☆</td></tr>
-      <tr><td>第9章</td><td>継承・インターフェース・Enum</td><td>3節</td><td>11問</td><td>⭐⭐⭐⭐☆</td></tr>
-      <tr><td>第10章</td><td>ラムダ式</td><td>3節</td><td>10問</td><td>⭐⭐⭐⭐⭐</td></tr>
-      <tr><td>第11章</td><td>Stream API</td><td>3節</td><td>10問</td><td>⭐⭐⭐⭐⭐</td></tr>
-      <tr><td>第12章</td><td>日付・時刻（Date / Time API）</td><td>3節</td><td>9問</td><td>⭐⭐⭐⭐☆</td></tr>
-      <tr><td>第13章</td><td>Map</td><td>3節</td><td>10問</td><td>⭐⭐⭐⭐☆</td></tr>
-      <tr><td>第14章</td><td>パッケージ</td><td>3節</td><td>9問</td><td>⭐⭐⭐☆☆</td></tr>
-      <tr class="total-row"><td></td><td>合計</td><td>42節</td><td>139問</td><td></td></tr>
-    </tbody>
-  </table>
+      footer {
+        text-align: center;
+        margin-top: 48px;
+        color: #a0aec0;
+        font-size: 0.82rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>☕ Java基本構文コース</h1>
+        <p>全14章 · 42節 · 139問</p>
+      </header>
 
-  <!-- 各章の詳細 -->
-  <div class="chapters">
+      <!-- 概要テーブル -->
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>章</th>
+            <th>タイトル</th>
+            <th>節数</th>
+            <th>問題数</th>
+            <th>難易度</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>第1章</td>
+            <td><a href="#section-table-ch1">変数とデータ型</a></td>
+            <td>3節</td>
+            <td>9問</td>
+            <td>⭐☆☆☆☆</td>
+          </tr>
+          <tr>
+            <td>第2章</td>
+            <td><a href="#section-table-ch2">演算子</a></td>
+            <td>3節</td>
+            <td>9問</td>
+            <td>⭐⭐☆☆☆</td>
+          </tr>
+          <tr>
+            <td>第3章</td>
+            <td><a href="#section-table-ch3">条件分岐</a></td>
+            <td>3節</td>
+            <td>10問</td>
+            <td>⭐⭐☆☆☆</td>
+          </tr>
+          <tr>
+            <td>第4章</td>
+            <td><a href="#section-table-ch4">繰り返し処理</a></td>
+            <td>3節</td>
+            <td>10問</td>
+            <td>⭐⭐⭐☆☆</td>
+          </tr>
+          <tr>
+            <td>第5章</td>
+            <td><a href="#section-table-ch5">配列</a></td>
+            <td>3節</td>
+            <td>10問</td>
+            <td>⭐⭐⭐☆☆</td>
+          </tr>
+          <tr>
+            <td>第6章</td>
+            <td><a href="#section-table-ch6">メソッド</a></td>
+            <td>3節</td>
+            <td>11問</td>
+            <td>⭐⭐⭐☆☆</td>
+          </tr>
+          <tr>
+            <td>第7章</td>
+            <td><a href="#section-table-ch7">クラスとオブジェクト</a></td>
+            <td>3節</td>
+            <td>11問</td>
+            <td>⭐⭐⭐⭐☆</td>
+          </tr>
+          <tr>
+            <td>第8章</td>
+            <td><a href="#section-table-ch8">オブジェクト指向の概念</a></td>
+            <td>3節</td>
+            <td>10問</td>
+            <td>⭐⭐⭐⭐☆</td>
+          </tr>
+          <tr>
+            <td>第9章</td>
+            <td>
+              <a href="#section-table-ch9">継承・インターフェース・Enum</a>
+            </td>
+            <td>3節</td>
+            <td>11問</td>
+            <td>⭐⭐⭐⭐☆</td>
+          </tr>
+          <tr>
+            <td>第10章</td>
+            <td><a href="#section-table-ch10">ラムダ式</a></td>
+            <td>3節</td>
+            <td>10問</td>
+            <td>⭐⭐⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td>第11章</td>
+            <td><a href="#section-table-ch11">Stream API</a></td>
+            <td>3節</td>
+            <td>10問</td>
+            <td>⭐⭐⭐⭐⭐</td>
+          </tr>
+          <tr>
+            <td>第12章</td>
+            <td>
+              <a href="#section-table-ch12">日付・時刻（Date / Time API）</a>
+            </td>
+            <td>3節</td>
+            <td>9問</td>
+            <td>⭐⭐⭐⭐☆</td>
+          </tr>
+          <tr>
+            <td>第13章</td>
+            <td><a href="#section-table-ch13">Map</a></td>
+            <td>3節</td>
+            <td>10問</td>
+            <td>⭐⭐⭐⭐☆</td>
+          </tr>
+          <tr>
+            <td>第14章</td>
+            <td><a href="#section-table-ch14">パッケージ</a></td>
+            <td>3節</td>
+            <td>9問</td>
+            <td>⭐⭐⭐☆☆</td>
+          </tr>
+          <tr class="total-row">
+            <td></td>
+            <td>合計</td>
+            <td>42節</td>
+            <td>139問</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
 
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第1章：変数とデータ型</h2><span class="stars">⭐☆☆☆☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">1-1</td><td>基本データ型の宣言と代入</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">1-2</td><td>型変換（キャスト）</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">1-3</td><td>文字列（String）の操作</td><td class="q-count">3問</td></tr>
-      </tbody></table>
+      <!-- 各章の詳細 -->
+      <div class="chapters">
+        <div class="chapter-card" id="section-table-ch1">
+          <div class="chapter-header">
+            <h2>第1章：変数とデータ型</h2>
+            <span class="stars">⭐☆☆☆☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">1-1</td>
+                <td>
+                  <a href="/Chapter1/1-1/1-1_basic_data_types.html">
+                    基本データ型の宣言と代入
+                  </a>
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">1-2</td>
+                <td>
+                  <a href="/Chapter1/1-2/1-2_type_casting.html"
+                    >型変換（キャスト）</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">1-3</td>
+                <td>
+                  <a href="/Chapter1/1-3/1-3_string_operations.html"
+                    >文字列（String）の操作</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch2">
+          <div class="chapter-header">
+            <h2>第2章：演算子</h2>
+            <span class="stars">⭐⭐☆☆☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">2-1</td>
+                <td>
+                  <a href="/Chapter2/2-1/2-1_arithmetic_operators.html"
+                    >算術演算子</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">2-2</td>
+                <td>
+                  <a href="/Chapter2/2-2/2-2_comparison_logical_operators.html"
+                    >比較演算子・論理演算子</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">2-3</td>
+                <td>
+                  <a href="/Chapter2/2-3/2-3_compound_assignment_increment.html"
+                    >複合代入演算子・インクリメント</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch3">
+          <div class="chapter-header">
+            <h2>第3章：条件分岐</h2>
+            <span class="stars">⭐⭐☆☆☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">3-1</td>
+                <td>
+                  <a href="/Chapter3/3-1/3-1_if_else.html"
+                    >if / else if / else</a
+                  >
+                </td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">3-2</td>
+                <td><a href="/Chapter3/3-2/3-2_switch.html">switch文</a></td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">3-3</td>
+                <td>
+                  <a href="/Chapter3/3-3/3-3_ternary_operator.html"
+                    >三項演算子</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch4">
+          <div class="chapter-header">
+            <h2>第4章：繰り返し処理</h2>
+            <span class="stars">⭐⭐⭐☆☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">4-1</td>
+                <td><a href="/Chapter4/4-1/4-1_for_loop.html">for文</a></td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">4-2</td>
+                <td>
+                  <a href="/Chapter4/4-2/4-2_while_do_while.html"
+                    >while / do-while文</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">4-3</td>
+                <td>
+                  <a href="/Chapter4/4-3/4-3_break_continue.html"
+                    >break / continue</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch5">
+          <div class="chapter-header">
+            <h2>第5章：配列</h2>
+            <span class="stars">⭐⭐⭐☆☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">5-1</td>
+                <td>
+                  <a href="/Chapter5/5-1/5-1_arrays.html"
+                    >一次元配列の宣言・操作</a
+                  >
+                </td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">5-2</td>
+                <td>
+                  <a href="/Chapter5/5-2/5-2_multidimensional_arrays.html"
+                    >多次元配列</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">5-3</td>
+                <td>
+                  <a href="/Chapter5/5-3/5-3_array_loops.html"
+                    >配列の繰り返し処理</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch6">
+          <div class="chapter-header">
+            <h2>第6章：メソッド</h2>
+            <span class="stars">⭐⭐⭐☆☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">6-1</td>
+                <td>
+                  <a href="/Chapter6/6-1/6-1_method_definition.html"
+                    >メソッドの定義と呼び出し</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">6-2</td>
+                <td>
+                  <a href="/Chapter6/6-2/6-2_arguments_return.html"
+                    >引数と戻り値</a
+                  >
+                </td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">6-3</td>
+                <td>
+                  <a href="/Chapter6/6-3/6-3_method_overloading.html"
+                    >メソッドのオーバーロード</a
+                  >
+                </td>
+                <td class="q-count">4問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch7">
+          <div class="chapter-header">
+            <h2>第7章：クラスとオブジェクト</h2>
+            <span class="stars">⭐⭐⭐⭐☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">7-1</td>
+                <td>
+                  <a href="/Chapter7/7-1/7-1_class_instance.html"
+                    >クラスの定義・インスタンス生成</a
+                  >
+                </td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">7-2</td>
+                <td>
+                  <a href="/Chapter7/7-2/7-2_fields_constructors.html"
+                    >フィールドとコンストラクタ</a
+                  >
+                </td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">7-3</td>
+                <td>
+                  <a href="/Chapter7/7-3/7-3_this_methods.html"
+                    >thisキーワード・メソッド</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch8">
+          <div class="chapter-header">
+            <h2>第8章：オブジェクト指向の概念</h2>
+            <span class="stars">⭐⭐⭐⭐☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">8-1</td>
+                <td>
+                  <a href="/Chapter8/8-1/8-1_encapsulation.html"
+                    >カプセル化（フィールドとアクセサ）</a
+                  >
+                </td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">8-2</td>
+                <td>
+                  <a href="/Chapter8/8-2/8-2_polymorphism.html"
+                    >ポリモーフィズム</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">8-3</td>
+                <td>
+                  <a href="/Chapter8/8-3/8-3_abstract_classes.html"
+                    >抽象クラス</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch9">
+          <div class="chapter-header">
+            <h2>第9章：継承・インターフェース・Enum</h2>
+            <span class="stars">⭐⭐⭐⭐☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">9-1</td>
+                <td>
+                  <a href="/Chapter9/9-1/9-1_inheritance.html"
+                    >継承（extends / override）</a
+                  >
+                </td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">9-2</td>
+                <td>
+                  <a href="/Chapter9/9-2/9-2_interfaces.html"
+                    >インターフェース（implements）</a
+                  >
+                </td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">9-3</td>
+                <td>
+                  <a href="/Chapter9/9-3/9-3_enum.html">Enum（列挙型）</a>
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch10">
+          <div class="chapter-header">
+            <h2>第10章：ラムダ式</h2>
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">10-1</td>
+                <td>
+                  <a href="/Chapter10/10-1/10-1_lambda_basics.html"
+                    >ラムダ式の基本構文</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">10-2</td>
+                <td>
+                  <a href="/Chapter10/10-2/10-2_functional_interfaces.html"
+                    >関数型インターフェース（Function / Predicate /
+                    Consumer）</a
+                  >
+                </td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">10-3</td>
+                <td>
+                  <a href="/Chapter10/10-3/10-3_method_references.html"
+                    >メソッド参照</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch11">
+          <div class="chapter-header">
+            <h2>第11章：Stream API</h2>
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">11-1</td>
+                <td>
+                  <a href="/Chapter11/11-1/11-1_stream_basics.html"
+                    >Streamの生成と基本操作（filter / map）</a
+                  >
+                </td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">11-2</td>
+                <td>
+                  <a href="/Chapter11/11-2/11-2_stream_terminal.html"
+                    >集計・終端操作（collect / reduce / count）</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">11-3</td>
+                <td>
+                  <a href="/Chapter11/11-3/11-3_sorted_optional_flatmap.html"
+                    >ソート・フラット化（sorted / flatMap）</a
+                  >
+                </td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch12">
+          <div class="chapter-header">
+            <h2>第12章：日付・時刻（Date / Time API）</h2>
+            <span class="stars">⭐⭐⭐⭐☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">12-1</td>
+                <td><a href="#">LocalDate / LocalTime / LocalDateTime</a></td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">12-2</td>
+                <td><a href="#">日付の計算・比較</a></td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">12-3</td>
+                <td><a href="#">フォーマット（DateTimeFormatter）</a></td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch13">
+          <div class="chapter-header">
+            <h2>第13章：Map</h2>
+            <span class="stars">⭐⭐⭐⭐☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">13-1</td>
+                <td><a href="#">HashMap の基本操作</a></td>
+                <td class="q-count">4問</td>
+              </tr>
+              <tr>
+                <td class="section-num">13-2</td>
+                <td><a href="#">Map の繰り返し処理</a></td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">13-3</td>
+                <td><a href="#">TreeMap / LinkedHashMap の使い分け</a></td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch14">
+          <div class="chapter-header">
+            <h2>第14章：パッケージ</h2>
+            <span class="stars">⭐⭐⭐☆☆</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">14-1</td>
+                <td><a href="#">パッケージの宣言とimport</a></td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">14-2</td>
+                <td><a href="#">アクセス修飾子とパッケージの関係</a></td>
+                <td class="q-count">3問</td>
+              </tr>
+              <tr>
+                <td class="section-num">14-3</td>
+                <td><a href="#">標準ライブラリのパッケージ活用</a></td>
+                <td class="q-count">3問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- /.chapters -->
+
+      <footer>
+        <p>Java基本構文コース ― 全14章 · 42節 · 139問</p>
+      </footer>
     </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第2章：演算子</h2><span class="stars">⭐⭐☆☆☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">2-1</td><td>算術演算子</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">2-2</td><td>比較演算子・論理演算子</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">2-3</td><td>複合代入演算子・インクリメント</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第3章：条件分岐</h2><span class="stars">⭐⭐☆☆☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">3-1</td><td>if / else if / else</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">3-2</td><td>switch文</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">3-3</td><td>三項演算子</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第4章：繰り返し処理</h2><span class="stars">⭐⭐⭐☆☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">4-1</td><td>for文</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">4-2</td><td>while / do-while文</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">4-3</td><td>break / continue</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第5章：配列</h2><span class="stars">⭐⭐⭐☆☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">5-1</td><td>一次元配列の宣言・操作</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">5-2</td><td>多次元配列</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">5-3</td><td>配列の繰り返し処理</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第6章：メソッド</h2><span class="stars">⭐⭐⭐☆☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">6-1</td><td>メソッドの定義と呼び出し</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">6-2</td><td>引数と戻り値</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">6-3</td><td>メソッドのオーバーロード</td><td class="q-count">4問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第7章：クラスとオブジェクト</h2><span class="stars">⭐⭐⭐⭐☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">7-1</td><td>クラスの定義・インスタンス生成</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">7-2</td><td>フィールドとコンストラクタ</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">7-3</td><td>thisキーワード・メソッド</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第8章：オブジェクト指向の概念</h2><span class="stars">⭐⭐⭐⭐☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">8-1</td><td>カプセル化（フィールドとアクセサ）</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">8-2</td><td>ポリモーフィズム</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">8-3</td><td>抽象クラス</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第9章：継承・インターフェース・Enum</h2><span class="stars">⭐⭐⭐⭐☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">9-1</td><td>継承（extends / override）</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">9-2</td><td>インターフェース（implements）</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">9-3</td><td>Enum（列挙型）</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第10章：ラムダ式</h2><span class="stars">⭐⭐⭐⭐⭐</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">10-1</td><td>ラムダ式の基本構文</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">10-2</td><td>関数型インターフェース（Function / Predicate / Consumer）</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">10-3</td><td>メソッド参照</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第11章：Stream API</h2><span class="stars">⭐⭐⭐⭐⭐</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">11-1</td><td>Streamの生成と基本操作（filter / map）</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">11-2</td><td>集計・終端操作（collect / reduce / count）</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">11-3</td><td>ソート・フラット化（sorted / flatMap）</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第12章：日付・時刻（Date / Time API）</h2><span class="stars">⭐⭐⭐⭐☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">12-1</td><td>LocalDate / LocalTime / LocalDateTime</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">12-2</td><td>日付の計算・比較</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">12-3</td><td>フォーマット（DateTimeFormatter）</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第13章：Map</h2><span class="stars">⭐⭐⭐⭐☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">13-1</td><td>HashMap の基本操作</td><td class="q-count">4問</td></tr>
-        <tr><td class="section-num">13-2</td><td>Map の繰り返し処理</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">13-3</td><td>TreeMap / LinkedHashMap の使い分け</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-    <div class="chapter-card">
-      <div class="chapter-header"><h2>第14章：パッケージ</h2><span class="stars">⭐⭐⭐☆☆</span></div>
-      <table class="section-table"><thead><tr><th>節</th><th>タイトル</th><th>問題数</th></tr></thead><tbody>
-        <tr><td class="section-num">14-1</td><td>パッケージの宣言とimport</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">14-2</td><td>アクセス修飾子とパッケージの関係</td><td class="q-count">3問</td></tr>
-        <tr><td class="section-num">14-3</td><td>標準ライブラリのパッケージ活用</td><td class="q-count">3問</td></tr>
-      </tbody></table>
-    </div>
-
-  </div><!-- /.chapters -->
-
-  <footer>
-    <p>Java基本構文コース ― 全14章 · 42節 · 139問</p>
-  </footer>
-
-</div>
-</body>
+  </body>
 </html>
