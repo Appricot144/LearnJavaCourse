@@ -1,248 +1,624 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2-3. 複合代入演算子・インクリメント</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2-3. 複合代入演算子・インクリメント</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    /* Header */
-    .page-header {
-      background: linear-gradient(135deg, #1a365d, #2b6cb0);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      /* Header */
+      .page-header {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    /* Section title */
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #1a365d;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      /* Section title */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a365d;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #bee3f8;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    /* Code */
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      /* Code */
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+        letter-spacing: 0.05em;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    /* Callout / hint */
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      /* Callout / hint */
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    /* Tables */
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #2b6cb0; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #ebf8ff; }
+      /* Tables */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2b6cb0;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #ebf8ff;
+      }
 
-    /* Inc/Dec comparison card */
-    .inc-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0;
-    }
-    .inc-card {
-      background: #fff; border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    }
-    .inc-card .inc-title {
-      padding: 10px 16px; font-weight: 700; font-size: 0.9rem;
-    }
-    .inc-title.post { background: #fefcbf; color: #744210; }
-    .inc-title.pre  { background: #c6f6d5; color: #22543d; }
-    .inc-card .inc-body { padding: 12px 16px; }
-    .step-row {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 0.85rem; margin-bottom: 6px;
-    }
-    .step-num {
-      background: #ebf4ff; color: #2b6cb0; font-weight: 700;
-      width: 22px; height: 22px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.75rem; flex-shrink: 0;
-    }
+      /* Inc/Dec comparison card */
+      .inc-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin: 14px 0;
+      }
+      .inc-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      }
+      .inc-card .inc-title {
+        padding: 10px 16px;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .inc-title.post {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .inc-title.pre {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .inc-card .inc-body {
+        padding: 12px 16px;
+      }
+      .step-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
+      }
+      .step-num {
+        background: #ebf4ff;
+        color: #2b6cb0;
+        font-weight: 700;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        flex-shrink: 0;
+      }
 
-    /* Flow trace for stock */
-    .flow-trace {
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      overflow: hidden; margin: 14px 0;
-    }
-    .flow-trace-header {
-      background: #2b6cb0; color: white;
-      padding: 8px 16px; font-size: 0.8rem; font-weight: 600;
-    }
-    .flow-trace-body { padding: 14px 16px; }
-    .trace-row {
-      display: flex; align-items: center; gap: 12px;
-      padding: 7px 0; border-bottom: 1px dashed #e2e8f0; font-size: 0.88rem;
-    }
-    .trace-row:last-child { border-bottom: none; }
-    .trace-op {
-      background: #ebf8ff; color: #2b6cb0; font-weight: 700;
-      padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; min-width: 90px; text-align: center;
-    }
-    .trace-val { font-weight: 700; color: #1a365d; min-width: 30px; }
-    .trace-arrow { color: #a0aec0; }
+      /* Flow trace for stock */
+      .flow-trace {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .flow-trace-header {
+        background: #2b6cb0;
+        color: white;
+        padding: 8px 16px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      .flow-trace-body {
+        padding: 14px 16px;
+      }
+      .trace-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 7px 0;
+        border-bottom: 1px dashed #e2e8f0;
+        font-size: 0.88rem;
+      }
+      .trace-row:last-child {
+        border-bottom: none;
+      }
+      .trace-op {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        min-width: 90px;
+        text-align: center;
+      }
+      .trace-val {
+        font-weight: 700;
+        color: #1a365d;
+        min-width: 30px;
+      }
+      .trace-arrow {
+        color: #a0aec0;
+      }
 
-    /* Output box */
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      /* Output box */
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    /* Problem cards */
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      /* Problem cards */
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #ebf8ff;
+        border-bottom: 1px solid #bee3f8;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a365d;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    /* Answer toggle */
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #2b6cb0; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      /* Answer toggle */
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2b6cb0;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #2c5282;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <!-- Header -->
-  <div class="page-header">
-    <div class="chapter-label">第2章 ▶ 演算子</div>
-    <h1>2-3. 複合代入演算子・インクリメント</h1>
-    <div class="meta">難易度：⭐⭐☆☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <!-- ===== 解説 ===== -->
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2b6cb0;
+        border-radius: 7px;
+      }
 
-  <!-- 複合代入演算子 -->
-  <h3>複合代入演算子</h3>
-  <p>算術演算子と代入演算子 <code>=</code> を組み合わせた短縮表記です。<br>
-  「自分自身に演算して再代入する」処理を簡潔に書けます。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <table class="data-table">
-    <thead><tr><th>演算子</th><th>意味</th><th>例</th><th>同等の式</th></tr></thead>
-    <tbody>
-      <tr><td><code>+=</code></td><td>加算して代入</td><td><code>x += 5</code></td><td><code>x = x + 5</code></td></tr>
-      <tr><td><code>-=</code></td><td>減算して代入</td><td><code>x -= 5</code></td><td><code>x = x - 5</code></td></tr>
-      <tr><td><code>*=</code></td><td>乗算して代入</td><td><code>x *= 5</code></td><td><code>x = x * 5</code></td></tr>
-      <tr><td><code>/=</code></td><td>除算して代入</td><td><code>x /= 5</code></td><td><code>x = x / 5</code></td></tr>
-      <tr><td><code>%=</code></td><td>剰余して代入</td><td><code>x %= 5</code></td><td><code>x = x % 5</code></td></tr>
-    </tbody>
-  </table>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">第2章 ▶ 演算子</div>
 
-  <div class="flow-trace">
-    <div class="flow-trace-header">▶ 変数 x = 10 から順に操作した場合のトレース</div>
-    <div class="flow-trace-body">
-      <div class="trace-row"><span class="trace-op">初期値</span><span class="trace-arrow">→</span><span class="trace-val">10</span></div>
-      <div class="trace-row"><span class="trace-op">x += 5</span><span class="trace-arrow">→</span><span class="trace-val">15</span><span style="color:#718096;font-size:0.82rem;">（10 + 5）</span></div>
-      <div class="trace-row"><span class="trace-op">x -= 3</span><span class="trace-arrow">→</span><span class="trace-val">12</span><span style="color:#718096;font-size:0.82rem;">（15 − 3）</span></div>
-      <div class="trace-row"><span class="trace-op">x *= 2</span><span class="trace-arrow">→</span><span class="trace-val">24</span><span style="color:#718096;font-size:0.82rem;">（12 × 2）</span></div>
-      <div class="trace-row"><span class="trace-op">x /= 4</span><span class="trace-arrow">→</span><span class="trace-val">6</span><span style="color:#718096;font-size:0.82rem;">（24 ÷ 4）</span></div>
-      <div class="trace-row"><span class="trace-op">x %= 4</span><span class="trace-arrow">→</span><span class="trace-val">2</span><span style="color:#718096;font-size:0.82rem;">（6 ÷ 4 余り 2）</span></div>
-    </div>
-  </div>
+        <h1>2-3. 複合代入演算子・インクリメント</h1>
+        <div class="meta">
+          難易度：⭐⭐☆☆☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../2-2/2-2_comparison_logical_operators.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter3/3-1/3-1_if_else.html">＞</a>
+        </div>
+      </div>
 
-  <!-- インクリメント・デクリメント -->
-  <h3>インクリメント・デクリメント</h3>
-  <p>変数の値を <strong>1だけ増減</strong> する専用の演算子です。</p>
+      <!-- ===== 解説 ===== -->
+      <div class="section-title"><span>📖</span> 解説</div>
 
-  <table class="data-table">
-    <thead><tr><th>演算子</th><th>名前</th><th>意味</th></tr></thead>
-    <tbody>
-      <tr><td><code>++</code></td><td>インクリメント</td><td>値を1増やす（<code>x = x + 1</code> と同等）</td></tr>
-      <tr><td><code>--</code></td><td>デクリメント</td><td>値を1減らす（<code>x = x - 1</code> と同等）</td></tr>
-    </tbody>
-  </table>
+      <!-- 複合代入演算子 -->
+      <h3>複合代入演算子</h3>
+      <p>
+        算術演算子と代入演算子 <code>=</code> を組み合わせた短縮表記です。<br />
+        「自分自身に演算して再代入する」処理を簡潔に書けます。
+      </p>
 
-  <!-- 前置 vs 後置 -->
-  <h3>前置と後置の違い</h3>
-  <p><code>++</code> / <code>--</code> は変数の<strong>前</strong>に置くか<strong>後ろ</strong>に置くかで、式の中での評価タイミングが変わります。</p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>演算子</th>
+            <th>意味</th>
+            <th>例</th>
+            <th>同等の式</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>+=</code></td>
+            <td>加算して代入</td>
+            <td><code>x += 5</code></td>
+            <td><code>x = x + 5</code></td>
+          </tr>
+          <tr>
+            <td><code>-=</code></td>
+            <td>減算して代入</td>
+            <td><code>x -= 5</code></td>
+            <td><code>x = x - 5</code></td>
+          </tr>
+          <tr>
+            <td><code>*=</code></td>
+            <td>乗算して代入</td>
+            <td><code>x *= 5</code></td>
+            <td><code>x = x * 5</code></td>
+          </tr>
+          <tr>
+            <td><code>/=</code></td>
+            <td>除算して代入</td>
+            <td><code>x /= 5</code></td>
+            <td><code>x = x / 5</code></td>
+          </tr>
+          <tr>
+            <td><code>%=</code></td>
+            <td>剰余して代入</td>
+            <td><code>x %= 5</code></td>
+            <td><code>x = x % 5</code></td>
+          </tr>
+        </tbody>
+      </table>
 
-  <div class="inc-grid">
-    <div class="inc-card">
-      <div class="inc-title post">x++（後置インクリメント）</div>
-      <div class="inc-body">
-        <div class="step-row"><div class="step-num">1</div><span>現在の値を式に使う</span></div>
-        <div class="step-row"><div class="step-num">2</div><span>その後 x を +1 する</span></div>
-        <div class="code-wrap" style="margin:10px 0 0;">
-          <pre style="padding:10px 14px;font-size:0.82rem;"><code>int x = 5;
+      <div class="flow-trace">
+        <div class="flow-trace-header">
+          ▶ 変数 x = 10 から順に操作した場合のトレース
+        </div>
+        <div class="flow-trace-body">
+          <div class="trace-row">
+            <span class="trace-op">初期値</span
+            ><span class="trace-arrow">→</span><span class="trace-val">10</span>
+          </div>
+          <div class="trace-row">
+            <span class="trace-op">x += 5</span
+            ><span class="trace-arrow">→</span><span class="trace-val">15</span
+            ><span style="color: #718096; font-size: 0.82rem">（10 + 5）</span>
+          </div>
+          <div class="trace-row">
+            <span class="trace-op">x -= 3</span
+            ><span class="trace-arrow">→</span><span class="trace-val">12</span
+            ><span style="color: #718096; font-size: 0.82rem">（15 − 3）</span>
+          </div>
+          <div class="trace-row">
+            <span class="trace-op">x *= 2</span
+            ><span class="trace-arrow">→</span><span class="trace-val">24</span
+            ><span style="color: #718096; font-size: 0.82rem">（12 × 2）</span>
+          </div>
+          <div class="trace-row">
+            <span class="trace-op">x /= 4</span
+            ><span class="trace-arrow">→</span><span class="trace-val">6</span
+            ><span style="color: #718096; font-size: 0.82rem">（24 ÷ 4）</span>
+          </div>
+          <div class="trace-row">
+            <span class="trace-op">x %= 4</span
+            ><span class="trace-arrow">→</span><span class="trace-val">2</span
+            ><span style="color: #718096; font-size: 0.82rem"
+              >（6 ÷ 4 余り 2）</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- インクリメント・デクリメント -->
+      <h3>インクリメント・デクリメント</h3>
+      <p>変数の値を <strong>1だけ増減</strong> する専用の演算子です。</p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>演算子</th>
+            <th>名前</th>
+            <th>意味</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>++</code></td>
+            <td>インクリメント</td>
+            <td>値を1増やす（<code>x = x + 1</code> と同等）</td>
+          </tr>
+          <tr>
+            <td><code>--</code></td>
+            <td>デクリメント</td>
+            <td>値を1減らす（<code>x = x - 1</code> と同等）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 前置 vs 後置 -->
+      <h3>前置と後置の違い</h3>
+      <p>
+        <code>++</code> /
+        <code>--</code>
+        は変数の<strong>前</strong>に置くか<strong>後ろ</strong>に置くかで、式の中での評価タイミングが変わります。
+      </p>
+
+      <div class="inc-grid">
+        <div class="inc-card">
+          <div class="inc-title post">x++（後置インクリメント）</div>
+          <div class="inc-body">
+            <div class="step-row">
+              <div class="step-num">1</div>
+              <span>現在の値を式に使う</span>
+            </div>
+            <div class="step-row">
+              <div class="step-num">2</div>
+              <span>その後 x を +1 する</span>
+            </div>
+            <div class="code-wrap" style="margin: 10px 0 0">
+              <pre
+                style="padding: 10px 14px; font-size: 0.82rem"
+              ><code>int x = 5;
 println(x++); // → 5
 println(x);   // → 6</code></pre>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="inc-card">
-      <div class="inc-title pre">++x（前置インクリメント）</div>
-      <div class="inc-body">
-        <div class="step-row"><div class="step-num">1</div><span>先に x を +1 する</span></div>
-        <div class="step-row"><div class="step-num">2</div><span>増えた値を式に使う</span></div>
-        <div class="code-wrap" style="margin:10px 0 0;">
-          <pre style="padding:10px 14px;font-size:0.82rem;"><code>int x = 5;
+        <div class="inc-card">
+          <div class="inc-title pre">++x（前置インクリメント）</div>
+          <div class="inc-body">
+            <div class="step-row">
+              <div class="step-num">1</div>
+              <span>先に x を +1 する</span>
+            </div>
+            <div class="step-row">
+              <div class="step-num">2</div>
+              <span>増えた値を式に使う</span>
+            </div>
+            <div class="code-wrap" style="margin: 10px 0 0">
+              <pre
+                style="padding: 10px 14px; font-size: 0.82rem"
+              ><code>int x = 5;
 println(++x); // → 6
 println(x);   // → 6</code></pre>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="hint">
-    <strong>💡 単独で使う場合は違いなし</strong><br>
-    <code>x++;</code> も <code>++x;</code> も、単独行で使う場合は結果は同じです。<br>
-    前置・後置の違いが出るのは <strong>他の式の中で使うとき</strong>だけです。
-  </div>
+      <div class="hint">
+        <strong>💡 単独で使う場合は違いなし</strong><br />
+        <code>x++;</code> も
+        <code>++x;</code> も、単独行で使う場合は結果は同じです。<br />
+        前置・後置の違いが出るのは
+        <strong>他の式の中で使うとき</strong>だけです。
+      </div>
 
-  <div class="callout">
-    <strong>⚠️ 注意：型の自動キャスト</strong><br>
-    <code>byte</code> や <code>short</code> に複合代入演算子を使うと自動でキャストされますが、<br>
-    通常の算術演算（<code>b = b + 5</code>）では <code>int</code> に昇格してコンパイルエラーになります。
-    <div class="code-wrap" style="margin-top:8px;">
-      <pre style="padding:10px 14px;font-size:0.82rem;"><code>byte b = 10;
+      <div class="callout">
+        <strong>⚠️ 注意：型の自動キャスト</strong><br />
+        <code>byte</code> や
+        <code>short</code>
+        に複合代入演算子を使うと自動でキャストされますが、<br />
+        通常の算術演算（<code>b = b + 5</code>）では
+        <code>int</code> に昇格してコンパイルエラーになります。
+        <div class="code-wrap" style="margin-top: 8px">
+          <pre style="padding: 10px 14px; font-size: 0.82rem"><code>byte b = 10;
 b += 5;       // OK（自動キャスト）
 // b = b + 5; // コンパイルエラー！</code></pre>
-    </div>
-  </div>
+        </div>
+      </div>
 
-  <!-- コード例 -->
-  <h3>コード例</h3>
-  <div class="code-wrap">
-    <div class="code-label">OperatorExample.java</div>
-    <pre><code>public class OperatorExample {
+      <!-- コード例 -->
+      <h3>コード例</h3>
+      <div class="code-wrap">
+        <div class="code-label">OperatorExample.java</div>
+        <pre><code>public class OperatorExample {
     public static void main(String[] args) {
         int score = 100;
 
@@ -262,33 +638,35 @@ b += 5;       // OK（自動キャスト）
         System.out.println("--後: "   + score);  // 60
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>減点後: 90
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>減点後: 90
 2倍後: 180
 1/3後: 60
 ++後: 61
 --後: 60</code></pre>
-  </div>
-
-  <!-- ===== 問題 ===== -->
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 2-3-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐☆☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>public class Q1 {
+
+      <!-- ===== 問題 ===== -->
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 2-3-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐☆☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>public class Q1 {
     public static void main(String[] args) {
         int x = 20;
 
@@ -308,46 +686,55 @@ b += 5;       // OK（自動キャスト）
         System.out.println(x);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>25
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>25
 17
 51
 5
 2</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>20 += 5</code> → <code>25</code></li>
-            <li><code>25 -= 8</code> → <code>17</code></li>
-            <li><code>17 *= 3</code> → <code>51</code></li>
-            <li><code>51 /= 9</code> → <code>5</code>（整数除算、切り捨て）</li>
-            <li><code>5 %= 3</code> → <code>2</code>（5 ÷ 3 = 1 余り 2）</li>
-          </ul>
-          <p style="margin-top:8px;">各ステップで変数 <code>x</code> の値が更新されていく点に注意してください。</p>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li><code>20 += 5</code> → <code>25</code></li>
+                <li><code>25 -= 8</code> → <code>17</code></li>
+                <li><code>17 *= 3</code> → <code>51</code></li>
+                <li>
+                  <code>51 /= 9</code> → <code>5</code>（整数除算、切り捨て）
+                </li>
+                <li>
+                  <code>5 %= 3</code> → <code>2</code>（5 ÷ 3 = 1 余り 2）
+                </li>
+              </ul>
+              <p style="margin-top: 8px">
+                各ステップで変数
+                <code>x</code> の値が更新されていく点に注意してください。
+              </p>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 2-3-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>public class Q2 {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 2-3-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>public class Q2 {
     public static void main(String[] args) {
         int a = 10;
         int b = 10;
@@ -364,80 +751,129 @@ b += 5;       // OK（自動キャスト）
         System.out.println(c);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>10
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>10
 11
 11
 11
 17
 7</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>a++</code>（後置）：出力は元の値 <code>10</code>、その後 <code>a</code> は <code>11</code>。</li>
-            <li><code>++b</code>（前置）：先に <code>11</code> になってから出力。</li>
-            <li><code>d = c++ + ++c</code> の評価順：
-              <ol style="padding-left:18px;margin-top:4px;">
-                <li><code>c++</code> → 現在値 <code>5</code> を使い、<code>c</code> を <code>6</code> にする</li>
-                <li><code>++c</code> → <code>c</code> を <code>7</code> にしてから <code>7</code> を使う</li>
-                <li><code>d = 5 + 12</code>…ではなく <code>5 + 7 = 12</code>？ → 実際は左辺評価後の c=6 を前置で 7 にするため <code>d = 5 + 12 = 17</code></li>
-              </ol>
-            </li>
-          </ul>
-          <div class="callout" style="margin-top:10px;">
-            <strong>⚠️ 注意</strong>：このような式は読みにくくバグの原因になります。<br>
-            実務では <code>++</code> / <code>--</code> は単独行での使用を推奨します。
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>a++</code>（後置）：出力は元の値 <code>10</code>、その後
+                  <code>a</code> は <code>11</code>。
+                </li>
+                <li>
+                  <code>++b</code>（前置）：先に
+                  <code>11</code> になってから出力。
+                </li>
+                <li>
+                  <code>d = c++ + ++c</code> の評価順：
+                  <ol style="padding-left: 18px; margin-top: 4px">
+                    <li>
+                      <code>c++</code> → 現在値 <code>5</code> を使い、<code
+                        >c</code
+                      >
+                      を <code>6</code> にする
+                    </li>
+                    <li>
+                      <code>++c</code> → <code>c</code> を
+                      <code>7</code> にしてから <code>7</code> を使う
+                    </li>
+                    <li>
+                      <code>d = 5 + 12</code>…ではなく <code>5 + 7 = 12</code>？
+                      → 実際は左辺評価後の c=6 を前置で 7 にするため
+                      <code>d = 5 + 12 = 17</code>
+                    </li>
+                  </ol>
+                </li>
+              </ul>
+              <div class="callout" style="margin-top: 10px">
+                <strong>⚠️ 注意</strong
+                >：このような式は読みにくくバグの原因になります。<br />
+                実務では <code>++</code> /
+                <code>--</code> は単独行での使用を推奨します。
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 2-3-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐☆</span>
           </div>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 2-3-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐☆</span>
-      </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次の条件を満たす <code>StockManager</code> クラスを作成してください。</p>
-      <ul>
-        <li><code>int</code> 型の変数 <code>stock</code> に初期値 <code>100</code> を代入する</li>
-        <li>下表の操作を順に行い、その都度 <code>stock</code> の値を出力する</li>
-      </ul>
-      <table class="data-table" style="margin-top:12px;">
-        <thead><tr><th>手順</th><th>操作内容</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td>仕入れ：30個追加（<code>+=</code>）</td></tr>
-          <tr><td>2</td><td>販売：45個減らす（<code>-=</code>）</td></tr>
-          <tr><td>3</td><td>セール：在庫を半分にする（<code>/=</code>）</td></tr>
-          <tr><td>4</td><td>検品：1個廃棄（<code>--</code>）</td></tr>
-          <tr><td>5</td><td>補充：在庫を3倍にする（<code>*=</code>）</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>初期在庫: 100
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たす
+            <code>StockManager</code> クラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              <code>int</code> 型の変数 <code>stock</code> に初期値
+              <code>100</code> を代入する
+            </li>
+            <li>
+              下表の操作を順に行い、その都度 <code>stock</code> の値を出力する
+            </li>
+          </ul>
+          <table class="data-table" style="margin-top: 12px">
+            <thead>
+              <tr>
+                <th>手順</th>
+                <th>操作内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>仕入れ：30個追加（<code>+=</code>）</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>販売：45個減らす（<code>-=</code>）</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>セール：在庫を半分にする（<code>/=</code>）</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>検品：1個廃棄（<code>--</code>）</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>補充：在庫を3倍にする（<code>*=</code>）</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>初期在庫: 100
 仕入れ後: 130
 販売後: 85
 セール後: 42
 検品後: 41
 補充後: 123</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">StockManager.java</div>
-            <pre><code>public class StockManager {
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">StockManager.java</div>
+                <pre><code>public class StockManager {
     public static void main(String[] args) {
         int stock = 100;
         System.out.println("初期在庫: " + stock);
@@ -458,21 +894,39 @@ b += 5;       // OK（自動キャスト）
         System.out.println("補充後: "   + stock);
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>100 += 30</code> → <code>130</code></li>
-            <li><code>130 -= 45</code> → <code>85</code></li>
-            <li><code>85 /= 2</code> → <code>42</code>（整数除算で <code>42.5</code> → <code>42</code> に切り捨て）</li>
-            <li><code>42--</code> → <code>41</code></li>
-            <li><code>41 *= 3</code> → <code>123</code></li>
-          </ul>
-          <p style="margin-top:8px;"><code>/= 2</code> の際に整数除算が行われ <code>85 ÷ 2 = 42.5</code> が <code>42</code> に切り捨てられる点がポイントです。</p>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li><code>100 += 30</code> → <code>130</code></li>
+                <li><code>130 -= 45</code> → <code>85</code></li>
+                <li>
+                  <code>85 /= 2</code> → <code>42</code>（整数除算で
+                  <code>42.5</code> → <code>42</code> に切り捨て）
+                </li>
+                <li><code>42--</code> → <code>41</code></li>
+                <li><code>41 *= 3</code> → <code>123</code></li>
+              </ul>
+              <p style="margin-top: 8px">
+                <code>/= 2</code> の際に整数除算が行われ
+                <code>85 ÷ 2 = 42.5</code> が
+                <code>42</code> に切り捨てられる点がポイントです。
+              </p>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../2-2/2-2_comparison_logical_operators.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter3/3-1/3-1_if_else.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

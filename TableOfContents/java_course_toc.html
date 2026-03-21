@@ -172,6 +172,31 @@
         color: #a0aec0;
         font-size: 0.82rem;
       }
+
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2b6cb0;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
     </style>
   </head>
   <body>
@@ -180,6 +205,15 @@
         <h1>☕ Java基本構文コース</h1>
         <p>全14章 · 42節 · 139問</p>
       </header>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div style="width: 20px"></div>
+        <div class="page-button"><a href="#">目次</a></div>
+        <div class="page-button">
+          <a href="../Chapter1/1-1/1-1_basic_data_types.html">＞</a>
+        </div>
+      </div>
 
       <!-- 概要テーブル -->
       <table class="summary-table">
@@ -324,7 +358,7 @@
               <tr>
                 <td class="section-num">1-1</td>
                 <td>
-                  <a href="/Chapter1/1-1/1-1_basic_data_types.html">
+                  <a href="../Chapter1/1-1/1-1_basic_data_types.html">
                     基本データ型の宣言と代入
                   </a>
                 </td>
@@ -333,7 +367,7 @@
               <tr>
                 <td class="section-num">1-2</td>
                 <td>
-                  <a href="/Chapter1/1-2/1-2_type_casting.html"
+                  <a href="../Chapter1/1-2/1-2_type_casting.html"
                     >型変換（キャスト）</a
                   >
                 </td>
@@ -342,7 +376,7 @@
               <tr>
                 <td class="section-num">1-3</td>
                 <td>
-                  <a href="/Chapter1/1-3/1-3_string_operations.html"
+                  <a href="../Chapter1/1-3/1-3_string_operations.html"
                     >文字列（String）の操作</a
                   >
                 </td>
@@ -369,7 +403,7 @@
               <tr>
                 <td class="section-num">2-1</td>
                 <td>
-                  <a href="/Chapter2/2-1/2-1_arithmetic_operators.html"
+                  <a href="../Chapter2/2-1/2-1_arithmetic_operators.html"
                     >算術演算子</a
                   >
                 </td>
@@ -378,7 +412,8 @@
               <tr>
                 <td class="section-num">2-2</td>
                 <td>
-                  <a href="/Chapter2/2-2/2-2_comparison_logical_operators.html"
+                  <a
+                    href="../Chapter2/2-2/2-2_comparison_logical_operators.html"
                     >比較演算子・論理演算子</a
                   >
                 </td>
@@ -387,7 +422,8 @@
               <tr>
                 <td class="section-num">2-3</td>
                 <td>
-                  <a href="/Chapter2/2-3/2-3_compound_assignment_increment.html"
+                  <a
+                    href="../Chapter2/2-3/2-3_compound_assignment_increment.html"
                     >複合代入演算子・インクリメント</a
                   >
                 </td>
@@ -414,7 +450,7 @@
               <tr>
                 <td class="section-num">3-1</td>
                 <td>
-                  <a href="/Chapter3/3-1/3-1_if_else.html"
+                  <a href="../Chapter3/3-1/3-1_if_else.html"
                     >if / else if / else</a
                   >
                 </td>
@@ -422,13 +458,13 @@
               </tr>
               <tr>
                 <td class="section-num">3-2</td>
-                <td><a href="/Chapter3/3-2/3-2_switch.html">switch文</a></td>
+                <td><a href="../Chapter3/3-2/3-2_switch.html">switch文</a></td>
                 <td class="q-count">3問</td>
               </tr>
               <tr>
                 <td class="section-num">3-3</td>
                 <td>
-                  <a href="/Chapter3/3-3/3-3_ternary_operator.html"
+                  <a href="../Chapter3/3-3/3-3_ternary_operator.html"
                     >三項演算子</a
                   >
                 </td>
@@ -454,13 +490,13 @@
             <tbody>
               <tr>
                 <td class="section-num">4-1</td>
-                <td><a href="/Chapter4/4-1/4-1_for_loop.html">for文</a></td>
+                <td><a href="../Chapter4/4-1/4-1_for_loop.html">for文</a></td>
                 <td class="q-count">4問</td>
               </tr>
               <tr>
                 <td class="section-num">4-2</td>
                 <td>
-                  <a href="/Chapter4/4-2/4-2_while_do_while.html"
+                  <a href="../Chapter4/4-2/4-2_while_do_while.html"
                     >while / do-while文</a
                   >
                 </td>
@@ -469,7 +505,7 @@
               <tr>
                 <td class="section-num">4-3</td>
                 <td>
-                  <a href="/Chapter4/4-3/4-3_break_continue.html"
+                  <a href="../Chapter4/4-3/4-3_break_continue.html"
                     >break / continue</a
                   >
                 </td>
@@ -496,7 +532,7 @@
               <tr>
                 <td class="section-num">5-1</td>
                 <td>
-                  <a href="/Chapter5/5-1/5-1_arrays.html"
+                  <a href="../Chapter5/5-1/5-1_arrays.html"
                     >一次元配列の宣言・操作</a
                   >
                 </td>
@@ -505,7 +541,7 @@
               <tr>
                 <td class="section-num">5-2</td>
                 <td>
-                  <a href="/Chapter5/5-2/5-2_multidimensional_arrays.html"
+                  <a href="../Chapter5/5-2/5-2_multidimensional_arrays.html"
                     >多次元配列</a
                   >
                 </td>
@@ -514,7 +550,7 @@
               <tr>
                 <td class="section-num">5-3</td>
                 <td>
-                  <a href="/Chapter5/5-3/5-3_array_loops.html"
+                  <a href="../Chapter5/5-3/5-3_array_loops.html"
                     >配列の繰り返し処理</a
                   >
                 </td>
@@ -541,7 +577,7 @@
               <tr>
                 <td class="section-num">6-1</td>
                 <td>
-                  <a href="/Chapter6/6-1/6-1_method_definition.html"
+                  <a href="../Chapter6/6-1/6-1_method_definition.html"
                     >メソッドの定義と呼び出し</a
                   >
                 </td>
@@ -550,7 +586,7 @@
               <tr>
                 <td class="section-num">6-2</td>
                 <td>
-                  <a href="/Chapter6/6-2/6-2_arguments_return.html"
+                  <a href="../Chapter6/6-2/6-2_arguments_return.html"
                     >引数と戻り値</a
                   >
                 </td>
@@ -559,7 +595,7 @@
               <tr>
                 <td class="section-num">6-3</td>
                 <td>
-                  <a href="/Chapter6/6-3/6-3_method_overloading.html"
+                  <a href="../Chapter6/6-3/6-3_method_overloading.html"
                     >メソッドのオーバーロード</a
                   >
                 </td>
@@ -586,7 +622,7 @@
               <tr>
                 <td class="section-num">7-1</td>
                 <td>
-                  <a href="/Chapter7/7-1/7-1_class_instance.html"
+                  <a href="../Chapter7/7-1/7-1_class_instance.html"
                     >クラスの定義・インスタンス生成</a
                   >
                 </td>
@@ -595,7 +631,7 @@
               <tr>
                 <td class="section-num">7-2</td>
                 <td>
-                  <a href="/Chapter7/7-2/7-2_fields_constructors.html"
+                  <a href="../Chapter7/7-2/7-2_fields_constructors.html"
                     >フィールドとコンストラクタ</a
                   >
                 </td>
@@ -604,7 +640,7 @@
               <tr>
                 <td class="section-num">7-3</td>
                 <td>
-                  <a href="/Chapter7/7-3/7-3_this_methods.html"
+                  <a href="../Chapter7/7-3/7-3_this_methods.html"
                     >thisキーワード・メソッド</a
                   >
                 </td>
@@ -631,7 +667,7 @@
               <tr>
                 <td class="section-num">8-1</td>
                 <td>
-                  <a href="/Chapter8/8-1/8-1_encapsulation.html"
+                  <a href="../Chapter8/8-1/8-1_encapsulation.html"
                     >カプセル化（フィールドとアクセサ）</a
                   >
                 </td>
@@ -640,7 +676,7 @@
               <tr>
                 <td class="section-num">8-2</td>
                 <td>
-                  <a href="/Chapter8/8-2/8-2_polymorphism.html"
+                  <a href="../Chapter8/8-2/8-2_polymorphism.html"
                     >ポリモーフィズム</a
                   >
                 </td>
@@ -649,7 +685,7 @@
               <tr>
                 <td class="section-num">8-3</td>
                 <td>
-                  <a href="/Chapter8/8-3/8-3_abstract_classes.html"
+                  <a href="../Chapter8/8-3/8-3_abstract_classes.html"
                     >抽象クラス</a
                   >
                 </td>
@@ -676,7 +712,7 @@
               <tr>
                 <td class="section-num">9-1</td>
                 <td>
-                  <a href="/Chapter9/9-1/9-1_inheritance.html"
+                  <a href="../Chapter9/9-1/9-1_inheritance.html"
                     >継承（extends / override）</a
                   >
                 </td>
@@ -685,7 +721,7 @@
               <tr>
                 <td class="section-num">9-2</td>
                 <td>
-                  <a href="/Chapter9/9-2/9-2_interfaces.html"
+                  <a href="../Chapter9/9-2/9-2_interfaces.html"
                     >インターフェース（implements）</a
                   >
                 </td>
@@ -694,7 +730,7 @@
               <tr>
                 <td class="section-num">9-3</td>
                 <td>
-                  <a href="/Chapter9/9-3/9-3_enum.html">Enum（列挙型）</a>
+                  <a href="../Chapter9/9-3/9-3_enum.html">Enum（列挙型）</a>
                 </td>
                 <td class="q-count">3問</td>
               </tr>
@@ -719,7 +755,7 @@
               <tr>
                 <td class="section-num">10-1</td>
                 <td>
-                  <a href="/Chapter10/10-1/10-1_lambda_basics.html"
+                  <a href="../Chapter10/10-1/10-1_lambda_basics.html"
                     >ラムダ式の基本構文</a
                   >
                 </td>
@@ -728,7 +764,7 @@
               <tr>
                 <td class="section-num">10-2</td>
                 <td>
-                  <a href="/Chapter10/10-2/10-2_functional_interfaces.html"
+                  <a href="../Chapter10/10-2/10-2_functional_interfaces.html"
                     >関数型インターフェース（Function / Predicate /
                     Consumer）</a
                   >
@@ -738,7 +774,7 @@
               <tr>
                 <td class="section-num">10-3</td>
                 <td>
-                  <a href="/Chapter10/10-3/10-3_method_references.html"
+                  <a href="../Chapter10/10-3/10-3_method_references.html"
                     >メソッド参照</a
                   >
                 </td>
@@ -765,7 +801,7 @@
               <tr>
                 <td class="section-num">11-1</td>
                 <td>
-                  <a href="/Chapter11/11-1/11-1_stream_basics.html"
+                  <a href="../Chapter11/11-1/11-1_stream_basics.html"
                     >Streamの生成と基本操作（filter / map）</a
                   >
                 </td>
@@ -774,7 +810,7 @@
               <tr>
                 <td class="section-num">11-2</td>
                 <td>
-                  <a href="/Chapter11/11-2/11-2_stream_terminal.html"
+                  <a href="../Chapter11/11-2/11-2_stream_terminal.html"
                     >集計・終端操作（collect / reduce / count）</a
                   >
                 </td>
@@ -783,7 +819,7 @@
               <tr>
                 <td class="section-num">11-3</td>
                 <td>
-                  <a href="/Chapter11/11-3/11-3_sorted_optional_flatmap.html"
+                  <a href="../Chapter11/11-3/11-3_sorted_optional_flatmap.html"
                     >ソート・フラット化（sorted / flatMap）</a
                   >
                 </td>

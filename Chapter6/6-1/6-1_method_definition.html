@@ -1,219 +1,562 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>6-1. メソッドの定義と呼び出し</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>6-1. メソッドの定義と呼び出し</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    /* Header */
-    .page-header {
-      background: linear-gradient(135deg, #1a365d, #2b6cb0);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      /* Header */
+      .page-header {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    /* Section title */
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #1a365d;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      /* Section title */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a365d;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #bee3f8;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    /* Code */
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      /* Code */
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+        letter-spacing: 0.05em;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    /* Callout / hint */
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      /* Callout / hint */
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    /* Tables */
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #2b6cb0; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #ebf8ff; }
+      /* Tables */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2b6cb0;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #ebf8ff;
+      }
 
-    /* Method anatomy diagram */
-    .method-anatomy {
-      background: #fff; border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 20px 24px; margin: 14px 0;
-    }
-    .ma-row {
-      display: flex; align-items: stretch; gap: 4px;
-      font-family: monospace; font-size: 0.92rem; font-weight: 700;
-      justify-content: center; flex-wrap: wrap; gap: 4px; margin-bottom: 10px;
-    }
-    .ma-part {
-      padding: 8px 12px; border-radius: 6px; text-align: center;
-    }
-    .ma-access  { background: #e9d8fd; color: #44337a; }
-    .ma-static  { background: #fefcbf; color: #744210; }
-    .ma-void    { background: #c6f6d5; color: #22543d; }
-    .ma-name    { background: #2b6cb0; color: white; }
-    .ma-params  { background: #ebf8ff; color: #2b6cb0; }
-    .ma-body    { background: #edf2f7; color: #4a5568; }
-    .ma-labels {
-      display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 4px;
-    }
-    .ma-label { font-size: 0.72rem; color: #718096; text-align: center; }
+      /* Method anatomy diagram */
+      .method-anatomy {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+      }
+      .ma-row {
+        display: flex;
+        align-items: stretch;
+        gap: 4px;
+        font-family: monospace;
+        font-size: 0.92rem;
+        font-weight: 700;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-bottom: 10px;
+      }
+      .ma-part {
+        padding: 8px 12px;
+        border-radius: 6px;
+        text-align: center;
+      }
+      .ma-access {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .ma-static {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .ma-void {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .ma-name {
+        background: #2b6cb0;
+        color: white;
+      }
+      .ma-params {
+        background: #ebf8ff;
+        color: #2b6cb0;
+      }
+      .ma-body {
+        background: #edf2f7;
+        color: #4a5568;
+      }
+      .ma-labels {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .ma-label {
+        font-size: 0.72rem;
+        color: #718096;
+        text-align: center;
+      }
 
-    /* Call flow diagram */
-    .call-flow {
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 18px 20px; margin: 14px 0;
-    }
-    .cf-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 12px; }
-    .cf-row { display: flex; align-items: flex-start; gap: 16px; }
-    .cf-col { flex: 1; }
-    .cf-box {
-      border-radius: 8px; padding: 10px 14px; font-size: 0.85rem;
-      font-family: monospace; margin-bottom: 6px;
-    }
-    .cf-main   { background: #ebf8ff; border: 2px solid #bee3f8; color: #1a365d; }
-    .cf-method { background: #c6f6d5; border: 2px solid #9ae6b4; color: #22543d; }
-    .cf-arrow  { display: flex; align-items: center; justify-content: center; color: #2b6cb0; font-size: 1.4rem; padding-top: 20px; }
+      /* Call flow diagram */
+      .call-flow {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 18px 20px;
+        margin: 14px 0;
+      }
+      .cf-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 12px;
+      }
+      .cf-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .cf-col {
+        flex: 1;
+      }
+      .cf-box {
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        font-family: monospace;
+        margin-bottom: 6px;
+      }
+      .cf-main {
+        background: #ebf8ff;
+        border: 2px solid #bee3f8;
+        color: #1a365d;
+      }
+      .cf-method {
+        background: #c6f6d5;
+        border: 2px solid #9ae6b4;
+        color: #22543d;
+      }
+      .cf-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2b6cb0;
+        font-size: 1.4rem;
+        padding-top: 20px;
+      }
 
-    /* Benefits cards */
-    .benefit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0; }
-    .benefit-card {
-      background: #fff; border-radius: 10px; padding: 14px 16px; text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.07); border-top: 3px solid #2b6cb0;
-    }
-    .benefit-card .bc-icon { font-size: 1.6rem; margin-bottom: 6px; }
-    .benefit-card .bc-name { font-weight: 700; font-size: 0.88rem; color: #1a365d; margin-bottom: 4px; }
-    .benefit-card .bc-desc { font-size: 0.78rem; color: #718096; }
+      /* Benefits cards */
+      .benefit-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .benefit-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 14px 16px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+        border-top: 3px solid #2b6cb0;
+      }
+      .benefit-card .bc-icon {
+        font-size: 1.6rem;
+        margin-bottom: 6px;
+      }
+      .benefit-card .bc-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #1a365d;
+        margin-bottom: 4px;
+      }
+      .benefit-card .bc-desc {
+        font-size: 0.78rem;
+        color: #718096;
+      }
 
-    /* Output box */
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      /* Output box */
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    /* Problem cards */
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      /* Problem cards */
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #ebf8ff;
+        border-bottom: 1px solid #bee3f8;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a365d;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    /* Answer toggle */
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #2b6cb0; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      /* Answer toggle */
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2b6cb0;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #2c5282;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <!-- Header -->
-  <div class="page-header">
-    <div class="chapter-label">第6章 ▶ メソッド</div>
-    <h1>6-1. メソッドの定義と呼び出し</h1>
-    <div class="meta">難易度：⭐⭐⭐☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <!-- ===== 解説 ===== -->
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2b6cb0;
+        border-radius: 7px;
+      }
 
-  <h3>メソッドとは？</h3>
-  <p><strong>一連の処理をまとめて名前を付けたもの</strong>です。<br>
-  同じ処理を何度も書く代わりに、メソッドとして定義して呼び出します。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <div class="benefit-grid">
-    <div class="benefit-card">
-      <div class="bc-icon">♻️</div>
-      <div class="bc-name">再利用性</div>
-      <div class="bc-desc">同じ処理を何度でも呼び出せる</div>
-    </div>
-    <div class="benefit-card">
-      <div class="bc-icon">📖</div>
-      <div class="bc-name">可読性</div>
-      <div class="bc-desc">処理に名前が付いて意図が明確に</div>
-    </div>
-    <div class="benefit-card">
-      <div class="bc-icon">🔧</div>
-      <div class="bc-name">保守性</div>
-      <div class="bc-desc">変更箇所が1カ所にまとまる</div>
-    </div>
-  </div>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">第6章 ▶ メソッド</div>
 
-  <!-- 構造図 -->
-  <h3>メソッドの基本構造</h3>
+        <h1>6-1. メソッドの定義と呼び出し</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐☆☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter5/5-3/5-3_array_loops.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../6-2/6-2_arguments_return.html">＞</a>
+        </div>
+      </div>
 
-  <div class="method-anatomy">
-    <div class="ma-row">
-      <div class="ma-part ma-access">public</div>
-      <div class="ma-part ma-static">static</div>
-      <div class="ma-part ma-void">void</div>
-      <div class="ma-part ma-name">greet</div>
-      <div class="ma-part ma-params">( )</div>
-      <div class="ma-part ma-body">{ ... }</div>
-    </div>
-    <div class="ma-labels">
-      <span class="ma-label" style="min-width:70px;">アクセス<br>修飾子</span>
-      <span class="ma-label" style="min-width:60px;">静的<br>宣言</span>
-      <span class="ma-label" style="min-width:70px;">戻り値の型<br>（なし）</span>
-      <span class="ma-label" style="min-width:70px;">メソッド名</span>
-      <span class="ma-label" style="min-width:60px;">引数<br>（なし）</span>
-      <span class="ma-label" style="min-width:60px;">処理内容</span>
-    </div>
-  </div>
+      <!-- ===== 解説 ===== -->
+      <div class="section-title"><span>📖</span> 解説</div>
 
-  <table class="data-table">
-    <thead><tr><th>部分</th><th>説明</th></tr></thead>
-    <tbody>
-      <tr><td><code>public</code></td><td>どこからでも呼び出せる（アクセス修飾子）</td></tr>
-      <tr><td><code>static</code></td><td>インスタンス不要で呼び出せる</td></tr>
-      <tr><td><code>void</code></td><td>戻り値なし（値を返さない）</td></tr>
-      <tr><td><code>greet</code></td><td>メソッド名（任意の名前）</td></tr>
-      <tr><td><code>()</code></td><td>引数リスト（なければ空）</td></tr>
-    </tbody>
-  </table>
+      <h3>メソッドとは？</h3>
+      <p>
+        <strong>一連の処理をまとめて名前を付けたもの</strong>です。<br />
+        同じ処理を何度も書く代わりに、メソッドとして定義して呼び出します。
+      </p>
 
-  <!-- 呼び出し -->
-  <h3>メソッドの呼び出し</h3>
-  <div class="code-wrap">
-    <div class="code-label">定義と呼び出しの例</div>
-    <pre><code>public class MethodExample {
+      <div class="benefit-grid">
+        <div class="benefit-card">
+          <div class="bc-icon">♻️</div>
+          <div class="bc-name">再利用性</div>
+          <div class="bc-desc">同じ処理を何度でも呼び出せる</div>
+        </div>
+        <div class="benefit-card">
+          <div class="bc-icon">📖</div>
+          <div class="bc-name">可読性</div>
+          <div class="bc-desc">処理に名前が付いて意図が明確に</div>
+        </div>
+        <div class="benefit-card">
+          <div class="bc-icon">🔧</div>
+          <div class="bc-name">保守性</div>
+          <div class="bc-desc">変更箇所が1カ所にまとまる</div>
+        </div>
+      </div>
+
+      <!-- 構造図 -->
+      <h3>メソッドの基本構造</h3>
+
+      <div class="method-anatomy">
+        <div class="ma-row">
+          <div class="ma-part ma-access">public</div>
+          <div class="ma-part ma-static">static</div>
+          <div class="ma-part ma-void">void</div>
+          <div class="ma-part ma-name">greet</div>
+          <div class="ma-part ma-params">( )</div>
+          <div class="ma-part ma-body">{ ... }</div>
+        </div>
+        <div class="ma-labels">
+          <span class="ma-label" style="min-width: 70px"
+            >アクセス<br />修飾子</span
+          >
+          <span class="ma-label" style="min-width: 60px">静的<br />宣言</span>
+          <span class="ma-label" style="min-width: 70px"
+            >戻り値の型<br />（なし）</span
+          >
+          <span class="ma-label" style="min-width: 70px">メソッド名</span>
+          <span class="ma-label" style="min-width: 60px"
+            >引数<br />（なし）</span
+          >
+          <span class="ma-label" style="min-width: 60px">処理内容</span>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>部分</th>
+            <th>説明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>public</code></td>
+            <td>どこからでも呼び出せる（アクセス修飾子）</td>
+          </tr>
+          <tr>
+            <td><code>static</code></td>
+            <td>インスタンス不要で呼び出せる</td>
+          </tr>
+          <tr>
+            <td><code>void</code></td>
+            <td>戻り値なし（値を返さない）</td>
+          </tr>
+          <tr>
+            <td><code>greet</code></td>
+            <td>メソッド名（任意の名前）</td>
+          </tr>
+          <tr>
+            <td><code>()</code></td>
+            <td>引数リスト（なければ空）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 呼び出し -->
+      <h3>メソッドの呼び出し</h3>
+      <div class="code-wrap">
+        <div class="code-label">定義と呼び出しの例</div>
+        <pre><code>public class MethodExample {
 
     // メソッドの定義
     public static void greet() {
@@ -226,59 +569,84 @@
         greet();  // 呼び出し3回目
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>こんにちは！
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>こんにちは！
 こんにちは！
 こんにちは！</code></pre>
-  </div>
-
-  <!-- 実行フロー -->
-  <h3>メソッドの実行フロー</h3>
-  <div class="call-flow">
-    <div class="cf-title">▶ main から greet を呼び出す流れ</div>
-    <div class="cf-row">
-      <div class="cf-col">
-        <div class="cf-box cf-main">main() {<br>&nbsp;&nbsp;① greet(); ──→<br>&nbsp;&nbsp;③ greet(); ──→<br>}</div>
       </div>
-      <div class="cf-arrow">⇄</div>
-      <div class="cf-col">
-        <div class="cf-box cf-method">greet() {<br>&nbsp;&nbsp;② println("こんにちは！")<br>&nbsp;&nbsp;← mainに戻る<br>}</div>
-      </div>
-    </div>
-  </div>
 
-  <!-- void と return -->
-  <h3>void メソッドと return</h3>
-  <p><code>void</code> メソッドは戻り値がありませんが、<code>return;</code> で途中終了できます。</p>
-  <div class="code-wrap">
-    <div class="code-label">途中終了の例</div>
-    <pre><code>public static void checkAge(int age) {
+      <!-- 実行フロー -->
+      <h3>メソッドの実行フロー</h3>
+      <div class="call-flow">
+        <div class="cf-title">▶ main から greet を呼び出す流れ</div>
+        <div class="cf-row">
+          <div class="cf-col">
+            <div class="cf-box cf-main">
+              main() {<br />&nbsp;&nbsp;① greet(); ──→<br />&nbsp;&nbsp;③
+              greet(); ──→<br />}
+            </div>
+          </div>
+          <div class="cf-arrow">⇄</div>
+          <div class="cf-col">
+            <div class="cf-box cf-method">
+              greet() {<br />&nbsp;&nbsp;② println("こんにちは！")<br />&nbsp;&nbsp;←
+              mainに戻る<br />}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- void と return -->
+      <h3>void メソッドと return</h3>
+      <p>
+        <code>void</code> メソッドは戻り値がありませんが、<code>return;</code>
+        で途中終了できます。
+      </p>
+      <div class="code-wrap">
+        <div class="code-label">途中終了の例</div>
+        <pre><code>public static void checkAge(int age) {
     if (age &lt; 0) {
         System.out.println("無効な年齢です");
         return;  // ここで終了
     }
     System.out.println("年齢: " + age);
 }</code></pre>
-  </div>
+      </div>
 
-  <!-- 命名規則 -->
-  <h3>メソッドの命名規則</h3>
-  <table class="data-table">
-    <thead><tr><th>ルール</th><th>例</th></tr></thead>
-    <tbody>
-      <tr><td>小文字で始めるキャメルケース</td><td><code>calculateTotal</code>、<code>getUserName</code></td></tr>
-      <tr><td>動詞または動詞＋名詞</td><td><code>print</code>、<code>getScore</code>、<code>showResult</code></td></tr>
-      <tr><td>略語は避ける</td><td><code>calculate</code> ○、<code>calc</code> △</td></tr>
-    </tbody>
-  </table>
+      <!-- 命名規則 -->
+      <h3>メソッドの命名規則</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ルール</th>
+            <th>例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>小文字で始めるキャメルケース</td>
+            <td><code>calculateTotal</code>、<code>getUserName</code></td>
+          </tr>
+          <tr>
+            <td>動詞または動詞＋名詞</td>
+            <td>
+              <code>print</code>、<code>getScore</code>、<code>showResult</code>
+            </td>
+          </tr>
+          <tr>
+            <td>略語は避ける</td>
+            <td><code>calculate</code> ○、<code>calc</code> △</td>
+          </tr>
+        </tbody>
+      </table>
 
-  <!-- コード例 -->
-  <h3>コード例：複数のメソッドを組み合わせる</h3>
-  <div class="code-wrap">
-    <div class="code-label">ShapeDrawer.java</div>
-    <pre><code>public class ShapeDrawer {
+      <!-- コード例 -->
+      <h3>コード例：複数のメソッドを組み合わせる</h3>
+      <div class="code-wrap">
+        <div class="code-label">ShapeDrawer.java</div>
+        <pre><code>public class ShapeDrawer {
 
     public static void drawLine() {
         System.out.println("──────────");
@@ -305,10 +673,10 @@
         drawBox();
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>──────────
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>──────────
   メニュー
 ──────────
   1. スタート
@@ -318,25 +686,27 @@
 ┌────────┐
 │        │
 └────────┘</code></pre>
-  </div>
-
-  <!-- ===== 問題 ===== -->
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 6-1-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐☆☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>public class Q1 {
+
+      <!-- ===== 問題 ===== -->
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 6-1-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐☆☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>public class Q1 {
 
     public static void hello() {
         System.out.println("Hello!");
@@ -357,42 +727,56 @@
         bye();
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>Hello!
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>Hello!
 Hello!
 Goodbye!
 Goodbye!</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>main</code> の <code>hello()</code> → <code>"Hello!"</code></li>
-            <li><code>greetSet()</code> が呼ばれ、内部で <code>hello()</code> → <code>"Hello!"</code>、<code>bye()</code> → <code>"Goodbye!"</code></li>
-            <li><code>main</code> の <code>bye()</code> → <code>"Goodbye!"</code></li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>main</code> の <code>hello()</code> →
+                  <code>"Hello!"</code>
+                </li>
+                <li>
+                  <code>greetSet()</code> が呼ばれ、内部で
+                  <code>hello()</code> → <code>"Hello!"</code>、<code
+                    >bye()</code
+                  >
+                  → <code>"Goodbye!"</code>
+                </li>
+                <li>
+                  <code>main</code> の <code>bye()</code> →
+                  <code>"Goodbye!"</code>
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 6-1-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>public class Q2 {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 6-1-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>public class Q2 {
 
     public static void printStars(int count) {
         for (int i = 0; i &lt; count; i++) {
@@ -415,57 +799,82 @@ Goodbye!</code></pre>
         printStars(3);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>*
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>*
 **
 ***
 ****
 *****
 ---
 ***</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>printTriangle()</code> は <code>printStars(1)</code>〜<code>printStars(5)</code> を順に呼び出し1〜5個の <code>*</code> を出力します。</li>
-            <li><code>System.out.println("---")</code> でセパレータを出力。</li>
-            <li><code>printStars(3)</code> で <code>***</code> を出力します。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>printTriangle()</code> は
+                  <code>printStars(1)</code>〜<code>printStars(5)</code>
+                  を順に呼び出し1〜5個の <code>*</code> を出力します。
+                </li>
+                <li>
+                  <code>System.out.println("---")</code> でセパレータを出力。
+                </li>
+                <li>
+                  <code>printStars(3)</code> で <code>***</code> を出力します。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 6-1-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次の条件を満たす <code>ReportPrinter</code> クラスを作成してください。</p>
-      <ul>
-        <li>下表の3つのメソッドを定義する</li>
-        <li><code>main</code> メソッドでレポートを出力する</li>
-      </ul>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>メソッド名</th><th>処理内容</th></tr></thead>
-        <tbody>
-          <tr><td><code>printHeader()</code></td><td><code>"=== 成績レポート ==="</code> を出力</td></tr>
-          <tr><td><code>printSeparator()</code></td><td><code>"-------------------"</code> を出力</td></tr>
-          <tr><td><code>printFooter()</code></td><td><code>"=== 以上 ==="</code> を出力</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>=== 成績レポート ===
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 6-1-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たす
+            <code>ReportPrinter</code> クラスを作成してください。
+          </p>
+          <ul>
+            <li>下表の3つのメソッドを定義する</li>
+            <li><code>main</code> メソッドでレポートを出力する</li>
+          </ul>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>メソッド名</th>
+                <th>処理内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>printHeader()</code></td>
+                <td><code>"=== 成績レポート ==="</code> を出力</td>
+              </tr>
+              <tr>
+                <td><code>printSeparator()</code></td>
+                <td><code>"-------------------"</code> を出力</td>
+              </tr>
+              <tr>
+                <td><code>printFooter()</code></td>
+                <td><code>"=== 以上 ==="</code> を出力</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>=== 成績レポート ===
 -------------------
 名前: 山田太郎
 点数: 85点
@@ -476,13 +885,13 @@ Goodbye!</code></pre>
 評価: A
 -------------------
 === 以上 ===</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">ReportPrinter.java</div>
-            <pre><code>public class ReportPrinter {
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">ReportPrinter.java</div>
+                <pre><code>public class ReportPrinter {
 
     public static void printHeader() {
         System.out.println("=== 成績レポート ===");
@@ -510,17 +919,33 @@ Goodbye!</code></pre>
         printFooter();
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li>繰り返し使うセパレータ行をメソッドにまとめることで、変更が1カ所で済みます。</li>
-            <li><code>printSeparator()</code> は3回呼ばれていますが、定義は1カ所です。これがメソッドの再利用性の利点です。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  繰り返し使うセパレータ行をメソッドにまとめることで、変更が1カ所で済みます。
+                </li>
+                <li>
+                  <code>printSeparator()</code>
+                  は3回呼ばれていますが、定義は1カ所です。これがメソッドの再利用性の利点です。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter5/5-3/5-3_array_loops.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../6-2/6-2_arguments_return.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

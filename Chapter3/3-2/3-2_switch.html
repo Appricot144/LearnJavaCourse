@@ -1,152 +1,449 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3-2. switch文</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3-2. switch文</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    /* Header */
-    .page-header {
-      background: linear-gradient(135deg, #1a365d, #2b6cb0);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      /* Header */
+      .page-header {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    /* Section title */
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #1a365d;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      /* Section title */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a365d;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #bee3f8;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    /* Code */
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      /* Code */
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+        letter-spacing: 0.05em;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    /* Callout / hint */
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      /* Callout / hint */
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    /* Tables */
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #2b6cb0; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #ebf8ff; }
+      /* Tables */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2b6cb0;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #ebf8ff;
+      }
 
-    /* Fallthrough diagram */
-    .fallthrough-diagram {
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 18px 20px; margin: 14px 0;
-    }
-    .ft-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 12px; }
-    .ft-row {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 0.86rem; margin-bottom: 6px;
-    }
-    .ft-case {
-      min-width: 90px; padding: 4px 12px; border-radius: 6px;
-      font-weight: 700; font-family: monospace; font-size: 0.85rem; text-align: center;
-    }
-    .ft-hit    { background: #2b6cb0; color: white; }
-    .ft-fall   { background: #fefcbf; color: #744210; }
-    .ft-stop   { background: #c6f6d5; color: #22543d; }
-    .ft-skip   { background: #edf2f7; color: #a0aec0; }
-    .ft-arrow  { color: #a0aec0; font-size: 1rem; }
-    .ft-badge-break { background: #fed7d7; color: #742a2a; font-size: 0.72rem; padding: 1px 8px; border-radius: 10px; font-weight: 600; }
-    .ft-badge-fall  { background: #fefcbf; color: #744210; font-size: 0.72rem; padding: 1px 8px; border-radius: 10px; font-weight: 600; }
+      /* Fallthrough diagram */
+      .fallthrough-diagram {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 18px 20px;
+        margin: 14px 0;
+      }
+      .ft-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 12px;
+      }
+      .ft-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.86rem;
+        margin-bottom: 6px;
+      }
+      .ft-case {
+        min-width: 90px;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-family: monospace;
+        font-size: 0.85rem;
+        text-align: center;
+      }
+      .ft-hit {
+        background: #2b6cb0;
+        color: white;
+      }
+      .ft-fall {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .ft-stop {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .ft-skip {
+        background: #edf2f7;
+        color: #a0aec0;
+      }
+      .ft-arrow {
+        color: #a0aec0;
+        font-size: 1rem;
+      }
+      .ft-badge-break {
+        background: #fed7d7;
+        color: #742a2a;
+        font-size: 0.72rem;
+        padding: 1px 8px;
+        border-radius: 10px;
+        font-weight: 600;
+      }
+      .ft-badge-fall {
+        background: #fefcbf;
+        color: #744210;
+        font-size: 0.72rem;
+        padding: 1px 8px;
+        border-radius: 10px;
+        font-weight: 600;
+      }
 
-    /* Season grid */
-    .season-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0;
-    }
-    .season-card {
-      background: #fff; border-radius: 10px; padding: 12px 14px; text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
-    }
-    .season-card .s-icon { font-size: 1.6rem; margin-bottom: 4px; }
-    .season-card .s-label { font-size: 0.75rem; color: #718096; }
-    .season-card .s-months { font-size: 0.8rem; font-weight: 700; color: #2b6cb0; margin-top: 2px; }
+      /* Season grid */
+      .season-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin: 14px 0;
+      }
+      .season-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 12px 14px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+      }
+      .season-card .s-icon {
+        font-size: 1.6rem;
+        margin-bottom: 4px;
+      }
+      .season-card .s-label {
+        font-size: 0.75rem;
+        color: #718096;
+      }
+      .season-card .s-months {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin-top: 2px;
+      }
 
-    /* Output box */
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      /* Output box */
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    /* Problem cards */
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      /* Problem cards */
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #ebf8ff;
+        border-bottom: 1px solid #bee3f8;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a365d;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    /* Answer toggle */
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #2b6cb0; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
-    .alt-label { font-size: 0.8rem; font-weight: 700; color: #718096; margin: 12px 0 6px; }
-  </style>
-</head>
-<body>
-<div class="container">
+      /* Answer toggle */
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2b6cb0;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #2c5282;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
+      .alt-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin: 12px 0 6px;
+      }
 
-  <!-- Header -->
-  <div class="page-header">
-    <div class="chapter-label">第3章 ▶ 条件分岐</div>
-    <h1>3-2. switch文</h1>
-    <div class="meta">難易度：⭐⭐☆☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <!-- ===== 解説 ===== -->
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2b6cb0;
+        border-radius: 7px;
+      }
 
-  <h3>switch文とは？</h3>
-  <p><code>switch</code> 文は、<strong>1つの変数や式の値によって処理を分岐</strong>させる構文です。<br>
-  <code>if / else if</code> の連続と同じことができますが、値が多い場合に読みやすくなります。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <!-- 基本構造 -->
-  <h3>基本構造</h3>
-  <div class="code-wrap">
-    <div class="code-label">switch文の構文</div>
-    <pre><code>switch (式) {
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">第3章 ▶ 条件分岐</div>
+
+        <h1>3-2. switch文</h1>
+        <div class="meta">
+          難易度：⭐⭐☆☆☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../3-1/3-1_if_else.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../3-3/3-3_ternary_operator.html">＞</a>
+        </div>
+      </div>
+
+      <!-- ===== 解説 ===== -->
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>switch文とは？</h3>
+      <p>
+        <code>switch</code>
+        文は、<strong>1つの変数や式の値によって処理を分岐</strong>させる構文です。<br />
+        <code>if / else if</code>
+        の連続と同じことができますが、値が多い場合に読みやすくなります。
+      </p>
+
+      <!-- 基本構造 -->
+      <h3>基本構造</h3>
+      <div class="code-wrap">
+        <div class="code-label">switch文の構文</div>
+        <pre><code>switch (式) {
     case 値1:
         // 式 == 値1 のときの処理
         break;
@@ -156,44 +453,55 @@
     default:
         // どの case にも一致しないときの処理
 }</code></pre>
-  </div>
+      </div>
 
-  <div class="callout">
-    <strong>⚠️ break を忘れずに！</strong><br>
-    <code>break</code> を省略すると次の <code>case</code> に処理が流れ続けます（フォールスルー）。<br>
-    意図しない動作の原因になるため、必ず記述する習慣をつけましょう。
-  </div>
+      <div class="callout">
+        <strong>⚠️ break を忘れずに！</strong><br />
+        <code>break</code> を省略すると次の
+        <code>case</code> に処理が流れ続けます（フォールスルー）。<br />
+        意図しない動作の原因になるため、必ず記述する習慣をつけましょう。
+      </div>
 
-  <!-- フォールスルー図 -->
-  <h3>break を省略するとどうなる？（フォールスルー）</h3>
+      <!-- フォールスルー図 -->
+      <h3>break を省略するとどうなる？（フォールスルー）</h3>
 
-  <div class="fallthrough-diagram">
-    <div class="ft-title">▶ x = 2 のとき、case 2 に break がない場合の流れ</div>
-    <div class="ft-row">
-      <div class="ft-case ft-skip">case 1</div>
-      <div class="ft-arrow">→</div>
-      <span>一致しないのでスキップ</span>
-    </div>
-    <div class="ft-row">
-      <div class="ft-case ft-hit">case 2</div>
-      <div class="ft-arrow">→</div>
-      <span>一致！ "B" を出力 &nbsp;<span class="ft-badge-fall">break なし → 次へ</span></span>
-    </div>
-    <div class="ft-row">
-      <div class="ft-case ft-fall">case 3</div>
-      <div class="ft-arrow">→</div>
-      <span>"C" を出力 &nbsp;<span class="ft-badge-break">break → 終了</span></span>
-    </div>
-    <div class="ft-row">
-      <div class="ft-case ft-skip">case 4</div>
-      <div class="ft-arrow">→</div>
-      <span>break で止まったのでここは実行されない</span>
-    </div>
-  </div>
+      <div class="fallthrough-diagram">
+        <div class="ft-title">
+          ▶ x = 2 のとき、case 2 に break がない場合の流れ
+        </div>
+        <div class="ft-row">
+          <div class="ft-case ft-skip">case 1</div>
+          <div class="ft-arrow">→</div>
+          <span>一致しないのでスキップ</span>
+        </div>
+        <div class="ft-row">
+          <div class="ft-case ft-hit">case 2</div>
+          <div class="ft-arrow">→</div>
+          <span
+            >一致！ "B" を出力 &nbsp;<span class="ft-badge-fall"
+              >break なし → 次へ</span
+            ></span
+          >
+        </div>
+        <div class="ft-row">
+          <div class="ft-case ft-fall">case 3</div>
+          <div class="ft-arrow">→</div>
+          <span
+            >"C" を出力 &nbsp;<span class="ft-badge-break"
+              >break → 終了</span
+            ></span
+          >
+        </div>
+        <div class="ft-row">
+          <div class="ft-case ft-skip">case 4</div>
+          <div class="ft-arrow">→</div>
+          <span>break で止まったのでここは実行されない</span>
+        </div>
+      </div>
 
-  <div class="code-wrap">
-    <div class="code-label">フォールスルーの例（x = 2）</div>
-    <pre><code>int x = 2;
+      <div class="code-wrap">
+        <div class="code-label">フォールスルーの例（x = 2）</div>
+        <pre><code>int x = 2;
 
 switch (x) {
     case 1:
@@ -209,27 +517,46 @@ switch (x) {
         System.out.println("D");
         break;
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>B
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>B
 C</code></pre>
-  </div>
+      </div>
 
-  <!-- 複数 case まとめ -->
-  <h3>複数の case をまとめる（季節の例）</h3>
-  <p>同じ処理をする <code>case</code> は <code>break</code> なしで連続させてまとめられます。</p>
+      <!-- 複数 case まとめ -->
+      <h3>複数の case をまとめる（季節の例）</h3>
+      <p>
+        同じ処理をする <code>case</code> は
+        <code>break</code> なしで連続させてまとめられます。
+      </p>
 
-  <div class="season-grid">
-    <div class="season-card"><div class="s-icon">🌸</div><div class="s-label">春</div><div class="s-months">3・4・5月</div></div>
-    <div class="season-card"><div class="s-icon">☀️</div><div class="s-label">夏</div><div class="s-months">6・7・8月</div></div>
-    <div class="season-card"><div class="s-icon">🍂</div><div class="s-label">秋</div><div class="s-months">9・10・11月</div></div>
-    <div class="season-card"><div class="s-icon">❄️</div><div class="s-label">冬</div><div class="s-months">12・1・2月</div></div>
-  </div>
+      <div class="season-grid">
+        <div class="season-card">
+          <div class="s-icon">🌸</div>
+          <div class="s-label">春</div>
+          <div class="s-months">3・4・5月</div>
+        </div>
+        <div class="season-card">
+          <div class="s-icon">☀️</div>
+          <div class="s-label">夏</div>
+          <div class="s-months">6・7・8月</div>
+        </div>
+        <div class="season-card">
+          <div class="s-icon">🍂</div>
+          <div class="s-label">秋</div>
+          <div class="s-months">9・10・11月</div>
+        </div>
+        <div class="season-card">
+          <div class="s-icon">❄️</div>
+          <div class="s-label">冬</div>
+          <div class="s-months">12・1・2月</div>
+        </div>
+      </div>
 
-  <div class="code-wrap">
-    <div class="code-label">複数 case まとめの例（month = 4）</div>
-    <pre><code>int month = 4;
+      <div class="code-wrap">
+        <div class="code-label">複数 case まとめの例（month = 4）</div>
+        <pre><code>int month = 4;
 
 switch (month) {
     case 3:
@@ -250,43 +577,79 @@ switch (month) {
     default:
         System.out.println("冬");
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>春</code></pre>
-  </div>
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>春</code></pre>
+      </div>
 
-  <!-- 使える型 -->
-  <h3>switch文で使える型</h3>
-  <table class="data-table">
-    <thead><tr><th>使える型</th><th>例</th></tr></thead>
-    <tbody>
-      <tr><td><code>int</code> / <code>byte</code> / <code>short</code> / <code>char</code></td><td><code>switch (score)</code></td></tr>
-      <tr><td><code>String</code></td><td><code>switch (name)</code></td></tr>
-      <tr><td><code>enum</code>（列挙型）</td><td><code>switch (color)</code></td></tr>
-    </tbody>
-  </table>
+      <!-- 使える型 -->
+      <h3>switch文で使える型</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>使える型</th>
+            <th>例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>int</code> / <code>byte</code> / <code>short</code> /
+              <code>char</code>
+            </td>
+            <td><code>switch (score)</code></td>
+          </tr>
+          <tr>
+            <td><code>String</code></td>
+            <td><code>switch (name)</code></td>
+          </tr>
+          <tr>
+            <td><code>enum</code>（列挙型）</td>
+            <td><code>switch (color)</code></td>
+          </tr>
+        </tbody>
+      </table>
 
-  <div class="callout">
-    <strong>⚠️ 使えない型</strong>：<code>long</code> / <code>float</code> / <code>double</code> / <code>boolean</code> は switch 文では使えません。
-  </div>
+      <div class="callout">
+        <strong>⚠️ 使えない型</strong>：<code>long</code> / <code>float</code> /
+        <code>double</code> / <code>boolean</code> は switch 文では使えません。
+      </div>
 
-  <!-- switch vs if -->
-  <h3>switch文 vs if文</h3>
-  <table class="data-table">
-    <thead><tr><th>比較項目</th><th>switch文</th><th>if文</th></tr></thead>
-    <tbody>
-      <tr><td>向いているケース</td><td>値が多い・1変数の等値比較</td><td>範囲比較・複雑な条件</td></tr>
-      <tr><td>使える比較</td><td><code>==</code>（等値のみ）</td><td><code>&gt;=</code>、<code>&amp;&amp;</code> など自由</td></tr>
-      <tr><td>読みやすさ</td><td>値が多い場合に○</td><td>条件が複雑な場合に○</td></tr>
-    </tbody>
-  </table>
+      <!-- switch vs if -->
+      <h3>switch文 vs if文</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>比較項目</th>
+            <th>switch文</th>
+            <th>if文</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>向いているケース</td>
+            <td>値が多い・1変数の等値比較</td>
+            <td>範囲比較・複雑な条件</td>
+          </tr>
+          <tr>
+            <td>使える比較</td>
+            <td><code>==</code>（等値のみ）</td>
+            <td><code>&gt;=</code>、<code>&amp;&amp;</code> など自由</td>
+          </tr>
+          <tr>
+            <td>読みやすさ</td>
+            <td>値が多い場合に○</td>
+            <td>条件が複雑な場合に○</td>
+          </tr>
+        </tbody>
+      </table>
 
-  <!-- コード例 -->
-  <h3>コード例（String の switch）</h3>
-  <div class="code-wrap">
-    <div class="code-label">SeasonChecker.java</div>
-    <pre><code>public class SeasonChecker {
+      <!-- コード例 -->
+      <h3>コード例（String の switch）</h3>
+      <div class="code-wrap">
+        <div class="code-label">SeasonChecker.java</div>
+        <pre><code>public class SeasonChecker {
     public static void main(String[] args) {
         String season = "summer";
 
@@ -308,29 +671,31 @@ switch (month) {
         }
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>夏：海水浴の季節</code></pre>
-  </div>
-
-  <!-- ===== 問題 ===== -->
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 3-2-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐☆☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>public class Q1 {
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>夏：海水浴の季節</code></pre>
+      </div>
+
+      <!-- ===== 問題 ===== -->
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 3-2-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐☆☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>public class Q1 {
     public static void main(String[] args) {
         int num = 2;
 
@@ -349,38 +714,47 @@ switch (month) {
         }
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>に</code></pre>
           </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>num = 2</code> なので <code>case 2:</code> に一致し、<code>"に"</code> が出力されます。</li>
-            <li><code>break</code> があるため <code>case 3:</code> 以降は実行されません。</li>
-          </ul>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>に</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>num = 2</code> なので
+                  <code>case 2:</code> に一致し、<code>"に"</code>
+                  が出力されます。
+                </li>
+                <li>
+                  <code>break</code> があるため
+                  <code>case 3:</code> 以降は実行されません。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 3-2-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>public class Q2 {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 3-2-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>public class Q2 {
     public static void main(String[] args) {
         int x = 2;
 
@@ -401,62 +775,98 @@ switch (month) {
         }
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>B
-C</code></pre>
           </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>x = 2</code> なので <code>case 2:</code> に一致し <code>"B"</code> が出力されます。</li>
-            <li><code>case 2:</code> に <code>break</code> がないため、フォールスルーが発生し <code>case 3:</code> の <code>"C"</code> も実行されます。</li>
-            <li><code>case 3:</code> に <code>break</code> があるため、そこで処理が終わります。</li>
-          </ul>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>B
+C</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>x = 2</code> なので <code>case 2:</code> に一致し
+                  <code>"B"</code> が出力されます。
+                </li>
+                <li>
+                  <code>case 2:</code> に
+                  <code>break</code> がないため、フォールスルーが発生し
+                  <code>case 3:</code> の <code>"C"</code> も実行されます。
+                </li>
+                <li>
+                  <code>case 3:</code> に
+                  <code>break</code> があるため、そこで処理が終わります。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
+      </div>
 
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 3-2-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
-      </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次の条件を満たす <code>TrafficLight</code> クラスを作成してください。</p>
-      <ul>
-        <li><code>String</code> 型の変数 <code>color</code> に <code>"yellow"</code> を代入する</li>
-        <li><code>switch</code> 文を使って下表のメッセージを出力する</li>
-        <li><code>"red"</code> または <code>"yellow"</code> のとき、追加で <code>"安全を確認してください"</code> を出力する</li>
-      </ul>
-      <table class="data-table" style="margin-top:12px;">
-        <thead><tr><th>color の値</th><th>出力メッセージ</th></tr></thead>
-        <tbody>
-          <tr><td><code>"red"</code></td><td>止まれ</td></tr>
-          <tr><td><code>"yellow"</code></td><td>注意して進め</td></tr>
-          <tr><td><code>"green"</code></td><td>進め</td></tr>
-          <tr><td>それ以外</td><td>不明な信号です</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>注意して進め
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 3-2-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たす
+            <code>TrafficLight</code> クラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              <code>String</code> 型の変数 <code>color</code> に
+              <code>"yellow"</code> を代入する
+            </li>
+            <li><code>switch</code> 文を使って下表のメッセージを出力する</li>
+            <li>
+              <code>"red"</code> または <code>"yellow"</code> のとき、追加で
+              <code>"安全を確認してください"</code> を出力する
+            </li>
+          </ul>
+          <table class="data-table" style="margin-top: 12px">
+            <thead>
+              <tr>
+                <th>color の値</th>
+                <th>出力メッセージ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>"red"</code></td>
+                <td>止まれ</td>
+              </tr>
+              <tr>
+                <td><code>"yellow"</code></td>
+                <td>注意して進め</td>
+              </tr>
+              <tr>
+                <td><code>"green"</code></td>
+                <td>進め</td>
+              </tr>
+              <tr>
+                <td>それ以外</td>
+                <td>不明な信号です</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>注意して進め
 安全を確認してください</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">TrafficLight.java</div>
-            <pre><code>public class TrafficLight {
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">TrafficLight.java</div>
+                <pre><code>public class TrafficLight {
     public static void main(String[] args) {
         String color = "yellow";
 
@@ -477,11 +887,13 @@ C</code></pre>
         }
     }
 }</code></pre>
-          </div>
-          <div class="alt-label">▶ 別解（共通処理を switch の外にまとめる）</div>
-          <div class="code-wrap">
-            <div class="code-label">TrafficLight.java（別解）</div>
-            <pre><code>public class TrafficLight {
+              </div>
+              <div class="alt-label">
+                ▶ 別解（共通処理を switch の外にまとめる）
+              </div>
+              <div class="code-wrap">
+                <div class="code-label">TrafficLight.java（別解）</div>
+                <pre><code>public class TrafficLight {
     public static void main(String[] args) {
         String color = "yellow";
         String message = "";
@@ -509,18 +921,41 @@ C</code></pre>
         }
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>color = "yellow"</code> なので <code>case "yellow":</code> に一致します。</li>
-            <li><code>"注意して進め"</code> と <code>"安全を確認してください"</code> が出力されます。</li>
-            <li>別解では <code>red</code> と <code>yellow</code> の共通処理（安全確認）を <code>switch</code> の外で <code>if</code> にまとめています。コードの重複を減らせるメリットがあります。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>color = "yellow"</code> なので
+                  <code>case "yellow":</code> に一致します。
+                </li>
+                <li>
+                  <code>"注意して進め"</code> と
+                  <code>"安全を確認してください"</code> が出力されます。
+                </li>
+                <li>
+                  別解では <code>red</code> と
+                  <code>yellow</code> の共通処理（安全確認）を
+                  <code>switch</code> の外で
+                  <code>if</code>
+                  にまとめています。コードの重複を減らせるメリットがあります。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../3-1/3-1_if_else.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../3-3/3-3_ternary_operator.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

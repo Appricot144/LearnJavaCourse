@@ -1,187 +1,534 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>8-3. 抽象クラス</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>8-3. 抽象クラス</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    .page-header {
-      background: linear-gradient(135deg, #22543d, #276749);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      .page-header {
+        background: linear-gradient(135deg, #22543d, #276749);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #22543d;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #9ae6b4;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #276749; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #22543d;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #9ae6b4;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #276749;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #f0fff4; color: #276749; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #f0fff4;
+        color: #276749;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #276749; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; text-align: center; }
-    .data-table tbody td:first-child { text-align: left; }
-    .data-table tbody tr:hover { background: #f0fff4; }
-    .ok { color: #22543d; font-weight: 700; }
-    .ng { color: #c53030; font-weight: 700; }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #276749;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+        text-align: center;
+      }
+      .data-table tbody td:first-child {
+        text-align: left;
+      }
+      .data-table tbody tr:hover {
+        background: #f0fff4;
+      }
+      .ok {
+        color: #22543d;
+        font-weight: 700;
+      }
+      .ng {
+        color: #c53030;
+        font-weight: 700;
+      }
 
-    /* Abstract class diagram */
-    .abstract-diagram {
-      background: #fff; border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 20px 24px; margin: 14px 0;
-    }
-    .ad-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 14px; }
-    .ad-abstract {
-      border: 2px dashed #276749; border-radius: 10px;
-      padding: 12px 16px; margin-bottom: 12px;
-      display: inline-block; min-width: 200px;
-    }
-    .ad-abstract-label {
-      font-size: 0.72rem; font-weight: 700; color: #276749;
-      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
-    }
-    .ad-class-name { font-family: monospace; font-weight: 700; font-size: 1rem; color: #22543d; margin-bottom: 8px; }
-    .ad-method {
-      font-family: monospace; font-size: 0.82rem; padding: 3px 8px;
-      border-radius: 4px; margin-bottom: 3px; display: block;
-    }
-    .ad-abstract-method { background: #fed7d7; color: #742a2a; }
-    .ad-concrete-method { background: #c6f6d5; color: #22543d; }
-    .ad-children { display: flex; gap: 12px; margin-left: 24px; flex-wrap: wrap; }
-    .ad-child {
-      border: 2px solid #276749; border-radius: 8px; padding: 10px 14px;
-      font-family: monospace; font-size: 0.85rem;
-    }
-    .ad-arrow-down { color: #a0aec0; font-size: 1.2rem; margin: 4px 0 4px 12px; }
+      /* Abstract class diagram */
+      .abstract-diagram {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+      }
+      .ad-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 14px;
+      }
+      .ad-abstract {
+        border: 2px dashed #276749;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 12px;
+        display: inline-block;
+        min-width: 200px;
+      }
+      .ad-abstract-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #276749;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 4px;
+      }
+      .ad-class-name {
+        font-family: monospace;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #22543d;
+        margin-bottom: 8px;
+      }
+      .ad-method {
+        font-family: monospace;
+        font-size: 0.82rem;
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-bottom: 3px;
+        display: block;
+      }
+      .ad-abstract-method {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+      .ad-concrete-method {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .ad-children {
+        display: flex;
+        gap: 12px;
+        margin-left: 24px;
+        flex-wrap: wrap;
+      }
+      .ad-child {
+        border: 2px solid #276749;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-family: monospace;
+        font-size: 0.85rem;
+      }
+      .ad-arrow-down {
+        color: #a0aec0;
+        font-size: 1.2rem;
+        margin: 4px 0 4px 12px;
+      }
 
-    /* Template method flow */
-    .template-flow {
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 18px 20px; margin: 14px 0;
-    }
-    .tf-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 12px; }
-    .tf-steps { display: flex; flex-direction: column; gap: 6px; }
-    .tf-step { display: flex; align-items: center; gap: 10px; font-size: 0.88rem; }
-    .tf-box { padding: 7px 16px; border-radius: 6px; font-weight: 600; font-family: monospace; font-size: 0.85rem; }
-    .tf-fixed    { background: #276749; color: white; }
-    .tf-abstract { background: #fed7d7; color: #742a2a; border: 1px dashed #fc8181; }
-    .tf-arrow    { color: #a0aec0; font-size: 1rem; }
-    .tf-note     { font-size: 0.75rem; color: #718096; }
+      /* Template method flow */
+      .template-flow {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 18px 20px;
+        margin: 14px 0;
+      }
+      .tf-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 12px;
+      }
+      .tf-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .tf-step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.88rem;
+      }
+      .tf-box {
+        padding: 7px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-family: monospace;
+        font-size: 0.85rem;
+      }
+      .tf-fixed {
+        background: #276749;
+        color: white;
+      }
+      .tf-abstract {
+        background: #fed7d7;
+        color: #742a2a;
+        border: 1px dashed #fc8181;
+      }
+      .tf-arrow {
+        color: #a0aec0;
+        font-size: 1rem;
+      }
+      .tf-note {
+        font-size: 0.75rem;
+        color: #718096;
+      }
 
-    /* Use case cards */
-    .usecase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
-    .usecase-card { background: #fff; border-radius: 10px; padding: 14px 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
-    .usecase-card .uc-title { font-weight: 700; font-size: 0.88rem; margin-bottom: 6px; }
-    .uc-good { border-left: 4px solid #68d391; }
-    .uc-bad  { border-left: 4px solid #fc8181; }
-    .uc-good .uc-title { color: #22543d; }
-    .uc-bad  .uc-title { color: #742a2a; }
-    .usecase-card li { font-size: 0.82rem; color: #718096; }
+      /* Use case cards */
+      .usecase-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .usecase-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 14px 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+      }
+      .usecase-card .uc-title {
+        font-weight: 700;
+        font-size: 0.88rem;
+        margin-bottom: 6px;
+      }
+      .uc-good {
+        border-left: 4px solid #68d391;
+      }
+      .uc-bad {
+        border-left: 4px solid #fc8181;
+      }
+      .uc-good .uc-title {
+        color: #22543d;
+      }
+      .uc-bad .uc-title {
+        color: #742a2a;
+      }
+      .usecase-card li {
+        font-size: 0.82rem;
+        color: #718096;
+      }
 
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f0fff4; border-bottom: 1px solid #9ae6b4; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #22543d; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #f0fff4;
+        border-bottom: 1px solid #9ae6b4;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #22543d;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #276749; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #22543d; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #276749; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #276749;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #22543d;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #276749;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <div class="page-header">
-    <div class="chapter-label">第8章 ▶ オブジェクト指向の概念</div>
-    <h1>8-3. 抽象クラス</h1>
-    <div class="meta">難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #276749;
+        border-radius: 7px;
+      }
 
-  <h3>抽象クラスとは？</h3>
-  <p><strong>インスタンスを直接生成できないクラス</strong>です。<br>
-  「共通の骨格だけ定義し、具体的な実装はサブクラスに委ねる」設計に使います。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <!-- クラス図 -->
-  <div class="abstract-diagram">
-    <div class="ad-title">▶ Shape（抽象）を継承した Circle と Rectangle</div>
-    <div class="ad-abstract">
-      <div class="ad-abstract-label">《abstract》</div>
-      <div class="ad-class-name">Shape</div>
-      <span class="ad-method ad-abstract-method">abstract area()　　← 実装なし</span>
-      <span class="ad-method ad-abstract-method">abstract perimeter()　← 実装なし</span>
-      <span class="ad-method ad-concrete-method">show()　← 共通処理あり</span>
-    </div>
-    <div class="ad-arrow-down">↓ extends</div>
-    <div class="ad-children">
-      <div class="ad-child">
-        <strong>Circle</strong><br>
-        <small>area() を実装<br>perimeter() を実装</small>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第8章 ▶ オブジェクト指向の概念</div>
+
+        <h1>8-3. 抽象クラス</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
       </div>
-      <div class="ad-child">
-        <strong>Rectangle</strong><br>
-        <small>area() を実装<br>perimeter() を実装</small>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../8-2/8-2_polymorphism.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter9/9-1/9-1_inheritance.html">＞</a>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- 宣言 -->
-  <h3>抽象クラスと抽象メソッドの宣言</h3>
-  <div class="code-wrap">
-    <div class="code-label">Shape 抽象クラス</div>
-    <pre><code>public abstract class Shape {   // abstract を付ける
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>抽象クラスとは？</h3>
+      <p>
+        <strong>インスタンスを直接生成できないクラス</strong>です。<br />
+        「共通の骨格だけ定義し、具体的な実装はサブクラスに委ねる」設計に使います。
+      </p>
+
+      <!-- クラス図 -->
+      <div class="abstract-diagram">
+        <div class="ad-title">
+          ▶ Shape（抽象）を継承した Circle と Rectangle
+        </div>
+        <div class="ad-abstract">
+          <div class="ad-abstract-label">《abstract》</div>
+          <div class="ad-class-name">Shape</div>
+          <span class="ad-method ad-abstract-method"
+            >abstract area()　　← 実装なし</span
+          >
+          <span class="ad-method ad-abstract-method"
+            >abstract perimeter()　← 実装なし</span
+          >
+          <span class="ad-method ad-concrete-method"
+            >show()　← 共通処理あり</span
+          >
+        </div>
+        <div class="ad-arrow-down">↓ extends</div>
+        <div class="ad-children">
+          <div class="ad-child">
+            <strong>Circle</strong><br />
+            <small>area() を実装<br />perimeter() を実装</small>
+          </div>
+          <div class="ad-child">
+            <strong>Rectangle</strong><br />
+            <small>area() を実装<br />perimeter() を実装</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- 宣言 -->
+      <h3>抽象クラスと抽象メソッドの宣言</h3>
+      <div class="code-wrap">
+        <div class="code-label">Shape 抽象クラス</div>
+        <pre><code>public abstract class Shape {   // abstract を付ける
     String color;
 
     public Shape(String color) { this.color = color; }
@@ -196,20 +543,23 @@
             getClass().getSimpleName(), color, area(), perimeter());
     }
 }</code></pre>
-  </div>
+      </div>
 
-  <div class="callout">
-    <strong>⚠️ 抽象クラスのルール</strong><br>
-    ・抽象メソッドを1つでも持つクラスは <code>abstract</code> を付けなければなりません。<br>
-    ・<code>new Shape()</code> のような直接インスタンス化はコンパイルエラーになります。<br>
-    ・サブクラスはすべての抽象メソッドを実装しなければなりません（1つでも残ると自分も abstract になる）。
-  </div>
+      <div class="callout">
+        <strong>⚠️ 抽象クラスのルール</strong><br />
+        ・抽象メソッドを1つでも持つクラスは
+        <code>abstract</code> を付けなければなりません。<br />
+        ・<code>new Shape()</code>
+        のような直接インスタンス化はコンパイルエラーになります。<br />
+        ・サブクラスはすべての抽象メソッドを実装しなければなりません（1つでも残ると自分も
+        abstract になる）。
+      </div>
 
-  <!-- サブクラス -->
-  <h3>抽象クラスを継承するサブクラス</h3>
-  <div class="code-wrap">
-    <div class="code-label">Circle と Rectangle の実装</div>
-    <pre><code>public class Circle extends Shape {
+      <!-- サブクラス -->
+      <h3>抽象クラスを継承するサブクラス</h3>
+      <div class="code-wrap">
+        <div class="code-label">Circle と Rectangle の実装</div>
+        <pre><code>public class Circle extends Shape {
     double radius;
 
     public Circle(String color, double radius) {
@@ -236,72 +586,111 @@ public class Rectangle extends Shape {
     @Override
     public double perimeter() { return (width + height) * 2; }
 }</code></pre>
-  </div>
-
-  <!-- 比較表 -->
-  <h3>通常クラス vs 抽象クラス vs インターフェース</h3>
-  <table class="data-table">
-    <thead><tr><th>比較項目</th><th>通常クラス</th><th>抽象クラス</th><th>インターフェース</th></tr></thead>
-    <tbody>
-      <tr><td>インスタンス生成</td><td class="ok">✅ できる</td><td class="ng">❌ できない</td><td class="ng">❌ できない</td></tr>
-      <tr><td>抽象メソッド</td><td class="ng">❌ 持てない</td><td class="ok">✅ 持てる</td><td class="ok">✅ 全てが抽象</td></tr>
-      <tr><td>通常メソッド</td><td class="ok">✅ 持てる</td><td class="ok">✅ 持てる</td><td>✅ default のみ</td></tr>
-      <tr><td>フィールド</td><td class="ok">✅ 持てる</td><td class="ok">✅ 持てる</td><td>❌ 定数のみ</td></tr>
-      <tr><td>継承数</td><td>1つだけ</td><td>1つだけ</td><td>複数可能</td></tr>
-    </tbody>
-  </table>
-
-  <!-- 使いどころ -->
-  <h3>抽象クラスの使いどころ</h3>
-  <div class="usecase-grid">
-    <div class="usecase-card uc-good">
-      <div class="uc-title">✅ 向いているケース</div>
-      <ul>
-        <li>複数クラスに共通の「骨格」がある</li>
-        <li>共通処理を親クラスにまとめたい</li>
-        <li>特定のメソッドをサブクラスに強制したい</li>
-      </ul>
-    </div>
-    <div class="usecase-card uc-bad">
-      <div class="uc-title">❌ 向いていないケース</div>
-      <ul>
-        <li>共通フィールドや共通処理が何もない</li>
-        <li>複数の親から継承したい</li>
-        <li>→ インターフェース向き（第9章）</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- テンプレートメソッド -->
-  <h3>テンプレートメソッドパターン</h3>
-  <p>「処理の骨格」を親クラスで定義し、個々のステップをサブクラスに実装させるパターンです。</p>
-
-  <div class="template-flow">
-    <div class="tf-title">▶ process() の流れ（final で固定）</div>
-    <div class="tf-steps">
-      <div class="tf-step">
-        <div class="tf-box tf-fixed">process()</div>
-        <span class="tf-note">← final：サブクラスでオーバーライド不可</span>
       </div>
-      <div class="tf-step" style="margin-left:20px;">
-        <div class="tf-arrow">↓ 呼び出す</div>
-      </div>
-      <div class="tf-step" style="margin-left:20px; gap:6px; flex-wrap:wrap;">
-        <div class="tf-box tf-abstract">readData()</div>
-        <div class="tf-arrow">→</div>
-        <div class="tf-box tf-abstract">processData()</div>
-        <div class="tf-arrow">→</div>
-        <div class="tf-box tf-abstract">writeResult()</div>
-      </div>
-      <div class="tf-step" style="margin-left:20px;">
-        <span class="tf-note">← 抽象メソッド：サブクラスが具体実装を提供</span>
-      </div>
-    </div>
-  </div>
 
-  <div class="code-wrap">
-    <div class="code-label">DataProcessor のテンプレートメソッド</div>
-    <pre><code>public abstract class DataProcessor {
+      <!-- 比較表 -->
+      <h3>通常クラス vs 抽象クラス vs インターフェース</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>比較項目</th>
+            <th>通常クラス</th>
+            <th>抽象クラス</th>
+            <th>インターフェース</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>インスタンス生成</td>
+            <td class="ok">✅ できる</td>
+            <td class="ng">❌ できない</td>
+            <td class="ng">❌ できない</td>
+          </tr>
+          <tr>
+            <td>抽象メソッド</td>
+            <td class="ng">❌ 持てない</td>
+            <td class="ok">✅ 持てる</td>
+            <td class="ok">✅ 全てが抽象</td>
+          </tr>
+          <tr>
+            <td>通常メソッド</td>
+            <td class="ok">✅ 持てる</td>
+            <td class="ok">✅ 持てる</td>
+            <td>✅ default のみ</td>
+          </tr>
+          <tr>
+            <td>フィールド</td>
+            <td class="ok">✅ 持てる</td>
+            <td class="ok">✅ 持てる</td>
+            <td>❌ 定数のみ</td>
+          </tr>
+          <tr>
+            <td>継承数</td>
+            <td>1つだけ</td>
+            <td>1つだけ</td>
+            <td>複数可能</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 使いどころ -->
+      <h3>抽象クラスの使いどころ</h3>
+      <div class="usecase-grid">
+        <div class="usecase-card uc-good">
+          <div class="uc-title">✅ 向いているケース</div>
+          <ul>
+            <li>複数クラスに共通の「骨格」がある</li>
+            <li>共通処理を親クラスにまとめたい</li>
+            <li>特定のメソッドをサブクラスに強制したい</li>
+          </ul>
+        </div>
+        <div class="usecase-card uc-bad">
+          <div class="uc-title">❌ 向いていないケース</div>
+          <ul>
+            <li>共通フィールドや共通処理が何もない</li>
+            <li>複数の親から継承したい</li>
+            <li>→ インターフェース向き（第9章）</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- テンプレートメソッド -->
+      <h3>テンプレートメソッドパターン</h3>
+      <p>
+        「処理の骨格」を親クラスで定義し、個々のステップをサブクラスに実装させるパターンです。
+      </p>
+
+      <div class="template-flow">
+        <div class="tf-title">▶ process() の流れ（final で固定）</div>
+        <div class="tf-steps">
+          <div class="tf-step">
+            <div class="tf-box tf-fixed">process()</div>
+            <span class="tf-note">← final：サブクラスでオーバーライド不可</span>
+          </div>
+          <div class="tf-step" style="margin-left: 20px">
+            <div class="tf-arrow">↓ 呼び出す</div>
+          </div>
+          <div
+            class="tf-step"
+            style="margin-left: 20px; gap: 6px; flex-wrap: wrap"
+          >
+            <div class="tf-box tf-abstract">readData()</div>
+            <div class="tf-arrow">→</div>
+            <div class="tf-box tf-abstract">processData()</div>
+            <div class="tf-arrow">→</div>
+            <div class="tf-box tf-abstract">writeResult()</div>
+          </div>
+          <div class="tf-step" style="margin-left: 20px">
+            <span class="tf-note"
+              >← 抽象メソッド：サブクラスが具体実装を提供</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">DataProcessor のテンプレートメソッド</div>
+        <pre><code>public abstract class DataProcessor {
 
     public final void process() {  // final で流れを固定
         readData();
@@ -325,24 +714,26 @@ new CsvProcessor().process();
 // → CSVを読み込む
 // → CSVを処理する
 // → CSVに書き出す</code></pre>
-  </div>
-
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 8-3-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>abstract class Animal {
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 8-3-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>abstract class Animal {
     String name;
     public Animal(String name) { this.name = name; }
     public abstract String sound();
@@ -378,45 +769,63 @@ public class Q1 {
         }
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>私は ポチ です。ワン と鳴きます。
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>私は ポチ です。ワン と鳴きます。
 私は タマ です。ニャー と鳴きます。
 私は ハチ です。ワン と鳴きます。
 ---
 ポチ がボールを取ってきた！
 ハチ がボールを取ってきた！</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>Animal</code> は抽象クラスなので直接インスタンス化はできませんが、<code>Dog</code> / <code>Cat</code> は生成できます。</li>
-            <li><code>introduce()</code> 内の <code>sound()</code> は動的ディスパッチで各サブクラスの実装が呼ばれます。</li>
-            <li><code>instanceof Dog</code> でチェックし、ダウンキャストして <code>fetch()</code> を呼び出しています。</li>
-            <li><code>Cat</code> は <code>fetch()</code> を持たないので <code>Dog</code> のみ実行されます。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>Animal</code>
+                  は抽象クラスなので直接インスタンス化はできませんが、<code
+                    >Dog</code
+                  >
+                  / <code>Cat</code> は生成できます。
+                </li>
+                <li>
+                  <code>introduce()</code> 内の
+                  <code>sound()</code>
+                  は動的ディスパッチで各サブクラスの実装が呼ばれます。
+                </li>
+                <li>
+                  <code>instanceof Dog</code> でチェックし、ダウンキャストして
+                  <code>fetch()</code> を呼び出しています。
+                </li>
+                <li>
+                  <code>Cat</code> は <code>fetch()</code> を持たないので
+                  <code>Dog</code> のみ実行されます。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 8-3-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>abstract class Game {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 8-3-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>abstract class Game {
     private String title;
     public Game(String title) { this.title = title; }
 
@@ -455,13 +864,13 @@ public class Q2 {
         }
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>=== チェス ===
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>=== チェス ===
 チェス盤を準備する
 チェスを開始する
 チェスを終了する
@@ -471,54 +880,96 @@ public class Q2 {
 キックオフ！
 試合終了のホイッスル
 </code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>play()</code> は <code>final</code> なのでオーバーライドできません（処理の流れを固定）。</li>
-            <li><code>initialize()</code> → <code>startPlay()</code> → <code>endPlay()</code> の順に呼ばれます。</li>
-            <li>各メソッドはサブクラスの実装が動的ディスパッチで呼ばれます。これがテンプレートメソッドパターンです。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>play()</code> は
+                  <code>final</code>
+                  なのでオーバーライドできません（処理の流れを固定）。
+                </li>
+                <li>
+                  <code>initialize()</code> → <code>startPlay()</code> →
+                  <code>endPlay()</code> の順に呼ばれます。
+                </li>
+                <li>
+                  各メソッドはサブクラスの実装が動的ディスパッチで呼ばれます。これがテンプレートメソッドパターンです。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 8-3-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次の条件を満たすクラス群を作成してください。</p>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>要素</th><th>内容</th></tr></thead>
-        <tbody>
-          <tr><td>抽象クラス <code>Tax</code></td><td><code>double price</code> フィールド。<code>abstract getTaxRate()</code>。通常メソッド <code>getTaxAmount()</code>・<code>getTotalPrice()</code>・<code>show()</code></td></tr>
-          <tr><td><code>ReducedTax</code></td><td><code>Tax</code> を継承。<code>getTaxRate()</code> が <code>0.08</code> を返す</td></tr>
-          <tr><td><code>StandardTax</code></td><td><code>Tax</code> を継承。<code>getTaxRate()</code> が <code>0.10</code> を返す</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>税抜:1000円 税率:8.0% 税込:1080.0円
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 8-3-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たすクラス群を作成してください。
+          </p>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>要素</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>抽象クラス <code>Tax</code></td>
+                <td>
+                  <code>double price</code> フィールド。<code
+                    >abstract getTaxRate()</code
+                  >。通常メソッド
+                  <code>getTaxAmount()</code
+                  >・<code>getTotalPrice()</code>・<code>show()</code>
+                </td>
+              </tr>
+              <tr>
+                <td><code>ReducedTax</code></td>
+                <td>
+                  <code>Tax</code> を継承。<code>getTaxRate()</code> が
+                  <code>0.08</code> を返す
+                </td>
+              </tr>
+              <tr>
+                <td><code>StandardTax</code></td>
+                <td>
+                  <code>Tax</code> を継承。<code>getTaxRate()</code> が
+                  <code>0.10</code> を返す
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>税抜:1000円 税率:8.0% 税込:1080.0円
 税抜:1000円 税率:10.0% 税込:1100.0円
 税抜:500円 税率:8.0% 税込:540.0円
 合計（税込）: 2720.0円</code></pre>
-      </div>
-      <div class="hint" style="margin-top:10px;">
-        <strong>💡 ヒント</strong>：<code>show()</code> の <code>printf</code> で <code>%%</code> と書くとパーセント記号が出力されます。<br>
-        <code>getTaxAmount()</code> と <code>getTotalPrice()</code> は <code>getTaxRate()</code> を動的ディスパッチで呼びます。
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">Tax / ReducedTax / StandardTax + Main</div>
-            <pre><code>abstract class Tax {
+          </div>
+          <div class="hint" style="margin-top: 10px">
+            <strong>💡 ヒント</strong>：<code>show()</code> の
+            <code>printf</code> で
+            <code>%%</code> と書くとパーセント記号が出力されます。<br />
+            <code>getTaxAmount()</code> と <code>getTotalPrice()</code> は
+            <code>getTaxRate()</code> を動的ディスパッチで呼びます。
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">
+                  Tax / ReducedTax / StandardTax + Main
+                </div>
+                <pre><code>abstract class Tax {
     double price;
 
     public Tax(double price) { this.price = price; }
@@ -560,19 +1011,40 @@ public class Main {
         System.out.println("合計（税込）: " + total + "円");
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>Tax</code> は抽象クラスなので <code>new Tax(1000)</code> はできません。</li>
-            <li><code>getTaxAmount()</code> / <code>getTotalPrice()</code> は <code>getTaxRate()</code> を内部で呼び、動的ディスパッチで各サブクラスの税率が使われます。</li>
-            <li><code>%%</code> は <code>printf</code> でパーセント記号を出力するエスケープです。</li>
-            <li>合計：<code>1080.0 + 1100.0 + 540.0 = 2720.0</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>Tax</code> は抽象クラスなので
+                  <code>new Tax(1000)</code> はできません。
+                </li>
+                <li>
+                  <code>getTaxAmount()</code> / <code>getTotalPrice()</code> は
+                  <code>getTaxRate()</code>
+                  を内部で呼び、動的ディスパッチで各サブクラスの税率が使われます。
+                </li>
+                <li>
+                  <code>%%</code> は
+                  <code>printf</code> でパーセント記号を出力するエスケープです。
+                </li>
+                <li>合計：<code>1080.0 + 1100.0 + 540.0 = 2720.0</code>。</li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../8-2/8-2_polymorphism.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter9/9-1/9-1_inheritance.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

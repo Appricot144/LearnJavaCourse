@@ -1,173 +1,486 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>9-3. Enum（列挙型）</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>9-3. Enum（列挙型）</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    .page-header {
-      background: linear-gradient(135deg, #44337a, #6b46c1);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      .page-header {
+        background: linear-gradient(135deg, #44337a, #6b46c1);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #44337a;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #d6bcfa;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #6b46c1; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #44337a;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #d6bcfa;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #6b46c1;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #faf5ff; color: #6b46c1; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #faf5ff;
+        color: #6b46c1;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #9f7aea; background: #faf5ff; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #6b46c1; }
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #9f7aea;
+        background: #faf5ff;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #6b46c1;
+      }
 
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #6b46c1; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #faf5ff; }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #6b46c1;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #faf5ff;
+      }
 
-    /* Enum visual */
-    .enum-visual {
-      background: #fff; border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 20px 24px; margin: 14px 0;
-    }
-    .ev-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 12px; }
-    .ev-constants { display: flex; gap: 8px; flex-wrap: wrap; }
-    .ev-const {
-      background: #faf5ff; border: 2px solid #9f7aea; border-radius: 8px;
-      padding: 8px 14px; font-family: monospace; font-size: 0.85rem;
-      font-weight: 700; color: #44337a; text-align: center;
-    }
-    .ev-const .ec-ord { font-size: 0.7rem; color: #9f7aea; display: block; }
+      /* Enum visual */
+      .enum-visual {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+      }
+      .ev-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 12px;
+      }
+      .ev-constants {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .ev-const {
+        background: #faf5ff;
+        border: 2px solid #9f7aea;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #44337a;
+        text-align: center;
+      }
+      .ev-const .ec-ord {
+        font-size: 0.7rem;
+        color: #9f7aea;
+        display: block;
+      }
 
-    /* Before/after comparison */
-    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
-    .compare-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
-    .cc-header { padding: 9px 14px; font-weight: 700; font-size: 0.85rem; }
-    .cc-before { background: #fed7d7; color: #742a2a; }
-    .cc-after  { background: #c6f6d5; color: #22543d; }
+      /* Before/after comparison */
+      .compare-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin: 14px 0;
+      }
+      .compare-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      }
+      .cc-header {
+        padding: 9px 14px;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+      .cc-before {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+      .cc-after {
+        background: #c6f6d5;
+        color: #22543d;
+      }
 
-    /* Enum structure card */
-    .enum-struct {
-      background: #fff; border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0;
-    }
-    .es-header { background: #6b46c1; color: white; padding: 10px 16px; font-weight: 700; font-size: 0.9rem; }
-    .es-section { padding: 10px 16px; border-bottom: 1px solid #e2e8f0; }
-    .es-section:last-child { border-bottom: none; }
-    .es-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-    .es-const-label { color: #9f7aea; background: #faf5ff; padding: 1px 8px; border-radius: 10px; display: inline-block; }
-    .es-field-label { color: #744210; background: #fefcbf; padding: 1px 8px; border-radius: 10px; display: inline-block; }
-    .es-method-label { color: #22543d; background: #c6f6d5; padding: 1px 8px; border-radius: 10px; display: inline-block; }
-    .es-item { font-family: monospace; font-size: 0.85rem; color: #2d3748; margin-bottom: 4px; }
+      /* Enum structure card */
+      .enum-struct {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0;
+      }
+      .es-header {
+        background: #6b46c1;
+        color: white;
+        padding: 10px 16px;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .es-section {
+        padding: 10px 16px;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .es-section:last-child {
+        border-bottom: none;
+      }
+      .es-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 6px;
+      }
+      .es-const-label {
+        color: #9f7aea;
+        background: #faf5ff;
+        padding: 1px 8px;
+        border-radius: 10px;
+        display: inline-block;
+      }
+      .es-field-label {
+        color: #744210;
+        background: #fefcbf;
+        padding: 1px 8px;
+        border-radius: 10px;
+        display: inline-block;
+      }
+      .es-method-label {
+        color: #22543d;
+        background: #c6f6d5;
+        padding: 1px 8px;
+        border-radius: 10px;
+        display: inline-block;
+      }
+      .es-item {
+        font-family: monospace;
+        font-size: 0.85rem;
+        color: #2d3748;
+        margin-bottom: 4px;
+      }
 
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #faf5ff; border-bottom: 1px solid #d6bcfa; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #44337a; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #faf5ff;
+        border-bottom: 1px solid #d6bcfa;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #44337a;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #6b46c1; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #44337a; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #6b46c1; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #6b46c1;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #44337a;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #6b46c1;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <div class="page-header">
-    <div class="chapter-label">第9章 ▶ 継承・インターフェース・Enum</div>
-    <h1>9-3. Enum（列挙型）</h1>
-    <div class="meta">難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #6b46c1;
+        border-radius: 7px;
+      }
 
-  <h3>Enum とは？</h3>
-  <p><strong>あらかじめ決まった定数の集まりを型として定義する</strong>仕組みです。<br>
-  曜日・方角・状態など「選択肢が固定されているもの」に使います。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <!-- Before/After -->
-  <div class="compare-grid">
-    <div class="compare-card">
-      <div class="cc-header cc-before">❌ Enum なし（バグの元）</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>int day = 8;  // 8は何曜日？
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第9章 ▶ 継承・インターフェース・Enum</div>
+
+        <h1>9-3. Enum（列挙型）</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../9-2/9-2_interfaces.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter10/10-1/10-1_lambda_basics.html">＞</a>
+        </div>
+      </div>
+
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>Enum とは？</h3>
+      <p>
+        <strong>あらかじめ決まった定数の集まりを型として定義する</strong
+        >仕組みです。<br />
+        曜日・方角・状態など「選択肢が固定されているもの」に使います。
+      </p>
+
+      <!-- Before/After -->
+      <div class="compare-grid">
+        <div class="compare-card">
+          <div class="cc-header cc-before">❌ Enum なし（バグの元）</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre style="font-size: 0.82rem"><code>int day = 8;  // 8は何曜日？
 // 7を超えてもエラーにならない</code></pre>
-      </div>
-    </div>
-    <div class="compare-card">
-      <div class="cc-header cc-after">✅ Enum あり（型安全）</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>Day day = Day.MONDAY;
+          </div>
+        </div>
+        <div class="compare-card">
+          <div class="cc-header cc-after">✅ Enum あり（型安全）</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre style="font-size: 0.82rem"><code>Day day = Day.MONDAY;
 // Day型以外は代入できない</code></pre>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Enum 定義 -->
-  <h3>基本的な Enum の定義</h3>
-  <div class="enum-visual">
-    <div class="ev-title">▶ Day Enum の各定数（ordinal は 0 始まり）</div>
-    <div class="ev-constants">
-      <div class="ev-const">MONDAY<span class="ec-ord">0</span></div>
-      <div class="ev-const">TUESDAY<span class="ec-ord">1</span></div>
-      <div class="ev-const">WEDNESDAY<span class="ec-ord">2</span></div>
-      <div class="ev-const">THURSDAY<span class="ec-ord">3</span></div>
-      <div class="ev-const">FRIDAY<span class="ec-ord">4</span></div>
-      <div class="ev-const">SATURDAY<span class="ec-ord">5</span></div>
-      <div class="ev-const">SUNDAY<span class="ec-ord">6</span></div>
-    </div>
-  </div>
+      <!-- Enum 定義 -->
+      <h3>基本的な Enum の定義</h3>
+      <div class="enum-visual">
+        <div class="ev-title">▶ Day Enum の各定数（ordinal は 0 始まり）</div>
+        <div class="ev-constants">
+          <div class="ev-const">MONDAY<span class="ec-ord">0</span></div>
+          <div class="ev-const">TUESDAY<span class="ec-ord">1</span></div>
+          <div class="ev-const">WEDNESDAY<span class="ec-ord">2</span></div>
+          <div class="ev-const">THURSDAY<span class="ec-ord">3</span></div>
+          <div class="ev-const">FRIDAY<span class="ec-ord">4</span></div>
+          <div class="ev-const">SATURDAY<span class="ec-ord">5</span></div>
+          <div class="ev-const">SUNDAY<span class="ec-ord">6</span></div>
+        </div>
+      </div>
 
-  <div class="code-wrap">
-    <div class="code-label">基本的な Enum と使い方</div>
-    <pre><code>public enum Day {
+      <div class="code-wrap">
+        <div class="code-label">基本的な Enum と使い方</div>
+        <pre><code>public enum Day {
     MONDAY, TUESDAY, WEDNESDAY, THURSDAY,
     FRIDAY, SATURDAY, SUNDAY
 }
@@ -187,31 +500,40 @@ switch (today) {
 
 // 比較は == を使う（Enum は == で比較できる）
 if (today == Day.WEDNESDAY) System.out.println("水曜日です");</code></pre>
-  </div>
+      </div>
 
-  <!-- フィールドとメソッドを持つ Enum -->
-  <h3>フィールドとメソッドを持つ Enum</h3>
+      <!-- フィールドとメソッドを持つ Enum -->
+      <h3>フィールドとメソッドを持つ Enum</h3>
 
-  <div class="enum-struct">
-    <div class="es-header">Status Enum の構造</div>
-    <div class="es-section">
-      <div class="es-label"><span class="es-const-label">定数</span></div>
-      <div class="es-item">PENDING("受付中"), PROCESSING("処理中"), COMPLETED("完了"), CANCELLED("キャンセル")</div>
-    </div>
-    <div class="es-section">
-      <div class="es-label"><span class="es-field-label">フィールド</span></div>
-      <div class="es-item">private final String label;</div>
-    </div>
-    <div class="es-section">
-      <div class="es-label"><span class="es-method-label">メソッド</span></div>
-      <div class="es-item">getLabel() → ラベル文字列を返す</div>
-      <div class="es-item">isFinished() → COMPLETED または CANCELLED なら true</div>
-    </div>
-  </div>
+      <div class="enum-struct">
+        <div class="es-header">Status Enum の構造</div>
+        <div class="es-section">
+          <div class="es-label"><span class="es-const-label">定数</span></div>
+          <div class="es-item">
+            PENDING("受付中"), PROCESSING("処理中"), COMPLETED("完了"),
+            CANCELLED("キャンセル")
+          </div>
+        </div>
+        <div class="es-section">
+          <div class="es-label">
+            <span class="es-field-label">フィールド</span>
+          </div>
+          <div class="es-item">private final String label;</div>
+        </div>
+        <div class="es-section">
+          <div class="es-label">
+            <span class="es-method-label">メソッド</span>
+          </div>
+          <div class="es-item">getLabel() → ラベル文字列を返す</div>
+          <div class="es-item">
+            isFinished() → COMPLETED または CANCELLED なら true
+          </div>
+        </div>
+      </div>
 
-  <div class="code-wrap">
-    <div class="code-label">Status Enum の実装</div>
-    <pre><code>public enum Status {
+      <div class="code-wrap">
+        <div class="code-label">Status Enum の実装</div>
+        <pre><code>public enum Status {
     PENDING("受付中"), PROCESSING("処理中"),
     COMPLETED("完了"), CANCELLED("キャンセル");
 
@@ -233,35 +555,55 @@ System.out.println(s.isFinished());  // false
 for (Status st : Status.values()) {
     System.out.println(st.ordinal() + ": " + st.getLabel());
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>処理中
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>処理中
 false
 0: 受付中
 1: 処理中
 2: 完了
 3: キャンセル</code></pre>
-  </div>
+      </div>
 
-  <!-- よく使うメソッド -->
-  <h3>Enum のよく使うメソッド</h3>
-  <table class="data-table">
-    <thead><tr><th>メソッド</th><th>説明</th></tr></thead>
-    <tbody>
-      <tr><td><code>name()</code></td><td>Enum 定数の名前を文字列で返す</td></tr>
-      <tr><td><code>ordinal()</code></td><td>Enum 定数の番号（0始まり）を返す</td></tr>
-      <tr><td><code>values()</code></td><td>すべての定数を配列で返す</td></tr>
-      <tr><td><code>valueOf(String)</code></td><td>文字列から Enum 定数を取得する</td></tr>
-      <tr><td><code>compareTo(other)</code></td><td><code>ordinal()</code> の差を返す</td></tr>
-    </tbody>
-  </table>
+      <!-- よく使うメソッド -->
+      <h3>Enum のよく使うメソッド</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>メソッド</th>
+            <th>説明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>name()</code></td>
+            <td>Enum 定数の名前を文字列で返す</td>
+          </tr>
+          <tr>
+            <td><code>ordinal()</code></td>
+            <td>Enum 定数の番号（0始まり）を返す</td>
+          </tr>
+          <tr>
+            <td><code>values()</code></td>
+            <td>すべての定数を配列で返す</td>
+          </tr>
+          <tr>
+            <td><code>valueOf(String)</code></td>
+            <td>文字列から Enum 定数を取得する</td>
+          </tr>
+          <tr>
+            <td><code>compareTo(other)</code></td>
+            <td><code>ordinal()</code> の差を返す</td>
+          </tr>
+        </tbody>
+      </table>
 
-  <!-- コード例 -->
-  <h3>コード例：信号機シミュレーション</h3>
-  <div class="code-wrap">
-    <div class="code-label">TrafficLight Enum</div>
-    <pre><code>public enum TrafficLight {
+      <!-- コード例 -->
+      <h3>コード例：信号機シミュレーション</h3>
+      <div class="code-wrap">
+        <div class="code-label">TrafficLight Enum</div>
+        <pre><code>public enum TrafficLight {
     RED("止まれ", 30), YELLOW("注意", 5), GREEN("進め", 25);
 
     private final String message;
@@ -287,31 +629,33 @@ for (int i = 0; i &lt; 4; i++) {
         + "（" + light.getSeconds() + "秒）");
     light = light.next();
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>RED: 止まれ（30秒）
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>RED: 止まれ（30秒）
 YELLOW: 注意（5秒）
 GREEN: 進め（25秒）
 RED: 止まれ（30秒）</code></pre>
-  </div>
-
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 9-3-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>enum Season {
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 9-3-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>enum Season {
     SPRING("春", 3), SUMMER("夏", 6),
     AUTUMN("秋", 9), WINTER("冬", 12);
 
@@ -341,13 +685,13 @@ public class Q1 {
         }
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>SUMMER
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>SUMMER
 夏
 1
 6
@@ -357,33 +701,47 @@ true
 夏: true
 秋: false
 冬: false</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>s.toString()</code> は Enum のデフォルトで <code>"SUMMER"</code>。</li>
-            <li><code>s.name</code> は独自フィールドの <code>"夏"</code>（<code>s.name()</code> メソッドとは別物）。</li>
-            <li><code>s.ordinal()</code> は <code>SPRING=0, SUMMER=1</code> なので <code>1</code>。</li>
-            <li><code>isWarm()</code> は <code>SPRING</code> と <code>SUMMER</code> のみ <code>true</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>s.toString()</code> は Enum のデフォルトで
+                  <code>"SUMMER"</code>。
+                </li>
+                <li>
+                  <code>s.name</code> は独自フィールドの
+                  <code>"夏"</code>（<code>s.name()</code> メソッドとは別物）。
+                </li>
+                <li>
+                  <code>s.ordinal()</code> は
+                  <code>SPRING=0, SUMMER=1</code> なので <code>1</code>。
+                </li>
+                <li>
+                  <code>isWarm()</code> は <code>SPRING</code> と
+                  <code>SUMMER</code> のみ <code>true</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 9-3-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>enum Priority {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 9-3-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>enum Priority {
     LOW(1), MEDIUM(5), HIGH(10), CRITICAL(100);
 
     final int weight;
@@ -420,75 +778,121 @@ public class Q2 {
         System.out.println(Priority.valueOf("MEDIUM").weight);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>[CRITICAL(100)] バグ修正 ⚠
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>[CRITICAL(100)] バグ修正 ⚠
 [LOW(1)] ドキュメント
 [HIGH(10)] テスト追加 ⚠
 [MEDIUM(5)] コードレビュー
 ---
 2
 5</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>isUrgent()</code> は <code>weight &gt;= 10</code> なので <code>HIGH</code> と <code>CRITICAL</code> が <code>true</code> → <code>" ⚠"</code> が付きます。</li>
-            <li><code>Priority.HIGH.compareTo(Priority.LOW)</code> は ordinal の差 = <code>2 - 0 = 2</code>。</li>
-            <li><code>Priority.valueOf("MEDIUM").weight</code> → <code>Priority.MEDIUM.weight = 5</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>isUrgent()</code> は <code>weight &gt;= 10</code> なので
+                  <code>HIGH</code> と <code>CRITICAL</code> が
+                  <code>true</code> → <code>" ⚠"</code> が付きます。
+                </li>
+                <li>
+                  <code>Priority.HIGH.compareTo(Priority.LOW)</code> は ordinal
+                  の差 = <code>2 - 0 = 2</code>。
+                </li>
+                <li>
+                  <code>Priority.valueOf("MEDIUM").weight</code> →
+                  <code>Priority.MEDIUM.weight = 5</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 9-3-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text"><code>Coin</code> Enum と <code>Main</code> クラスを作成してください。</p>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>定数</th><th>金額（yen）</th></tr></thead>
-        <tbody>
-          <tr><td><code>YEN_1</code></td><td>1</td></tr>
-          <tr><td><code>YEN_5</code></td><td>5</td></tr>
-          <tr><td><code>YEN_10</code></td><td>10</td></tr>
-          <tr><td><code>YEN_50</code></td><td>50</td></tr>
-          <tr><td><code>YEN_100</code></td><td>100</td></tr>
-          <tr><td><code>YEN_500</code></td><td>500</td></tr>
-        </tbody>
-      </table>
-      <ul style="margin-top:10px;">
-        <li><code>int yen</code> フィールドと <code>getYen()</code> getter を持つ</li>
-        <li><code>static int calcTotal(Coin[] coins)</code> で配列の合計金額を返す</li>
-      </ul>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>全コイン一覧:
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 9-3-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            <code>Coin</code> Enum と
+            <code>Main</code> クラスを作成してください。
+          </p>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>定数</th>
+                <th>金額（yen）</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>YEN_1</code></td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td><code>YEN_5</code></td>
+                <td>5</td>
+              </tr>
+              <tr>
+                <td><code>YEN_10</code></td>
+                <td>10</td>
+              </tr>
+              <tr>
+                <td><code>YEN_50</code></td>
+                <td>50</td>
+              </tr>
+              <tr>
+                <td><code>YEN_100</code></td>
+                <td>100</td>
+              </tr>
+              <tr>
+                <td><code>YEN_500</code></td>
+                <td>500</td>
+              </tr>
+            </tbody>
+          </table>
+          <ul style="margin-top: 10px">
+            <li>
+              <code>int yen</code> フィールドと <code>getYen()</code> getter
+              を持つ
+            </li>
+            <li>
+              <code>static int calcTotal(Coin[] coins)</code>
+              で配列の合計金額を返す
+            </li>
+          </ul>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>全コイン一覧:
 1円 / 5円 / 10円 / 50円 / 100円 / 500円 / 
 ---
 コインの合計: 666円
 最大コイン: YEN_500（500円）</code></pre>
-      </div>
-      <div class="hint" style="margin-top:10px;">
-        <strong>💡 ヒント</strong>：<code>wallet = {YEN_500, YEN_100, YEN_50, YEN_10, YEN_5, YEN_1}</code> を使います。<br>
-        合計は <code>500+100+50+10+5+1 = 666</code>。最大コインは <code>wallet</code> 配列から探します。
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">Coin.java + Main.java</div>
-            <pre><code>enum Coin {
+          </div>
+          <div class="hint" style="margin-top: 10px">
+            <strong>💡 ヒント</strong>：<code
+              >wallet = {YEN_500, YEN_100, YEN_50, YEN_10, YEN_5, YEN_1}</code
+            >
+            を使います。<br />
+            合計は <code>500+100+50+10+5+1 = 666</code>。最大コインは
+            <code>wallet</code> 配列から探します。
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">Coin.java + Main.java</div>
+                <pre><code>enum Coin {
     YEN_1(1), YEN_5(5), YEN_10(10),
     YEN_50(50), YEN_100(100), YEN_500(500);
 
@@ -526,18 +930,38 @@ public class Main {
         System.out.println("最大コイン: " + max + "（" + max.getYen() + "円）");
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>Coin.values()</code> で全定数を順に取得して出力します。</li>
-            <li><code>calcTotal</code> は配列の各 <code>yen</code> を合計します（<code>1+5+10+50+100+500=666</code>）。</li>
-            <li>最大コインは <code>wallet</code> 配列から <code>getYen()</code> で比較して求めます。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>Coin.values()</code> で全定数を順に取得して出力します。
+                </li>
+                <li>
+                  <code>calcTotal</code> は配列の各
+                  <code>yen</code>
+                  を合計します（<code>1+5+10+50+100+500=666</code>）。
+                </li>
+                <li>
+                  最大コインは <code>wallet</code> 配列から
+                  <code>getYen()</code> で比較して求めます。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../9-2/9-2_interfaces.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter10/10-1/10-1_lambda_basics.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

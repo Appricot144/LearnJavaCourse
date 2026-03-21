@@ -1,172 +1,439 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2-1. 算術演算子</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2-1. 算術演算子</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9;
-      color: #2d3748;
-      padding: 40px 20px;
-      line-height: 1.8;
-    }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
 
-    .container { max-width: 860px; margin: 0 auto; }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    /* ---- Header ---- */
-    .page-header {
-      background: linear-gradient(135deg, #1a365d, #2b6cb0);
-      color: white; border-radius: 12px;
-      padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      /* ---- Header ---- */
+      .page-header {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    /* ---- Section titles ---- */
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #1a365d;
-      margin: 36px 0 16px; padding-bottom: 8px;
-      border-bottom: 2px solid #bee3f8;
-    }
+      /* ---- Section titles ---- */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a365d;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #bee3f8;
+      }
 
-    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
-    p { margin-bottom: 12px; }
-    ul { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    /* ---- Code blocks ---- */
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #ebf8ff; color: #2b6cb0;
-      padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      /* ---- Code blocks ---- */
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+        letter-spacing: 0.05em;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    /* ---- Callout / hint ---- */
-    .callout {
-      border-left: 4px solid #f6ad55; background: #fffaf0;
-      border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem;
-    }
-    .callout strong { color: #c05621; }
-    .hint {
-      border-left: 4px solid #68d391; background: #f0fff4;
-      border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem;
-    }
-    .hint strong { color: #276749; }
+      /* ---- Callout / hint ---- */
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    /* ---- Operator table ---- */
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #2b6cb0; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #ebf8ff; }
+      /* ---- Operator table ---- */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2b6cb0;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #ebf8ff;
+      }
 
-    /* ---- Priority diagram ---- */
-    .priority-bar {
-      display: flex; align-items: stretch; border-radius: 10px;
-      overflow: hidden; margin: 14px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    }
-    .pri-group {
-      flex: 1; padding: 14px 18px; text-align: center;
-    }
-    .pri-high { background: #2b6cb0; color: white; }
-    .pri-low  { background: #bee3f8; color: #1a365d; }
-    .pri-group .pri-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 6px; opacity: 0.85; }
-    .pri-group .pri-ops   { font-size: 1.1rem; font-weight: 700; font-family: monospace; }
-    .pri-arrow {
-      display: flex; align-items: center; padding: 0 10px;
-      background: #ebf8ff; color: #2b6cb0; font-size: 1.4rem; font-weight: 700;
-    }
+      /* ---- Priority diagram ---- */
+      .priority-bar {
+        display: flex;
+        align-items: stretch;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 14px 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      }
+      .pri-group {
+        flex: 1;
+        padding: 14px 18px;
+        text-align: center;
+      }
+      .pri-high {
+        background: #2b6cb0;
+        color: white;
+      }
+      .pri-low {
+        background: #bee3f8;
+        color: #1a365d;
+      }
+      .pri-group .pri-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        margin-bottom: 6px;
+        opacity: 0.85;
+      }
+      .pri-group .pri-ops {
+        font-size: 1.1rem;
+        font-weight: 700;
+        font-family: monospace;
+      }
+      .pri-arrow {
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        background: #ebf8ff;
+        color: #2b6cb0;
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
 
-    /* ---- Output box ---- */
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      /* ---- Output box ---- */
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    /* ---- Problem cards ---- */
-    .problem-card {
-      background: #fff; border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      margin-bottom: 28px; overflow: hidden;
-    }
-    .problem-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8;
-    }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
+      /* ---- Problem cards ---- */
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #ebf8ff;
+        border-bottom: 1px solid #bee3f8;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a365d;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
 
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    /* ---- Answer toggle ---- */
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #2b6cb0; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
-    .answer-body {
-      margin-top: 12px; background: #f7fafc;
-      border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem;
-    }
-    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      /* ---- Answer toggle ---- */
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2b6cb0;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #2c5282;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <!-- Header -->
-  <div class="page-header">
-    <div class="chapter-label">第2章 ▶ 演算子</div>
-    <h1>2-1. 算術演算子</h1>
-    <div class="meta">難易度：⭐⭐☆☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <!-- ===== 解説 ===== -->
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2b6cb0;
+        border-radius: 7px;
+      }
 
-  <h3>算術演算子一覧</h3>
-  <p>算術演算子とは、<strong>数値の計算に使う演算子</strong>です。Javaには以下の5種類があります。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <table class="data-table">
-    <thead><tr><th>演算子</th><th>意味</th><th>例</th><th>結果</th></tr></thead>
-    <tbody>
-      <tr><td><code>+</code></td><td>加算</td><td><code>10 + 3</code></td><td><code>13</code></td></tr>
-      <tr><td><code>-</code></td><td>減算</td><td><code>10 - 3</code></td><td><code>7</code></td></tr>
-      <tr><td><code>*</code></td><td>乗算</td><td><code>10 * 3</code></td><td><code>30</code></td></tr>
-      <tr><td><code>/</code></td><td>除算</td><td><code>10 / 3</code></td><td><code>3</code>（整数切り捨て）</td></tr>
-      <tr><td><code>%</code></td><td>剰余（余り）</td><td><code>10 % 3</code></td><td><code>1</code></td></tr>
-    </tbody>
-  </table>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">第2章 ▶ 演算子</div>
 
-  <!-- 整数 vs double 除算 -->
-  <h3>整数の除算 vs 小数の除算</h3>
-  <p>整数同士の割り算は<strong>結果も整数</strong>になります（小数点以下は切り捨て）。<br>
-  小数の結果が必要なときはどちらかを <code>double</code> にします。</p>
+        <h1>2-1. 算術演算子</h1>
+        <div class="meta">
+          難易度：⭐⭐☆☆☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter1/1-3/1-3_string_operations.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../2-2/2-2_comparison_logical_operators.html">＞</a>
+        </div>
+      </div>
 
-  <div class="code-wrap">
-    <div class="code-label">除算の違い</div>
-    <pre><code>int a = 10;
+      <!-- ===== 解説 ===== -->
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>算術演算子一覧</h3>
+      <p>
+        算術演算子とは、<strong>数値の計算に使う演算子</strong>です。Javaには以下の5種類があります。
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>演算子</th>
+            <th>意味</th>
+            <th>例</th>
+            <th>結果</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>+</code></td>
+            <td>加算</td>
+            <td><code>10 + 3</code></td>
+            <td><code>13</code></td>
+          </tr>
+          <tr>
+            <td><code>-</code></td>
+            <td>減算</td>
+            <td><code>10 - 3</code></td>
+            <td><code>7</code></td>
+          </tr>
+          <tr>
+            <td><code>*</code></td>
+            <td>乗算</td>
+            <td><code>10 * 3</code></td>
+            <td><code>30</code></td>
+          </tr>
+          <tr>
+            <td><code>/</code></td>
+            <td>除算</td>
+            <td><code>10 / 3</code></td>
+            <td><code>3</code>（整数切り捨て）</td>
+          </tr>
+          <tr>
+            <td><code>%</code></td>
+            <td>剰余（余り）</td>
+            <td><code>10 % 3</code></td>
+            <td><code>1</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 整数 vs double 除算 -->
+      <h3>整数の除算 vs 小数の除算</h3>
+      <p>
+        整数同士の割り算は<strong>結果も整数</strong>になります（小数点以下は切り捨て）。<br />
+        小数の結果が必要なときはどちらかを <code>double</code> にします。
+      </p>
+
+      <div class="code-wrap">
+        <div class="code-label">除算の違い</div>
+        <pre><code>int a = 10;
 int b = 3;
 
 System.out.println(a / b);           //  3    ← 整数除算（切り捨て）
@@ -174,63 +441,74 @@ System.out.println(a % b);           //  1    ← 余り
 
 System.out.println(10.0 / 3);        //  3.3333...  ← double で割る
 System.out.println((double) a / b);  //  3.3333...  ← キャストで double に変換</code></pre>
-  </div>
+      </div>
 
-  <!-- 剰余演算子 -->
-  <h3>剰余演算子（%）の使いどころ</h3>
-  <p>余りを求める <code>%</code> は、<strong>偶数・奇数の判定</strong>や<strong>一定間隔の処理</strong>によく使われます。</p>
+      <!-- 剰余演算子 -->
+      <h3>剰余演算子（%）の使いどころ</h3>
+      <p>
+        余りを求める
+        <code>%</code>
+        は、<strong>偶数・奇数の判定</strong>や<strong>一定間隔の処理</strong>によく使われます。
+      </p>
 
-  <div class="code-wrap">
-    <div class="code-label">剰余演算子の例</div>
-    <pre><code>System.out.println(10 % 2);  // 0  → 割り切れる（偶数）
+      <div class="code-wrap">
+        <div class="code-label">剰余演算子の例</div>
+        <pre><code>System.out.println(10 % 2);  // 0  → 割り切れる（偶数）
 System.out.println(11 % 2);  // 1  → 余りがある（奇数）
 System.out.println(17 % 5);  // 2  → 17 ÷ 5 = 3 余り 2</code></pre>
-  </div>
+      </div>
 
-  <!-- 優先順位 -->
-  <h3>演算子の優先順位</h3>
-  <p>数学と同じルールで、<code>*</code> <code>/</code> <code>%</code> は <code>+</code> <code>-</code> より優先されます。</p>
+      <!-- 優先順位 -->
+      <h3>演算子の優先順位</h3>
+      <p>
+        数学と同じルールで、<code>*</code> <code>/</code> <code>%</code> は
+        <code>+</code> <code>-</code> より優先されます。
+      </p>
 
-  <div class="priority-bar">
-    <div class="pri-group pri-high">
-      <div class="pri-label">優先度：高</div>
-      <div class="pri-ops">* &nbsp; / &nbsp; %</div>
-    </div>
-    <div class="pri-arrow">→</div>
-    <div class="pri-group pri-low">
-      <div class="pri-label">優先度：低</div>
-      <div class="pri-ops">+ &nbsp; -</div>
-    </div>
-  </div>
+      <div class="priority-bar">
+        <div class="pri-group pri-high">
+          <div class="pri-label">優先度：高</div>
+          <div class="pri-ops">* &nbsp; / &nbsp; %</div>
+        </div>
+        <div class="pri-arrow">→</div>
+        <div class="pri-group pri-low">
+          <div class="pri-label">優先度：低</div>
+          <div class="pri-ops">+ &nbsp; -</div>
+        </div>
+      </div>
 
-  <div class="code-wrap">
-    <div class="code-label">優先順位の例</div>
-    <pre><code>System.out.println(2 + 3 * 4);    // 14  （3*4 が先）
+      <div class="code-wrap">
+        <div class="code-label">優先順位の例</div>
+        <pre><code>System.out.println(2 + 3 * 4);    // 14  （3*4 が先）
 System.out.println((2 + 3) * 4);  // 20  （括弧が最優先）
 System.out.println(10 - 4 / 2);   //  8  （4/2 が先）</code></pre>
-  </div>
+      </div>
 
-  <!-- 文字列と + -->
-  <h3>文字列と数値の + 演算</h3>
-  <p><code>+</code> は文字列との連結にも使われます。数値と文字列が混在するときは左から順に評価されます。</p>
+      <!-- 文字列と + -->
+      <h3>文字列と数値の + 演算</h3>
+      <p>
+        <code>+</code>
+        は文字列との連結にも使われます。数値と文字列が混在するときは左から順に評価されます。
+      </p>
 
-  <div class="code-wrap">
-    <div class="code-label">文字列と + の挙動</div>
-    <pre><code>System.out.println("結果: " + 1 + 2);    // 結果: 12  ← 左から順に文字列連結
+      <div class="code-wrap">
+        <div class="code-label">文字列と + の挙動</div>
+        <pre><code>System.out.println("結果: " + 1 + 2);    // 結果: 12  ← 左から順に文字列連結
 System.out.println("結果: " + (1 + 2));  // 結果: 3   ← 括弧で先に計算
 System.out.println(1 + 2 + "が答え");    // 3が答え   ← 数値計算後に連結</code></pre>
-  </div>
+      </div>
 
-  <div class="callout">
-    <strong>⚠️ 注意</strong>：<code>"文字列" + 数値 + 数値</code> は左から文字列連結されるため、意図しない結果になることがあります。<br>
-    計算式は <code>()</code> で囲む習慣をつけましょう。
-  </div>
+      <div class="callout">
+        <strong>⚠️ 注意</strong>：<code>"文字列" + 数値 + 数値</code>
+        は左から文字列連結されるため、意図しない結果になることがあります。<br />
+        計算式は <code>()</code> で囲む習慣をつけましょう。
+      </div>
 
-  <!-- コード例 -->
-  <h3>コード例</h3>
-  <div class="code-wrap">
-    <div class="code-label">ArithmeticExample.java</div>
-    <pre><code>public class ArithmeticExample {
+      <!-- コード例 -->
+      <h3>コード例</h3>
+      <div class="code-wrap">
+        <div class="code-label">ArithmeticExample.java</div>
+        <pre><code>public class ArithmeticExample {
     public static void main(String[] args) {
         int x = 17;
         int y = 5;
@@ -243,34 +521,36 @@ System.out.println(1 + 2 + "が答え");    // 3が答え   ← 数値計算後�
         System.out.println((double) x / y);  // 3.4（小数除算）
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>22
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>22
 12
 85
 3
 2
 3.4</code></pre>
-  </div>
-
-  <!-- ===== 問題 ===== -->
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 2-1-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐☆☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>public class Q1 {
+
+      <!-- ===== 問題 ===== -->
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 2-1-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐☆☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>public class Q1 {
     public static void main(String[] args) {
         int a = 20;
         int b = 6;
@@ -282,42 +562,50 @@ System.out.println(1 + 2 + "が答え");    // 3が答え   ← 数値計算後�
         System.out.println(a % b);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>26
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>26
 14
 120
 3
 2</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>20 / 6</code> は整数除算なので <code>3</code>（小数点以下切り捨て）。</li>
-            <li><code>20 % 6</code> は <code>20 ÷ 6 = 3 余り 2</code> なので <code>2</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>20 / 6</code> は整数除算なので
+                  <code>3</code>（小数点以下切り捨て）。
+                </li>
+                <li>
+                  <code>20 % 6</code> は <code>20 ÷ 6 = 3 余り 2</code> なので
+                  <code>2</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 2-1-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>public class Q2 {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 2-1-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>public class Q2 {
     public static void main(String[] args) {
         System.out.println(2 + 3 * 4);
         System.out.println((2 + 3) * 4);
@@ -327,65 +615,86 @@ System.out.println(1 + 2 + "が答え");    // 3が答え   ← 数値計算後�
         System.out.println("答え: " + (1 + 2));
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>14
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>14
 20
 3
 3.3333333333333335
 答え: 12
 答え: 3</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>2 + 3 * 4</code> は <code>*</code> が優先なので <code>2 + 12 = 14</code>。</li>
-            <li><code>10 / 3</code> は整数除算で <code>3</code>。</li>
-            <li><code>10.0 / 3</code> は double 除算で <code>3.3333...</code>（末尾の <code>5</code> は浮動小数点誤差）。</li>
-            <li><code>"答え: " + 1 + 2</code> は左から文字列連結され <code>"答え: 12"</code>。</li>
-            <li><code>"答え: " + (1 + 2)</code> は括弧内が先に計算され <code>"答え: 3"</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>2 + 3 * 4</code> は <code>*</code> が優先なので
+                  <code>2 + 12 = 14</code>。
+                </li>
+                <li><code>10 / 3</code> は整数除算で <code>3</code>。</li>
+                <li>
+                  <code>10.0 / 3</code> は double 除算で
+                  <code>3.3333...</code>（末尾の
+                  <code>5</code> は浮動小数点誤差）。
+                </li>
+                <li>
+                  <code>"答え: " + 1 + 2</code> は左から文字列連結され
+                  <code>"答え: 12"</code>。
+                </li>
+                <li>
+                  <code>"答え: " + (1 + 2)</code> は括弧内が先に計算され
+                  <code>"答え: 3"</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 2-1-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次の条件を満たす <code>Calculator</code> クラスを作成してください。</p>
-      <ul>
-        <li><code>int</code> 型の変数 <code>num1</code> に <code>100</code>、<code>num2</code> に <code>7</code> を代入する</li>
-        <li>足し算・引き算・掛け算・整数の割り算・余り・小数の割り算をそれぞれ出力する</li>
-      </ul>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>足し算: 107
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 2-1-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たす <code>Calculator</code> クラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              <code>int</code> 型の変数 <code>num1</code> に
+              <code>100</code>、<code>num2</code> に <code>7</code> を代入する
+            </li>
+            <li>
+              足し算・引き算・掛け算・整数の割り算・余り・小数の割り算をそれぞれ出力する
+            </li>
+          </ul>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>足し算: 107
 引き算: 93
 掛け算: 700
 割り算(整数): 14
 余り: 2
 割り算(小数): 14.285714285714286</code></pre>
-      </div>
-      <div class="hint" style="margin-top:12px;">
-        <strong>💡 ヒント</strong>：小数の割り算は <code>(double) num1 / num2</code> のようにキャストします。
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">Calculator.java</div>
-            <pre><code>public class Calculator {
+          </div>
+          <div class="hint" style="margin-top: 12px">
+            <strong>💡 ヒント</strong>：小数の割り算は
+            <code>(double) num1 / num2</code> のようにキャストします。
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">Calculator.java</div>
+                <pre><code>public class Calculator {
     public static void main(String[] args) {
         int num1 = 100;
         int num2 = 7;
@@ -398,18 +707,40 @@ System.out.println(1 + 2 + "が答え");    // 3が答え   ← 数値計算後�
         System.out.println("割り算(小数): " + (double) num1 / num2);
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li>計算式を <code>()</code> で囲むのは文字列連結との混在を防ぐためです。</li>
-            <li><code>(double) num1 / num2</code> で <code>num1</code> を double にキャストすると小数の結果が得られます。</li>
-            <li><code>100 % 7</code> は <code>100 ÷ 7 = 14 余り 2</code> なので <code>2</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  計算式を
+                  <code>()</code> で囲むのは文字列連結との混在を防ぐためです。
+                </li>
+                <li>
+                  <code>(double) num1 / num2</code> で <code>num1</code> を
+                  double にキャストすると小数の結果が得られます。
+                </li>
+                <li>
+                  <code>100 % 7</code> は
+                  <code>100 ÷ 7 = 14 余り 2</code> なので <code>2</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter11/11-3/11-3_sorted_optional_flatmap.html"
+            >＜</a
+          >
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../2-2/2-2_comparison_logical_operators.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

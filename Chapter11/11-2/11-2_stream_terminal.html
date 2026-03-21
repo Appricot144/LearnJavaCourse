@@ -1,177 +1,495 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>11-2. 集計・終端操作（collect / reduce / count）</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>11-2. 集計・終端操作（collect / reduce / count）</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    .page-header {
-      background: linear-gradient(135deg, #1a4971, #2b6cb0);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.5rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      .page-header {
+        background: linear-gradient(135deg, #1a4971, #2b6cb0);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #1a4971;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #90cdf4;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a4971;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #90cdf4;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #2b6cb0; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #ebf8ff; }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2b6cb0;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #ebf8ff;
+      }
 
-    /* Collectors cards */
-    .collector-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
-    .cc-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.07); }
-    .cc-card .cc-header { padding: 8px 14px; font-weight: 700; font-size: 0.85rem; }
-    .cc-list    { background: #ebf8ff; color: #1a365d; }
-    .cc-join    { background: #fefcbf; color: #744210; }
-    .cc-group   { background: #c6f6d5; color: #22543d; }
-    .cc-count   { background: #e9d8fd; color: #44337a; }
+      /* Collectors cards */
+      .collector-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .cc-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+      }
+      .cc-card .cc-header {
+        padding: 8px 14px;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+      .cc-list {
+        background: #ebf8ff;
+        color: #1a365d;
+      }
+      .cc-join {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .cc-group {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .cc-count {
+        background: #e9d8fd;
+        color: #44337a;
+      }
 
-    /* Reduce visual */
-    .reduce-vis {
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 18px 20px; margin: 14px 0;
-    }
-    .rv-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 10px; }
-    .rv-steps { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .rv-box {
-      padding: 6px 12px; border-radius: 6px; font-family: monospace;
-      font-size: 0.85rem; font-weight: 700;
-    }
-    .rv-init   { background: #ebf8ff; color: #2b6cb0; }
-    .rv-op     { background: #1e2a3a; color: #e2e8f0; }
-    .rv-result { background: #c05621; color: white; }
-    .rv-arrow  { color: #a0aec0; }
+      /* Reduce visual */
+      .reduce-vis {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 18px 20px;
+        margin: 14px 0;
+      }
+      .rv-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 10px;
+      }
+      .rv-steps {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .rv-box {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+      .rv-init {
+        background: #ebf8ff;
+        color: #2b6cb0;
+      }
+      .rv-op {
+        background: #1e2a3a;
+        color: #e2e8f0;
+      }
+      .rv-result {
+        background: #c05621;
+        color: white;
+      }
+      .rv-arrow {
+        color: #a0aec0;
+      }
 
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #90cdf4; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a4971; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #ebf8ff;
+        border-bottom: 1px solid #90cdf4;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a4971;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #2b6cb0; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #1a4971; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2b6cb0;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #1a4971;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <div class="page-header">
-    <div class="chapter-label">第11章 ▶ Stream API</div>
-    <h1>11-2. 集計・終端操作（collect / reduce / count）</h1>
-    <div class="meta">難易度：⭐⭐⭐⭐⭐　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2b6cb0;
+        border-radius: 7px;
+      }
 
-  <h3>終端操作とは？</h3>
-  <p>Stream パイプラインを<strong>実際に実行して結果を得る</strong>操作です。<br>
-  終端操作が呼ばれると Stream は消費され、再利用できません。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <table class="data-table">
-    <thead><tr><th>終端操作</th><th>説明</th></tr></thead>
-    <tbody>
-      <tr><td><code>collect(Collector)</code></td><td>List・Map・String など好きな形に収集</td></tr>
-      <tr><td><code>reduce(identity, BinaryOperator)</code></td><td>要素を累積して1つの値にまとめる</td></tr>
-      <tr><td><code>count()</code></td><td>要素数を返す（<code>long</code>）</td></tr>
-      <tr><td><code>forEach(Consumer)</code></td><td>各要素に処理を実行（戻り値なし）</td></tr>
-      <tr><td><code>findFirst()</code></td><td>最初の要素を <code>Optional</code> で返す</td></tr>
-      <tr><td><code>anyMatch / allMatch / noneMatch</code></td><td>条件に合う要素があるか確認</td></tr>
-      <tr><td><code>min / max</code></td><td>最小・最大値を <code>Optional</code> で返す</td></tr>
-      <tr><td><code>toArray()</code></td><td>配列に変換</td></tr>
-    </tbody>
-  </table>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第11章 ▶ Stream API</div>
 
-  <!-- collect -->
-  <h3>collect() と Collectors</h3>
-  <div class="collector-cards">
-    <div class="cc-card">
-      <div class="cc-header cc-list">Collectors.toList()</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="padding:10px 14px;font-size:0.82rem;"><code>stream.collect(Collectors.toList())
+        <h1>11-2. 集計・終端操作（collect / reduce / count）</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐⭐　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../11-1/11-1_stream_basics.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../11-3/11-3_sorted_optional_flatmap.html">＞</a>
+        </div>
+      </div>
+
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>終端操作とは？</h3>
+      <p>
+        Stream
+        パイプラインを<strong>実際に実行して結果を得る</strong>操作です。<br />
+        終端操作が呼ばれると Stream は消費され、再利用できません。
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>終端操作</th>
+            <th>説明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>collect(Collector)</code></td>
+            <td>List・Map・String など好きな形に収集</td>
+          </tr>
+          <tr>
+            <td><code>reduce(identity, BinaryOperator)</code></td>
+            <td>要素を累積して1つの値にまとめる</td>
+          </tr>
+          <tr>
+            <td><code>count()</code></td>
+            <td>要素数を返す（<code>long</code>）</td>
+          </tr>
+          <tr>
+            <td><code>forEach(Consumer)</code></td>
+            <td>各要素に処理を実行（戻り値なし）</td>
+          </tr>
+          <tr>
+            <td><code>findFirst()</code></td>
+            <td>最初の要素を <code>Optional</code> で返す</td>
+          </tr>
+          <tr>
+            <td><code>anyMatch / allMatch / noneMatch</code></td>
+            <td>条件に合う要素があるか確認</td>
+          </tr>
+          <tr>
+            <td><code>min / max</code></td>
+            <td>最小・最大値を <code>Optional</code> で返す</td>
+          </tr>
+          <tr>
+            <td><code>toArray()</code></td>
+            <td>配列に変換</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- collect -->
+      <h3>collect() と Collectors</h3>
+      <div class="collector-cards">
+        <div class="cc-card">
+          <div class="cc-header cc-list">Collectors.toList()</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="padding: 10px 14px; font-size: 0.82rem"
+            ><code>stream.collect(Collectors.toList())
 // → List&lt;T&gt;</code></pre>
-      </div>
-    </div>
-    <div class="cc-card">
-      <div class="cc-header cc-join">Collectors.joining()</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="padding:10px 14px;font-size:0.82rem;"><code>stream.collect(Collectors.joining(", "))
+          </div>
+        </div>
+        <div class="cc-card">
+          <div class="cc-header cc-join">Collectors.joining()</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="padding: 10px 14px; font-size: 0.82rem"
+            ><code>stream.collect(Collectors.joining(", "))
 // → "a, b, c"</code></pre>
-      </div>
-    </div>
-    <div class="cc-card">
-      <div class="cc-header cc-group">Collectors.groupingBy()</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="padding:10px 14px;font-size:0.82rem;"><code>stream.collect(Collectors.groupingBy(f))
+          </div>
+        </div>
+        <div class="cc-card">
+          <div class="cc-header cc-group">Collectors.groupingBy()</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="padding: 10px 14px; font-size: 0.82rem"
+            ><code>stream.collect(Collectors.groupingBy(f))
 // → Map&lt;K, List&lt;T&gt;&gt;</code></pre>
-      </div>
-    </div>
-    <div class="cc-card">
-      <div class="cc-header cc-count">Collectors.counting()</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="padding:10px 14px;font-size:0.82rem;"><code>stream.collect(Collectors.counting())
+          </div>
+        </div>
+        <div class="cc-card">
+          <div class="cc-header cc-count">Collectors.counting()</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="padding: 10px 14px; font-size: 0.82rem"
+            ><code>stream.collect(Collectors.counting())
 // → Long（件数）</code></pre>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="code-wrap">
-    <div class="code-label">collect() のよく使う例</div>
-    <pre><code>import java.util.stream.Collectors;
+      <div class="code-wrap">
+        <div class="code-label">collect() のよく使う例</div>
+        <pre><code>import java.util.stream.Collectors;
 
 List&lt;String&gt; words = List.of("apple", "banana", "cherry", "avocado");
 
@@ -191,26 +509,33 @@ Map&lt;Character, List&lt;String&gt;&gt; grouped = words.stream()
     .collect(Collectors.groupingBy(w -> w.charAt(0)));
 System.out.println(grouped);
 // {a=[apple, avocado], b=[banana], c=[cherry]}</code></pre>
-  </div>
+      </div>
 
-  <!-- reduce -->
-  <h3>reduce()：要素を1つにまとめる</h3>
+      <!-- reduce -->
+      <h3>reduce()：要素を1つにまとめる</h3>
 
-  <div class="reduce-vis">
-    <div class="rv-title">▶ reduce(0, (acc, n) -> acc + n) で 1,2,3,4,5 を合計する流れ</div>
-    <div class="rv-steps">
-      <div class="rv-box rv-init">0</div>
-      <div class="rv-op">+1=</div><div class="rv-box rv-init">1</div>
-      <div class="rv-op">+2=</div><div class="rv-box rv-init">3</div>
-      <div class="rv-op">+3=</div><div class="rv-box rv-init">6</div>
-      <div class="rv-op">+4=</div><div class="rv-box rv-init">10</div>
-      <div class="rv-op">+5=</div><div class="rv-box rv-result">15</div>
-    </div>
-  </div>
+      <div class="reduce-vis">
+        <div class="rv-title">
+          ▶ reduce(0, (acc, n) -> acc + n) で 1,2,3,4,5 を合計する流れ
+        </div>
+        <div class="rv-steps">
+          <div class="rv-box rv-init">0</div>
+          <div class="rv-op">+1=</div>
+          <div class="rv-box rv-init">1</div>
+          <div class="rv-op">+2=</div>
+          <div class="rv-box rv-init">3</div>
+          <div class="rv-op">+3=</div>
+          <div class="rv-box rv-init">6</div>
+          <div class="rv-op">+4=</div>
+          <div class="rv-box rv-init">10</div>
+          <div class="rv-op">+5=</div>
+          <div class="rv-box rv-result">15</div>
+        </div>
+      </div>
 
-  <div class="code-wrap">
-    <div class="code-label">reduce() の使い方</div>
-    <pre><code>List&lt;Integer&gt; nums = List.of(1, 2, 3, 4, 5);
+      <div class="code-wrap">
+        <div class="code-label">reduce() の使い方</div>
+        <pre><code>List&lt;Integer&gt; nums = List.of(1, 2, 3, 4, 5);
 
 // 合計（identity=0）
 int sum = nums.stream()
@@ -232,13 +557,13 @@ List&lt;String&gt; words = List.of("Hello", " ", "World", "!");
 String sentence = words.stream()
     .reduce("", (acc, s) -> acc + s);
 System.out.println(sentence);  // Hello World!</code></pre>
-  </div>
+      </div>
 
-  <!-- マッチング系 -->
-  <h3>anyMatch / allMatch / noneMatch</h3>
-  <div class="code-wrap">
-    <div class="code-label">条件チェックの終端操作</div>
-    <pre><code>List&lt;Integer&gt; nums = List.of(2, 4, 6, 8, 9);
+      <!-- マッチング系 -->
+      <h3>anyMatch / allMatch / noneMatch</h3>
+      <div class="code-wrap">
+        <div class="code-label">条件チェックの終端操作</div>
+        <pre><code>List&lt;Integer&gt; nums = List.of(2, 4, 6, 8, 9);
 
 // anyMatch：1つでも条件を満たせば true
 System.out.println(nums.stream().anyMatch(n -> n % 2 != 0));  // true（9がある）
@@ -248,13 +573,13 @@ System.out.println(nums.stream().allMatch(n -> n % 2 == 0));  // false（9があ
 
 // noneMatch：全て条件を満たさなければ true
 System.out.println(nums.stream().noneMatch(n -> n > 10));     // true</code></pre>
-  </div>
+      </div>
 
-  <!-- コード例 -->
-  <h3>コード例：groupingBy の活用</h3>
-  <div class="code-wrap">
-    <div class="code-label">CollectExample.java</div>
-    <pre><code>import java.util.*;
+      <!-- コード例 -->
+      <h3>コード例：groupingBy の活用</h3>
+      <div class="code-wrap">
+        <div class="code-label">CollectExample.java</div>
+        <pre><code>import java.util.*;
 import java.util.stream.*;
 
 public class CollectExample {
@@ -286,30 +611,34 @@ public class CollectExample {
             + " 平均:" + stats.getAverage());
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果（Map の順序は実行環境によって異なる場合あり）</div>
-    <pre><code>{a=3, b=2, c=2}
+      </div>
+      <div class="output-box">
+        <div class="output-label">
+          ▶ 出力結果（Map の順序は実行環境によって異なる場合あり）
+        </div>
+        <pre><code>{a=3, b=2, c=2}
 {5=[apple], 3=[ant], 6=[banana], 7=[avocado, carrot], 6=[cherry], 9=[blueberry]}
 件数:7 合計:46 平均:6.571428571428571</code></pre>
-  </div>
-
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 11-2-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>import java.util.*;
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 11-2-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>import java.util.*;
 import java.util.stream.*;
 
 public class Q1 {
@@ -338,45 +667,57 @@ public class Q1 {
         System.out.println(nums.stream().noneMatch(n -> n < 0));
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>5以上の個数: 5
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>5以上の個数: 5
 合計: 44
 ユニーク昇順: 1-2-3-4-5-6-9
 true
 true
 true</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li>5以上：5(×3), 9(×1), 6(×1) = 5個。</li>
-            <li>合計：3+1+4+1+5+9+2+6+5+3+5 = 44。</li>
-            <li><code>distinct()</code> でユニーク化 → <code>sorted()</code> で昇順 → <code>joining("-")</code> で連結。</li>
-            <li><code>anyMatch(n → n > 8)</code>：9があるので <code>true</code>。<code>allMatch(n → n > 0)</code>：全て正なので <code>true</code>。<code>noneMatch(n → n &lt; 0)</code>：負の数なしなので <code>true</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>5以上：5(×3), 9(×1), 6(×1) = 5個。</li>
+                <li>合計：3+1+4+1+5+9+2+6+5+3+5 = 44。</li>
+                <li>
+                  <code>distinct()</code> でユニーク化 →
+                  <code>sorted()</code> で昇順 →
+                  <code>joining("-")</code> で連結。
+                </li>
+                <li>
+                  <code>anyMatch(n → n > 8)</code>：9があるので
+                  <code>true</code>。<code>allMatch(n → n > 0)</code
+                  >：全て正なので <code>true</code>。<code
+                    >noneMatch(n → n &lt; 0)</code
+                  >：負の数なしなので <code>true</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 11-2-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>import java.util.*;
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 11-2-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>import java.util.*;
 import java.util.stream.*;
 
 public class Q2 {
@@ -413,13 +754,13 @@ public class Q2 {
         longest.ifPresent(s -> System.out.println("最長: " + s));
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>3文字: 2
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>3文字: 2
 4文字: 2
 6文字: 2
 7文字: 1
@@ -427,47 +768,94 @@ public class Q2 {
 API, Filter, Java, Lambda, Map, Stream
 ---
 最長: Stream</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li>文字数グループ：API/Map(3文字×2)、Java(4文字×2・重複あり)、Filter/Stream(6文字×2)、Lambda(7文字×1)。</li>
-            <li><code>distinct()</code> 後 <code>sorted()</code>：API, Filter, Java, Lambda, Map, Stream（アルファベット順）。</li>
-            <li><code>reduce</code> で長い方を残していくと、最終的に最長の Stream(6) または Lambda(6) のうち先に現れた方が残ります。Stream と Lambda は同じ6文字ですが、<code>a.length() >= b.length()</code> のため最初に比較された方が保持され続けます → Stream が最後まで残ります。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  文字数グループ：API/Map(3文字×2)、Java(4文字×2・重複あり)、Filter/Stream(6文字×2)、Lambda(7文字×1)。
+                </li>
+                <li>
+                  <code>distinct()</code> 後 <code>sorted()</code>：API, Filter,
+                  Java, Lambda, Map, Stream（アルファベット順）。
+                </li>
+                <li>
+                  <code>reduce</code> で長い方を残していくと、最終的に最長の
+                  Stream(6) または Lambda(6)
+                  のうち先に現れた方が残ります。Stream と Lambda
+                  は同じ6文字ですが、<code>a.length() >= b.length()</code>
+                  のため最初に比較された方が保持され続けます → Stream
+                  が最後まで残ります。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 11-2-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次の条件を満たすクラスを作成してください。</p>
-      <ul>
-        <li><code>Student</code> クラス：<code>name</code>・<code>score</code>・<code>grade</code>（学年）フィールド</li>
-        <li>以下の学生リストに対して Stream で集計処理を行う</li>
-      </ul>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>名前</th><th>点数</th><th>学年</th></tr></thead>
-        <tbody>
-          <tr><td>Alice</td><td>85</td><td>1</td></tr>
-          <tr><td>Bob</td><td>72</td><td>2</td></tr>
-          <tr><td>Carol</td><td>91</td><td>1</td></tr>
-          <tr><td>Dave</td><td>60</td><td>3</td></tr>
-          <tr><td>Eve</td><td>78</td><td>2</td></tr>
-          <tr><td>Frank</td><td>95</td><td>3</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>合格者数（70点以上）: 5
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 11-2-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たすクラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              <code>Student</code>
+              クラス：<code>name</code>・<code>score</code>・<code>grade</code>（学年）フィールド
+            </li>
+            <li>以下の学生リストに対して Stream で集計処理を行う</li>
+          </ul>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>名前</th>
+                <th>点数</th>
+                <th>学年</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Alice</td>
+                <td>85</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Bob</td>
+                <td>72</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Carol</td>
+                <td>91</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>Dave</td>
+                <td>60</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>Eve</td>
+                <td>78</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Frank</td>
+                <td>95</td>
+                <td>3</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>合格者数（70点以上）: 5
 全員の合計点: 481
 平均点: 80.16666666666667
 最高点の学生: Frank
@@ -476,17 +864,19 @@ API, Filter, Java, Lambda, Map, Stream
 2学年: 75.0
 3学年: 77.5
 合格者名簿: Alice, Carol, Eve, Bob, Frank</code></pre>
-      </div>
-      <div class="hint" style="margin-top:10px;">
-        <strong>💡 ヒント</strong>：学年別平均は <code>groupingBy</code> + <code>averagingInt</code> を使います。<br>
-        合格者名簿は点数70以上を <code>filter</code> し、名前を <code>joining(", ")</code> で連結します。
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">Main.java</div>
-            <pre><code>import java.util.*;
+          </div>
+          <div class="hint" style="margin-top: 10px">
+            <strong>💡 ヒント</strong>：学年別平均は <code>groupingBy</code> +
+            <code>averagingInt</code> を使います。<br />
+            合格者名簿は点数70以上を <code>filter</code> し、名前を
+            <code>joining(", ")</code> で連結します。
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">Main.java</div>
+                <pre><code>import java.util.*;
 import java.util.stream.*;
 
 public class Main {
@@ -557,18 +947,41 @@ public class Main {
         System.out.println("合格者名簿: " + roster);
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>groupingBy + averagingInt</code> で学年ごとの平均を <code>Map&lt;Integer,Double&gt;</code> として取得します。</li>
-            <li><code>reduce</code> で点数が高い方を残し、<code>map(Student::getName)</code> で名前を取り出します。</li>
-            <li>合格者名簿は <code>filter → sorted（点数降順）→ map → joining</code> のパイプラインで生成します。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>groupingBy + averagingInt</code> で学年ごとの平均を
+                  <code>Map&lt;Integer,Double&gt;</code> として取得します。
+                </li>
+                <li>
+                  <code>reduce</code> で点数が高い方を残し、<code
+                    >map(Student::getName)</code
+                  >
+                  で名前を取り出します。
+                </li>
+                <li>
+                  合格者名簿は
+                  <code>filter → sorted（点数降順）→ map → joining</code>
+                  のパイプラインで生成します。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../11-1/11-1_stream_basics.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../11-3/11-3_sorted_optional_flatmap.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

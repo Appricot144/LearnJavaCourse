@@ -1,169 +1,474 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>6-2. 引数と戻り値</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>6-2. 引数と戻り値</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    /* Header */
-    .page-header {
-      background: linear-gradient(135deg, #1a365d, #2b6cb0);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      /* Header */
+      .page-header {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    /* Section title */
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #1a365d;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      /* Section title */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a365d;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #bee3f8;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    /* Code */
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      /* Code */
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+        letter-spacing: 0.05em;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    /* Callout / hint */
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      /* Callout / hint */
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    /* Tables */
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #2b6cb0; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #ebf8ff; }
+      /* Tables */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2b6cb0;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #ebf8ff;
+      }
 
-    /* Arg/return flow diagram */
-    .arg-flow {
-      background: #fff; border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 20px 24px; margin: 14px 0;
-    }
-    .af-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 14px; }
-    .af-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .af-box {
-      padding: 10px 18px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; text-align: center;
-    }
-    .af-caller  { background: #ebf8ff; color: #1a365d; border: 2px solid #bee3f8; }
-    .af-method  { background: #c6f6d5; color: #22543d; border: 2px solid #9ae6b4; }
-    .af-arrow-r { color: #2b6cb0; font-size: 1.4rem; font-weight: 700; }
-    .af-arrow-l { color: #e53e3e; font-size: 1.4rem; font-weight: 700; }
-    .af-label   { font-size: 0.72rem; color: #718096; }
+      /* Arg/return flow diagram */
+      .arg-flow {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+      }
+      .af-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 14px;
+      }
+      .af-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .af-box {
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-align: center;
+      }
+      .af-caller {
+        background: #ebf8ff;
+        color: #1a365d;
+        border: 2px solid #bee3f8;
+      }
+      .af-method {
+        background: #c6f6d5;
+        color: #22543d;
+        border: 2px solid #9ae6b4;
+      }
+      .af-arrow-r {
+        color: #2b6cb0;
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+      .af-arrow-l {
+        color: #e53e3e;
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+      .af-label {
+        font-size: 0.72rem;
+        color: #718096;
+      }
 
-    /* Pattern grid */
-    .pattern-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
-    .pattern-card {
-      background: #fff; border-radius: 10px; padding: 12px 16px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #2b6cb0;
-    }
-    .pattern-card .pc-tag { font-size: 0.72rem; font-weight: 700; color: #2b6cb0; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .pattern-card .pc-sig { font-family: monospace; font-size: 0.85rem; color: #1a365d; font-weight: 600; }
+      /* Pattern grid */
+      .pattern-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .pattern-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 12px 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        border-left: 4px solid #2b6cb0;
+      }
+      .pattern-card .pc-tag {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .pattern-card .pc-sig {
+        font-family: monospace;
+        font-size: 0.85rem;
+        color: #1a365d;
+        font-weight: 600;
+      }
 
-    /* Value pass diagram */
-    .pass-diagram {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0;
-    }
-    .pd-card {
-      background: #fff; border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    }
-    .pd-header { padding: 9px 14px; font-weight: 700; font-size: 0.85rem; }
-    .pd-before { background: #ebf8ff; color: #1a365d; }
-    .pd-after  { background: #fed7d7; color: #742a2a; }
+      /* Value pass diagram */
+      .pass-diagram {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin: 14px 0;
+      }
+      .pd-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      }
+      .pd-header {
+        padding: 9px 14px;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+      .pd-before {
+        background: #ebf8ff;
+        color: #1a365d;
+      }
+      .pd-after {
+        background: #fed7d7;
+        color: #742a2a;
+      }
 
-    /* Output box */
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      /* Output box */
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    /* Problem cards */
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      /* Problem cards */
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #ebf8ff;
+        border-bottom: 1px solid #bee3f8;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a365d;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    /* Answer toggle */
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #2b6cb0; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      /* Answer toggle */
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2b6cb0;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #2c5282;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <!-- Header -->
-  <div class="page-header">
-    <div class="chapter-label">第6章 ▶ メソッド</div>
-    <h1>6-2. 引数と戻り値</h1>
-    <div class="meta">難易度：⭐⭐⭐☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <!-- ===== 解説 ===== -->
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2b6cb0;
+        border-radius: 7px;
+      }
 
-  <h3>引数と戻り値の流れ</h3>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <div class="arg-flow">
-    <div class="af-title">▶ 呼び出し元 → メソッドへ引数を渡し、戻り値を受け取る</div>
-    <div class="af-row">
-      <div class="af-box af-caller">呼び出し元<br><small>add(3, 5)</small></div>
-      <div>
-        <div class="af-label" style="text-align:center;">引数を渡す</div>
-        <div class="af-arrow-r">→</div>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">第6章 ▶ メソッド</div>
+
+        <h1>6-2. 引数と戻り値</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐☆☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
       </div>
-      <div class="af-box af-method">メソッド<br><small>int add(int a, int b)</small></div>
-      <div>
-        <div class="af-label" style="text-align:center;">戻り値を返す</div>
-        <div class="af-arrow-l">←</div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../6-1/6-1_method_definition.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../6-3/6-3_method_overloading.html">＞</a>
+        </div>
       </div>
-      <div class="af-box af-caller">結果を受け取る<br><small>int result = 8</small></div>
-    </div>
-  </div>
 
-  <!-- 引数 -->
-  <h3>引数の定義と呼び出し</h3>
-  <div class="code-wrap">
-    <div class="code-label">引数あり・なしの比較</div>
-    <pre><code>// 引数なし → 常に同じ動作
+      <!-- ===== 解説 ===== -->
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>引数と戻り値の流れ</h3>
+
+      <div class="arg-flow">
+        <div class="af-title">
+          ▶ 呼び出し元 → メソッドへ引数を渡し、戻り値を受け取る
+        </div>
+        <div class="af-row">
+          <div class="af-box af-caller">
+            呼び出し元<br /><small>add(3, 5)</small>
+          </div>
+          <div>
+            <div class="af-label" style="text-align: center">引数を渡す</div>
+            <div class="af-arrow-r">→</div>
+          </div>
+          <div class="af-box af-method">
+            メソッド<br /><small>int add(int a, int b)</small>
+          </div>
+          <div>
+            <div class="af-label" style="text-align: center">戻り値を返す</div>
+            <div class="af-arrow-l">←</div>
+          </div>
+          <div class="af-box af-caller">
+            結果を受け取る<br /><small>int result = 8</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- 引数 -->
+      <h3>引数の定義と呼び出し</h3>
+      <div class="code-wrap">
+        <div class="code-label">引数あり・なしの比較</div>
+        <pre><code>// 引数なし → 常に同じ動作
 public static void greet() {
     System.out.println("こんにちは、ゲスト！");
 }
@@ -176,19 +481,24 @@ public static void greet(String name) {
 // 呼び出し
 greet("田中");   // → こんにちは、田中！
 greet("鈴木");   // → こんにちは、鈴木！</code></pre>
-  </div>
+      </div>
 
-  <div class="callout">
-    <strong>⚠️ 引数の順番・個数・型はメソッド定義と完全に一致させる必要があります。</strong><br>
-    例：<code>showInfo(String name, int age)</code> → <code>showInfo("田中", 25)</code> ○<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<code>showInfo(25, "田中")</code> はコンパイルエラー！
-  </div>
+      <div class="callout">
+        <strong
+          >⚠️
+          引数の順番・個数・型はメソッド定義と完全に一致させる必要があります。</strong
+        ><br />
+        例：<code>showInfo(String name, int age)</code> →
+        <code>showInfo("田中", 25)</code> ○<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<code>showInfo(25, "田中")</code>
+        はコンパイルエラー！
+      </div>
 
-  <!-- 戻り値 -->
-  <h3>戻り値の定義と受け取り</h3>
-  <div class="code-wrap">
-    <div class="code-label">戻り値の例</div>
-    <pre><code>public static int add(int a, int b) {
+      <!-- 戻り値 -->
+      <h3>戻り値の定義と受け取り</h3>
+      <div class="code-wrap">
+        <div class="code-label">戻り値の例</div>
+        <pre><code>public static int add(int a, int b) {
     return a + b;  // 計算結果を返す
 }
 
@@ -198,36 +508,40 @@ System.out.println(result);  // 8
 
 // 直接使うこともできる
 System.out.println(add(10, 20));  // 30</code></pre>
-  </div>
+      </div>
 
-  <!-- 4パターン -->
-  <h3>引数・戻り値の組み合わせパターン</h3>
-  <div class="pattern-grid">
-    <div class="pattern-card">
-      <div class="pc-tag">引数なし・戻り値なし</div>
-      <div class="pc-sig">void greet()</div>
-    </div>
-    <div class="pattern-card">
-      <div class="pc-tag">引数あり・戻り値なし</div>
-      <div class="pc-sig">void print(String msg)</div>
-    </div>
-    <div class="pattern-card">
-      <div class="pc-tag">引数なし・戻り値あり</div>
-      <div class="pc-sig">int getYear()</div>
-    </div>
-    <div class="pattern-card" style="border-left-color:#9f7aea;">
-      <div class="pc-tag" style="color:#6b46c1;">引数あり・戻り値あり（最も多用）</div>
-      <div class="pc-sig">int add(int a, int b)</div>
-    </div>
-  </div>
+      <!-- 4パターン -->
+      <h3>引数・戻り値の組み合わせパターン</h3>
+      <div class="pattern-grid">
+        <div class="pattern-card">
+          <div class="pc-tag">引数なし・戻り値なし</div>
+          <div class="pc-sig">void greet()</div>
+        </div>
+        <div class="pattern-card">
+          <div class="pc-tag">引数あり・戻り値なし</div>
+          <div class="pc-sig">void print(String msg)</div>
+        </div>
+        <div class="pattern-card">
+          <div class="pc-tag">引数なし・戻り値あり</div>
+          <div class="pc-sig">int getYear()</div>
+        </div>
+        <div class="pattern-card" style="border-left-color: #9f7aea">
+          <div class="pc-tag" style="color: #6b46c1">
+            引数あり・戻り値あり（最も多用）
+          </div>
+          <div class="pc-sig">int add(int a, int b)</div>
+        </div>
+      </div>
 
-  <!-- 値渡し -->
-  <h3>値渡し（プリミティブ型）</h3>
-  <p>プリミティブ型の引数は<strong>値渡し</strong>です。メソッド内で変更しても呼び出し元に影響しません。</p>
+      <!-- 値渡し -->
+      <h3>値渡し（プリミティブ型）</h3>
+      <p>
+        プリミティブ型の引数は<strong>値渡し</strong>です。メソッド内で変更しても呼び出し元に影響しません。
+      </p>
 
-  <div class="code-wrap">
-    <div class="code-label">値渡しの例</div>
-    <pre><code>public static void doubleValue(int x) {
+      <div class="code-wrap">
+        <div class="code-label">値渡しの例</div>
+        <pre><code>public static void doubleValue(int x) {
     x = x * 2;
     System.out.println("メソッド内: " + x);  // 20
 }
@@ -237,19 +551,21 @@ public static void main(String[] args) {
     doubleValue(n);
     System.out.println("呼び出し後: " + n);  // 10 ← 変わらない！
 }</code></pre>
-  </div>
+      </div>
 
-  <div class="hint">
-    <strong>💡 なぜ変わらないの？</strong><br>
-    メソッドに渡されるのは <code>n</code> の「コピー」です。コピーを変えても元の <code>n</code> は変わりません。<br>
-    配列やオブジェクトは参照渡しのため、メソッド内の変更が反映されます（第7章以降で詳しく学習）。
-  </div>
+      <div class="hint">
+        <strong>💡 なぜ変わらないの？</strong><br />
+        メソッドに渡されるのは
+        <code>n</code> の「コピー」です。コピーを変えても元の
+        <code>n</code> は変わりません。<br />
+        配列やオブジェクトは参照渡しのため、メソッド内の変更が反映されます（第7章以降で詳しく学習）。
+      </div>
 
-  <!-- 複数return -->
-  <h3>複数の return 文</h3>
-  <div class="code-wrap">
-    <div class="code-label">条件によって異なる値を返す</div>
-    <pre><code>public static String getGrade(int score) {
+      <!-- 複数return -->
+      <h3>複数の return 文</h3>
+      <div class="code-wrap">
+        <div class="code-label">条件によって異なる値を返す</div>
+        <pre><code>public static String getGrade(int score) {
     if (score >= 90) return "S";
     if (score >= 80) return "A";
     if (score >= 70) return "B";
@@ -259,13 +575,13 @@ public static void main(String[] args) {
 
 System.out.println(getGrade(85));  // A
 System.out.println(getGrade(55));  // F</code></pre>
-  </div>
+      </div>
 
-  <!-- コード例 -->
-  <h3>コード例：BMI 計算</h3>
-  <div class="code-wrap">
-    <div class="code-label">MethodCalc.java</div>
-    <pre><code>public class MethodCalc {
+      <!-- コード例 -->
+      <h3>コード例：BMI 計算</h3>
+      <div class="code-wrap">
+        <div class="code-label">MethodCalc.java</div>
+        <pre><code>public class MethodCalc {
 
     public static double calcBMI(double weight, double height) {
         return weight / (height * height);
@@ -284,30 +600,32 @@ System.out.println(getGrade(55));  // F</code></pre>
         System.out.println("判定: " + judgeBMI(bmi));
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>BMI: 22.49
-判定: 普通体重</code></pre>
-  </div>
-
-  <!-- ===== 問題 ===== -->
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 6-2-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐☆☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>public class Q1 {
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>BMI: 22.49
+判定: 普通体重</code></pre>
+      </div>
+
+      <!-- ===== 問題 ===== -->
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 6-2-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐☆☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>public class Q1 {
 
     public static int multiply(int a, int b) {
         return a * b;
@@ -331,41 +649,50 @@ System.out.println(getGrade(55));  // F</code></pre>
         System.out.println(s);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>28
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>28
 30
 ababab</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>multiply(4, 7)</code> → <code>28</code>。</li>
-            <li>内側の <code>multiply(2, 5)</code> → <code>10</code>、外側の <code>multiply(3, 10)</code> → <code>30</code>（ネスト呼び出し）。</li>
-            <li><code>repeat("ab", 3)</code> → <code>"ab"</code> を3回繰り返して <code>"ababab"</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li><code>multiply(4, 7)</code> → <code>28</code>。</li>
+                <li>
+                  内側の <code>multiply(2, 5)</code> → <code>10</code>、外側の
+                  <code>multiply(3, 10)</code> →
+                  <code>30</code>（ネスト呼び出し）。
+                </li>
+                <li>
+                  <code>repeat("ab", 3)</code> →
+                  <code>"ab"</code> を3回繰り返して <code>"ababab"</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 6-2-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>public class Q2 {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 6-2-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>public class Q2 {
 
     public static int clamp(int value, int min, int max) {
         if (value &lt; min) return min;
@@ -395,71 +722,121 @@ ababab</code></pre>
         System.out.println("外部: " + n);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>5
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>5
 1
 10
 true
 false
 内部: 40
 外部: 20</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>clamp(5, 1, 10)</code> → <code>5</code>（範囲内なのでそのまま）。</li>
-            <li><code>clamp(-3, 1, 10)</code> → <code>1</code>（min より小さいので min を返す）。</li>
-            <li><code>clamp(15, 1, 10)</code> → <code>10</code>（max より大きいので max を返す）。</li>
-            <li><code>isEven(4)</code> → <code>true</code>、<code>isEven(7)</code> → <code>false</code>。</li>
-            <li><code>tryDouble(n)</code> はプリミティブの値渡しなので、メソッド内で変更しても外部の <code>n</code> は <code>20</code> のまま。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>clamp(5, 1, 10)</code> →
+                  <code>5</code>（範囲内なのでそのまま）。
+                </li>
+                <li>
+                  <code>clamp(-3, 1, 10)</code> → <code>1</code>（min
+                  より小さいので min を返す）。
+                </li>
+                <li>
+                  <code>clamp(15, 1, 10)</code> → <code>10</code>（max
+                  より大きいので max を返す）。
+                </li>
+                <li>
+                  <code>isEven(4)</code> → <code>true</code>、<code
+                    >isEven(7)</code
+                  >
+                  → <code>false</code>。
+                </li>
+                <li>
+                  <code>tryDouble(n)</code>
+                  はプリミティブの値渡しなので、メソッド内で変更しても外部の
+                  <code>n</code> は <code>20</code> のまま。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 6-2-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次の条件を満たす <code>StringUtils</code> クラスを作成してください。</p>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>メソッド</th><th>引数</th><th>戻り値</th><th>処理内容</th></tr></thead>
-        <tbody>
-          <tr><td><code>countChar</code></td><td><code>String s, char c</code></td><td><code>int</code></td><td>文字列中に文字 <code>c</code> が何個含まれるか返す</td></tr>
-          <tr><td><code>isPalindrome</code></td><td><code>String s</code></td><td><code>boolean</code></td><td>回文かどうかを返す</td></tr>
-          <tr><td><code>capitalize</code></td><td><code>String s</code></td><td><code>String</code></td><td>先頭大文字・残り小文字にして返す</td></tr>
-          <tr><td><code>repeat</code></td><td><code>String s, int n</code></td><td><code>String</code></td><td>文字列を <code>n</code> 回繰り返して返す</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>'l' の数: 3
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 6-2-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たす <code>StringUtils</code> クラスを作成してください。
+          </p>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>メソッド</th>
+                <th>引数</th>
+                <th>戻り値</th>
+                <th>処理内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>countChar</code></td>
+                <td><code>String s, char c</code></td>
+                <td><code>int</code></td>
+                <td>文字列中に文字 <code>c</code> が何個含まれるか返す</td>
+              </tr>
+              <tr>
+                <td><code>isPalindrome</code></td>
+                <td><code>String s</code></td>
+                <td><code>boolean</code></td>
+                <td>回文かどうかを返す</td>
+              </tr>
+              <tr>
+                <td><code>capitalize</code></td>
+                <td><code>String s</code></td>
+                <td><code>String</code></td>
+                <td>先頭大文字・残り小文字にして返す</td>
+              </tr>
+              <tr>
+                <td><code>repeat</code></td>
+                <td><code>String s, int n</code></td>
+                <td><code>String</code></td>
+                <td>文字列を <code>n</code> 回繰り返して返す</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>'l' の数: 3
 "racecar" は回文: true
 "hello" は回文: false
 capitalize("jAVA"): Java
 repeat("ha", 4): hahahaha</code></pre>
-      </div>
-      <div class="hint" style="margin-top:10px;">
-        <strong>💡 isPalindrome のヒント</strong>：前半 (<code>i &lt; s.length()/2</code>) を走査し、<br>
-        <code>charAt(i)</code> と <code>charAt(length-1-i)</code> を比較します。
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">StringUtils.java</div>
-            <pre><code>public class StringUtils {
+          </div>
+          <div class="hint" style="margin-top: 10px">
+            <strong>💡 isPalindrome のヒント</strong>：前半 (<code
+              >i &lt; s.length()/2</code
+            >) を走査し、<br />
+            <code>charAt(i)</code> と
+            <code>charAt(length-1-i)</code> を比較します。
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">StringUtils.java</div>
+                <pre><code>public class StringUtils {
 
     public static int countChar(String s, char c) {
         int count = 0;
@@ -506,19 +883,44 @@ repeat("ha", 4): hahahaha</code></pre>
             + repeat("ha", 4));
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>countChar</code>：<code>charAt(i)</code> で1文字ずつ比較してカウントします。</li>
-            <li><code>isPalindrome</code>：前半を走査し、対称位置の文字と比較します（<code>length/2</code> まででOK）。</li>
-            <li><code>capitalize</code>：<code>substring(0,1).toUpperCase()</code> と <code>substring(1).toLowerCase()</code> を連結します。</li>
-            <li><code>repeat</code>：ループで文字列を連結して返します。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>countChar</code>：<code>charAt(i)</code>
+                  で1文字ずつ比較してカウントします。
+                </li>
+                <li>
+                  <code>isPalindrome</code
+                  >：前半を走査し、対称位置の文字と比較します（<code
+                    >length/2</code
+                  >
+                  まででOK）。
+                </li>
+                <li>
+                  <code>capitalize</code>：<code
+                    >substring(0,1).toUpperCase()</code
+                  >
+                  と <code>substring(1).toLowerCase()</code> を連結します。
+                </li>
+                <li><code>repeat</code>：ループで文字列を連結して返します。</li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../6-1/6-1_method_definition.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../6-3/6-3_method_overloading.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

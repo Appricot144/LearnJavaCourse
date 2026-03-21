@@ -1,195 +1,492 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>11-1. Streamの生成と基本操作（filter / map）</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>11-1. Streamの生成と基本操作（filter / map）</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    .page-header {
-      background: linear-gradient(135deg, #1a4971, #2b6cb0);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.5rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      .page-header {
+        background: linear-gradient(135deg, #1a4971, #2b6cb0);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #1a4971;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #90cdf4;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a4971;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #90cdf4;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #2b6cb0; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #ebf8ff; }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2b6cb0;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #ebf8ff;
+      }
 
-    /* Stream pipeline diagram */
-    .pipeline {
-      background: #fff; border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 20px 24px; margin: 14px 0; overflow-x: auto;
-    }
-    .pipeline .pl-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 14px; }
-    .pl-row { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
-    .pl-box {
-      padding: 8px 14px; border-radius: 8px; font-family: monospace;
-      font-size: 0.82rem; font-weight: 700; white-space: nowrap; text-align: center;
-    }
-    .pl-source     { background: #2b6cb0; color: white; }
-    .pl-filter     { background: #c6f6d5; color: #22543d; }
-    .pl-map        { background: #fefcbf; color: #744210; }
-    .pl-terminal   { background: #e9d8fd; color: #44337a; }
-    .pl-arrow      { color: #a0aec0; font-size: 1.3rem; }
-    .pl-label      { font-size: 0.7rem; color: #718096; display: block; text-align: center; margin-top: 3px; }
+      /* Stream pipeline diagram */
+      .pipeline {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+        overflow-x: auto;
+      }
+      .pipeline .pl-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 14px;
+      }
+      .pl-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: nowrap;
+      }
+      .pl-box {
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-family: monospace;
+        font-size: 0.82rem;
+        font-weight: 700;
+        white-space: nowrap;
+        text-align: center;
+      }
+      .pl-source {
+        background: #2b6cb0;
+        color: white;
+      }
+      .pl-filter {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .pl-map {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .pl-terminal {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .pl-arrow {
+        color: #a0aec0;
+        font-size: 1.3rem;
+      }
+      .pl-label {
+        font-size: 0.7rem;
+        color: #718096;
+        display: block;
+        text-align: center;
+        margin-top: 3px;
+      }
 
-    /* Stream creation cards */
-    .creation-cards { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
-    .cr-card { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #2b6cb0; }
-    .cr-card .cr-label { background: #ebf8ff; padding: 6px 14px; font-size: 0.78rem; font-weight: 700; color: #2b6cb0; }
+      /* Stream creation cards */
+      .creation-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 14px 0;
+      }
+      .cr-card {
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        border-left: 4px solid #2b6cb0;
+      }
+      .cr-card .cr-label {
+        background: #ebf8ff;
+        padding: 6px 14px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #2b6cb0;
+      }
 
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #90cdf4; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a4971; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #ebf8ff;
+        border-bottom: 1px solid #90cdf4;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a4971;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #2b6cb0; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #1a4971; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2b6cb0;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #1a4971;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <div class="page-header">
-    <div class="chapter-label">第11章 ▶ Stream API</div>
-    <h1>11-1. Streamの生成と基本操作（filter / map）</h1>
-    <div class="meta">難易度：⭐⭐⭐⭐⭐　|　問題数：4問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2b6cb0;
+        border-radius: 7px;
+      }
 
-  <h3>Stream API とは？</h3>
-  <p>Java 8 で追加された、<strong>コレクション・配列のデータを宣言的に処理する</strong>仕組みです。<br>
-  ループを書かずに「フィルタリング・変換・集計」をパイプラインで表現できます。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <!-- パイプライン図 -->
-  <div class="pipeline">
-    <div class="pl-title">▶ Stream パイプラインの流れ</div>
-    <div class="pl-row">
-      <div>
-        <div class="pl-box pl-source">データソース</div>
-        <span class="pl-label">List / 配列 / etc.</span>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第11章 ▶ Stream API</div>
+
+        <h1>11-1. Streamの生成と基本操作（filter / map）</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐⭐　|　問題数：4問　|　形式：出力を答える・コード記述
+        </div>
       </div>
-      <div class="pl-arrow">→</div>
-      <div>
-        <div class="pl-box pl-filter">filter()</div>
-        <span class="pl-label">中間操作（絞り込み）</span>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter10/10-3/10-3_method_references.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../11-2/11-2_stream_terminal.html">＞</a>
+        </div>
       </div>
-      <div class="pl-arrow">→</div>
-      <div>
-        <div class="pl-box pl-map">map()</div>
-        <span class="pl-label">中間操作（変換）</span>
-      </div>
-      <div class="pl-arrow">→</div>
-      <div>
-        <div class="pl-box pl-terminal">collect() / forEach()</div>
-        <span class="pl-label">終端操作（結果取得）</span>
-      </div>
-    </div>
-  </div>
 
-  <div class="callout">
-    <strong>⚠️ Stream の重要な性質</strong><br>
-    ・<strong>遅延評価</strong>：終端操作が呼ばれるまで中間操作は実行されません。<br>
-    ・<strong>一度限り</strong>：使い終わった Stream は再利用できません（再生成が必要）。<br>
-    ・<strong>元データを変更しない</strong>：Stream は元のコレクションを変更しません。
-  </div>
+      <div class="section-title"><span>📖</span> 解説</div>
 
-  <!-- Stream の生成 -->
-  <h3>Stream の生成方法</h3>
-  <div class="creation-cards">
-    <div class="cr-card">
-      <div class="cr-label">Listから生成</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>List&lt;String&gt; list = List.of("apple", "banana", "cherry");
+      <h3>Stream API とは？</h3>
+      <p>
+        Java 8
+        で追加された、<strong>コレクション・配列のデータを宣言的に処理する</strong>仕組みです。<br />
+        ループを書かずに「フィルタリング・変換・集計」をパイプラインで表現できます。
+      </p>
+
+      <!-- パイプライン図 -->
+      <div class="pipeline">
+        <div class="pl-title">▶ Stream パイプラインの流れ</div>
+        <div class="pl-row">
+          <div>
+            <div class="pl-box pl-source">データソース</div>
+            <span class="pl-label">List / 配列 / etc.</span>
+          </div>
+          <div class="pl-arrow">→</div>
+          <div>
+            <div class="pl-box pl-filter">filter()</div>
+            <span class="pl-label">中間操作（絞り込み）</span>
+          </div>
+          <div class="pl-arrow">→</div>
+          <div>
+            <div class="pl-box pl-map">map()</div>
+            <span class="pl-label">中間操作（変換）</span>
+          </div>
+          <div class="pl-arrow">→</div>
+          <div>
+            <div class="pl-box pl-terminal">collect() / forEach()</div>
+            <span class="pl-label">終端操作（結果取得）</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>⚠️ Stream の重要な性質</strong><br />
+        ・<strong>遅延評価</strong>：終端操作が呼ばれるまで中間操作は実行されません。<br />
+        ・<strong>一度限り</strong>：使い終わった Stream
+        は再利用できません（再生成が必要）。<br />
+        ・<strong>元データを変更しない</strong>：Stream
+        は元のコレクションを変更しません。
+      </div>
+
+      <!-- Stream の生成 -->
+      <h3>Stream の生成方法</h3>
+      <div class="creation-cards">
+        <div class="cr-card">
+          <div class="cr-label">Listから生成</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="font-size: 0.82rem"
+            ><code>List&lt;String&gt; list = List.of("apple", "banana", "cherry");
 Stream&lt;String&gt; s = list.stream();</code></pre>
-      </div>
-    </div>
-    <div class="cr-card">
-      <div class="cr-label">配列から生成</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>String[] arr = {"apple", "banana", "cherry"};
+          </div>
+        </div>
+        <div class="cr-card">
+          <div class="cr-label">配列から生成</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="font-size: 0.82rem"
+            ><code>String[] arr = {"apple", "banana", "cherry"};
 Stream&lt;String&gt; s = Arrays.stream(arr);</code></pre>
-      </div>
-    </div>
-    <div class="cr-card">
-      <div class="cr-label">Stream.of() で直接生成</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>Stream&lt;Integer&gt; s = Stream.of(1, 2, 3, 4, 5);</code></pre>
-      </div>
-    </div>
-    <div class="cr-card">
-      <div class="cr-label">IntStream / LongStream（プリミティブ型専用）</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>IntStream range = IntStream.range(1, 6);     // 1〜5
+          </div>
+        </div>
+        <div class="cr-card">
+          <div class="cr-label">Stream.of() で直接生成</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="font-size: 0.82rem"
+            ><code>Stream&lt;Integer&gt; s = Stream.of(1, 2, 3, 4, 5);</code></pre>
+          </div>
+        </div>
+        <div class="cr-card">
+          <div class="cr-label">
+            IntStream / LongStream（プリミティブ型専用）
+          </div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="font-size: 0.82rem"
+            ><code>IntStream range = IntStream.range(1, 6);     // 1〜5
 IntStream of    = IntStream.of(10, 20, 30);  // 指定値</code></pre>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- filter -->
-  <h3>filter()：条件に合う要素だけを残す</h3>
-  <div class="code-wrap">
-    <div class="code-label">filter の使い方</div>
-    <pre><code>import java.util.List;
+      <!-- filter -->
+      <h3>filter()：条件に合う要素だけを残す</h3>
+      <div class="code-wrap">
+        <div class="code-label">filter の使い方</div>
+        <pre><code>import java.util.List;
 import java.util.stream.Collectors;
 
 List&lt;Integer&gt; nums = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -208,13 +505,13 @@ List&lt;Integer&gt; result = nums.stream()
     .collect(Collectors.toList());
 
 System.out.println(result);  // [6, 8, 10]</code></pre>
-  </div>
+      </div>
 
-  <!-- map -->
-  <h3>map()：各要素を別の値に変換する</h3>
-  <div class="code-wrap">
-    <div class="code-label">map の使い方</div>
-    <pre><code>List&lt;String&gt; words = List.of("apple", "banana", "cherry");
+      <!-- map -->
+      <h3>map()：各要素を別の値に変換する</h3>
+      <div class="code-wrap">
+        <div class="code-label">map の使い方</div>
+        <pre><code>List&lt;String&gt; words = List.of("apple", "banana", "cherry");
 
 // 大文字に変換
 List&lt;String&gt; uppers = words.stream()
@@ -233,13 +530,13 @@ int totalLen = words.stream()
     .mapToInt(String::length)
     .sum();
 System.out.println(totalLen);  // 17</code></pre>
-  </div>
+      </div>
 
-  <!-- filter + map の組み合わせ -->
-  <h3>filter と map の組み合わせ</h3>
-  <div class="code-wrap">
-    <div class="code-label">パイプラインの例</div>
-    <pre><code>List&lt;String&gt; words = List.of("apple", "ant", "banana", "avocado", "cat");
+      <!-- filter + map の組み合わせ -->
+      <h3>filter と map の組み合わせ</h3>
+      <div class="code-wrap">
+        <div class="code-label">パイプラインの例</div>
+        <pre><code>List&lt;String&gt; words = List.of("apple", "ant", "banana", "avocado", "cat");
 
 // "a" で始まる単語を大文字に変換
 List&lt;String&gt; result = words.stream()
@@ -248,28 +545,62 @@ List&lt;String&gt; result = words.stream()
     .collect(Collectors.toList());
 
 System.out.println(result);  // [APPLE, ANT, AVOCADO]</code></pre>
-  </div>
+      </div>
 
-  <!-- よく使う中間操作 -->
-  <h3>よく使う中間操作</h3>
-  <table class="data-table">
-    <thead><tr><th>メソッド</th><th>説明</th><th>例</th></tr></thead>
-    <tbody>
-      <tr><td><code>filter(Predicate)</code></td><td>条件に合う要素のみ残す</td><td><code>.filter(n -> n > 0)</code></td></tr>
-      <tr><td><code>map(Function)</code></td><td>各要素を別の値に変換</td><td><code>.map(String::length)</code></td></tr>
-      <tr><td><code>mapToInt(ToIntFunction)</code></td><td>IntStream に変換</td><td><code>.mapToInt(String::length)</code></td></tr>
-      <tr><td><code>distinct()</code></td><td>重複を除去</td><td><code>.distinct()</code></td></tr>
-      <tr><td><code>limit(n)</code></td><td>先頭n件に限定</td><td><code>.limit(5)</code></td></tr>
-      <tr><td><code>skip(n)</code></td><td>先頭n件をスキップ</td><td><code>.skip(2)</code></td></tr>
-      <tr><td><code>peek(Consumer)</code></td><td>デバッグ用の途中確認</td><td><code>.peek(System.out::println)</code></td></tr>
-    </tbody>
-  </table>
+      <!-- よく使う中間操作 -->
+      <h3>よく使う中間操作</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>メソッド</th>
+            <th>説明</th>
+            <th>例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>filter(Predicate)</code></td>
+            <td>条件に合う要素のみ残す</td>
+            <td><code>.filter(n -> n > 0)</code></td>
+          </tr>
+          <tr>
+            <td><code>map(Function)</code></td>
+            <td>各要素を別の値に変換</td>
+            <td><code>.map(String::length)</code></td>
+          </tr>
+          <tr>
+            <td><code>mapToInt(ToIntFunction)</code></td>
+            <td>IntStream に変換</td>
+            <td><code>.mapToInt(String::length)</code></td>
+          </tr>
+          <tr>
+            <td><code>distinct()</code></td>
+            <td>重複を除去</td>
+            <td><code>.distinct()</code></td>
+          </tr>
+          <tr>
+            <td><code>limit(n)</code></td>
+            <td>先頭n件に限定</td>
+            <td><code>.limit(5)</code></td>
+          </tr>
+          <tr>
+            <td><code>skip(n)</code></td>
+            <td>先頭n件をスキップ</td>
+            <td><code>.skip(2)</code></td>
+          </tr>
+          <tr>
+            <td><code>peek(Consumer)</code></td>
+            <td>デバッグ用の途中確認</td>
+            <td><code>.peek(System.out::println)</code></td>
+          </tr>
+        </tbody>
+      </table>
 
-  <!-- コード例 -->
-  <h3>コード例</h3>
-  <div class="code-wrap">
-    <div class="code-label">StreamExample.java</div>
-    <pre><code>import java.util.*;
+      <!-- コード例 -->
+      <h3>コード例</h3>
+      <div class="code-wrap">
+        <div class="code-label">StreamExample.java</div>
+        <pre><code>import java.util.*;
 import java.util.stream.*;
 
 public class StreamExample {
@@ -304,30 +635,32 @@ public class StreamExample {
         System.out.println(unique3);
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>[ALICE, CAROL, DAVE, FRANK]
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>[ALICE, CAROL, DAVE, FRANK]
 合計文字数: 18
 [3, 1, 4]</code></pre>
-  </div>
-
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 11-1-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>import java.util.*;
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 11-1-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>import java.util.*;
 import java.util.stream.*;
 
 public class Q1 {
@@ -362,43 +695,51 @@ public class Q1 {
         System.out.println(count);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>[3, 6, 9]
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>[3, 6, 9]
 [25, 36, 49, 64, 81, 100]
 [6, 12, 18]
 5</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>r1</code>：3の倍数 → <code>[3, 6, 9]</code>。</li>
-            <li><code>r2</code>：全要素を2乗してから20より大きいものを残す → 5²=25, 6²=36, …, 10²=100。</li>
-            <li><code>r3</code>：偶数(2,4,6,8,10)を3倍して先頭3件 → <code>[6, 12, 18]</code>。</li>
-            <li><code>count</code>：5より大きい数（6,7,8,9,10）= 5件。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li><code>r1</code>：3の倍数 → <code>[3, 6, 9]</code>。</li>
+                <li>
+                  <code>r2</code>：全要素を2乗してから20より大きいものを残す →
+                  5²=25, 6²=36, …, 10²=100。
+                </li>
+                <li>
+                  <code>r3</code>：偶数(2,4,6,8,10)を3倍して先頭3件 →
+                  <code>[6, 12, 18]</code>。
+                </li>
+                <li><code>count</code>：5より大きい数（6,7,8,9,10）= 5件。</li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 11-1-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>import java.util.*;
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 11-1-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>import java.util.*;
 import java.util.stream.*;
 
 public class Q2 {
@@ -433,13 +774,13 @@ public class Q2 {
             .forEach(System.out::println);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>Stream
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>Stream
 Lambda
 Filter
 ---
@@ -449,34 +790,46 @@ Filter
 ---
 c
 d</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li>4文字以上：stream(6)・lambda(6)・filter(6)。java(4)・api(3)・map(3)はスキップ（api, mapは4文字未満）。</li>
-            <li>文字数合計：6+6+4+3+6+3 = 28 … 実際は stream(6)+lambda(6)+java(4)+api(3)+filter(6)+map(3) = 28 → 34ではないですね。再確認：stream=6, lambda=6, java=4, api=3, filter=6, map=3 → 6+6+4+3+6+3=28。修正が必要です。</li>
-          </ul>
-          <div class="callout" style="margin-top:8px;">
-            <strong>修正：</strong> 合計は <code>6+6+4+3+6+3 = 28</code>、平均は <code>28/6 ≈ 4.666...</code>、最大は <code>6</code>。
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  4文字以上：stream(6)・lambda(6)・filter(6)。java(4)・api(3)・map(3)はスキップ（api,
+                  mapは4文字未満）。
+                </li>
+                <li>
+                  文字数合計：6+6+4+3+6+3 = 28 … 実際は
+                  stream(6)+lambda(6)+java(4)+api(3)+filter(6)+map(3) = 28 →
+                  34ではないですね。再確認：stream=6, lambda=6, java=4, api=3,
+                  filter=6, map=3 → 6+6+4+3+6+3=28。修正が必要です。
+                </li>
+              </ul>
+              <div class="callout" style="margin-top: 8px">
+                <strong>修正：</strong> 合計は
+                <code>6+6+4+3+6+3 = 28</code>、平均は
+                <code>28/6 ≈ 4.666...</code>、最大は <code>6</code>。
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 11-1-3</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
           </div>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 11-1-3</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
-      </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q3.java</div>
-        <pre><code>import java.util.*;
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q3.java</div>
+            <pre><code>import java.util.*;
 import java.util.stream.*;
 
 public class Q3 {
@@ -496,69 +849,112 @@ public class Q3 {
         System.out.println("結果: " + result);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>filter後: Alice
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>filter後: Alice
 map後: ALICE
 filter後: Carol
 map後: CAROL
 filter後: Dave
 map後: DAVE
 結果: [ALICE, CAROL, DAVE]</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li>3文字より長い名前：Alice(5)・Carol(5)・Dave(4)。Bob(3)・Eve(3) は除外。</li>
-            <li><code>peek</code> は各要素が流れるたびに実行されます。要素ごとに filter後 → map後 の順で出力されます（パイプライン処理を可視化）。</li>
-            <li>Stream は遅延評価のため、1要素ずつパイプライン全体を流れます。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  3文字より長い名前：Alice(5)・Carol(5)・Dave(4)。Bob(3)・Eve(3)
+                  は除外。
+                </li>
+                <li>
+                  <code>peek</code>
+                  は各要素が流れるたびに実行されます。要素ごとに filter後 →
+                  map後 の順で出力されます（パイプライン処理を可視化）。
+                </li>
+                <li>
+                  Stream は遅延評価のため、1要素ずつパイプライン全体を流れます。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 4 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 11-1-4</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次の条件を満たすクラスを作成してください。</p>
-      <ul>
-        <li><code>Product</code> クラス：<code>name</code>・<code>price</code>・<code>category</code> フィールド（コンストラクタ・getter・toString あり）</li>
-        <li>商品リスト（下記）から Stream で以下の処理を行う</li>
-      </ul>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>商品名</th><th>価格</th><th>カテゴリ</th></tr></thead>
-        <tbody>
-          <tr><td>りんご</td><td>150</td><td>果物</td></tr>
-          <tr><td>牛肉</td><td>800</td><td>肉類</td></tr>
-          <tr><td>バナナ</td><td>120</td><td>果物</td></tr>
-          <tr><td>鶏肉</td><td>400</td><td>肉類</td></tr>
-          <tr><td>メロン</td><td>1200</td><td>果物</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>果物一覧: [りんご(150円), バナナ(120円), メロン(1200円)]
+
+      <!-- 問題 4 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 11-1-4</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たすクラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              <code>Product</code>
+              クラス：<code>name</code>・<code>price</code>・<code
+                >category</code
+              >
+              フィールド（コンストラクタ・getter・toString あり）
+            </li>
+            <li>商品リスト（下記）から Stream で以下の処理を行う</li>
+          </ul>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>商品名</th>
+                <th>価格</th>
+                <th>カテゴリ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>りんご</td>
+                <td>150</td>
+                <td>果物</td>
+              </tr>
+              <tr>
+                <td>牛肉</td>
+                <td>800</td>
+                <td>肉類</td>
+              </tr>
+              <tr>
+                <td>バナナ</td>
+                <td>120</td>
+                <td>果物</td>
+              </tr>
+              <tr>
+                <td>鶏肉</td>
+                <td>400</td>
+                <td>肉類</td>
+              </tr>
+              <tr>
+                <td>メロン</td>
+                <td>1200</td>
+                <td>果物</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>果物一覧: [りんご(150円), バナナ(120円), メロン(1200円)]
 果物の最高価格: 1200
 500円以上の商品名: [牛肉, メロン]
 全商品の平均価格: 534.0</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">Main.java</div>
-            <pre><code>import java.util.*;
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">Main.java</div>
+                <pre><code>import java.util.*;
 import java.util.stream.*;
 
 public class Main {
@@ -612,19 +1008,39 @@ public class Main {
         System.out.println("全商品の平均価格: " + avg);
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>filter</code> でカテゴリや価格を絞り込みます。</li>
-            <li><code>mapToInt</code> で <code>IntStream</code> に変換することで <code>max()</code>・<code>average()</code> などの集計メソッドが使えます。</li>
-            <li><code>max()</code>・<code>average()</code> は <code>OptionalInt</code>・<code>OptionalDouble</code> を返すため <code>orElse()</code> で既定値を指定します。</li>
-            <li>平均：(150+800+120+400+1200)/5 = 2670/5 = 534.0。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li><code>filter</code> でカテゴリや価格を絞り込みます。</li>
+                <li>
+                  <code>mapToInt</code> で
+                  <code>IntStream</code> に変換することで
+                  <code>max()</code>・<code>average()</code>
+                  などの集計メソッドが使えます。
+                </li>
+                <li>
+                  <code>max()</code>・<code>average()</code> は
+                  <code>OptionalInt</code>・<code>OptionalDouble</code>
+                  を返すため <code>orElse()</code> で既定値を指定します。
+                </li>
+                <li>平均：(150+800+120+400+1200)/5 = 2670/5 = 534.0。</li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter10/10-3/10-3_method_references.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../11-2/11-2_stream_terminal.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

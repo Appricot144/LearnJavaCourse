@@ -1,176 +1,471 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>7-3. thisキーワード・メソッド</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>7-3. thisキーワード・メソッド</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    /* Header */
-    .page-header {
-      background: linear-gradient(135deg, #1a365d, #2b6cb0);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      /* Header */
+      .page-header {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    /* Section title */
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #1a365d;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      /* Section title */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a365d;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #bee3f8;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    /* Code */
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      /* Code */
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+        letter-spacing: 0.05em;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    /* Callout / hint */
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      /* Callout / hint */
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    /* Tables */
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #2b6cb0; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #ebf8ff; }
+      /* Tables */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2b6cb0;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #ebf8ff;
+      }
 
-    /* this 3 patterns */
-    .this-cards { display: flex; flex-direction: column; gap: 12px; margin: 14px 0; }
-    .this-card {
-      background: #fff; border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-      display: flex; align-items: stretch;
-    }
-    .this-card .tc-num {
-      background: #2b6cb0; color: white; font-size: 1.1rem; font-weight: 700;
-      padding: 0 16px; display: flex; align-items: center; flex-shrink: 0;
-    }
-    .this-card .tc-body { padding: 12px 16px; flex: 1; }
-    .this-card .tc-title { font-weight: 700; font-size: 0.9rem; color: #1a365d; margin-bottom: 2px; }
-    .this-card .tc-code { font-family: monospace; font-size: 0.83rem; color: #2b6cb0; background: #ebf8ff; padding: 2px 8px; border-radius: 4px; }
-    .this-card .tc-desc { font-size: 0.82rem; color: #718096; margin-top: 4px; }
+      /* this 3 patterns */
+      .this-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .this-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: stretch;
+      }
+      .this-card .tc-num {
+        background: #2b6cb0;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .this-card .tc-body {
+        padding: 12px 16px;
+        flex: 1;
+      }
+      .this-card .tc-title {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #1a365d;
+        margin-bottom: 2px;
+      }
+      .this-card .tc-code {
+        font-family: monospace;
+        font-size: 0.83rem;
+        color: #2b6cb0;
+        background: #ebf8ff;
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+      .this-card .tc-desc {
+        font-size: 0.82rem;
+        color: #718096;
+        margin-top: 4px;
+      }
 
-    /* Method chain diagram */
-    .chain-diagram {
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 18px 20px; margin: 14px 0; overflow-x: auto;
-    }
-    .chain-diagram .cd-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 10px; }
-    .chain-row { display: flex; align-items: center; gap: 0; flex-wrap: nowrap; }
-    .chain-method {
-      background: #2b6cb0; color: white; padding: 8px 14px;
-      font-family: monospace; font-size: 0.82rem; font-weight: 600;
-    }
-    .chain-return {
-      background: #c6f6d5; color: #22543d; padding: 8px 10px;
-      font-size: 0.75rem; font-weight: 700;
-    }
-    .chain-arrow { color: #2b6cb0; font-size: 1.2rem; padding: 0 4px; }
+      /* Method chain diagram */
+      .chain-diagram {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 18px 20px;
+        margin: 14px 0;
+        overflow-x: auto;
+      }
+      .chain-diagram .cd-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 10px;
+      }
+      .chain-row {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        flex-wrap: nowrap;
+      }
+      .chain-method {
+        background: #2b6cb0;
+        color: white;
+        padding: 8px 14px;
+        font-family: monospace;
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+      .chain-return {
+        background: #c6f6d5;
+        color: #22543d;
+        padding: 8px 10px;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+      .chain-arrow {
+        color: #2b6cb0;
+        font-size: 1.2rem;
+        padding: 0 4px;
+      }
 
-    /* Output box */
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      /* Output box */
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    /* Problem cards */
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      /* Problem cards */
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #ebf8ff;
+        border-bottom: 1px solid #bee3f8;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a365d;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    /* Answer toggle */
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #2b6cb0; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      /* Answer toggle */
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2b6cb0;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #2c5282;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <!-- Header -->
-  <div class="page-header">
-    <div class="chapter-label">第7章 ▶ クラスとオブジェクト</div>
-    <h1>7-3. thisキーワード・メソッド</h1>
-    <div class="meta">難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <!-- ===== 解説 ===== -->
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2b6cb0;
+        border-radius: 7px;
+      }
 
-  <h3>this の3つの使い方</h3>
-  <p><code>this</code> はクラスの<strong>インスタンス自身</strong>を指すキーワードです。主に3つの場面で使われます。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <div class="this-cards">
-    <div class="this-card">
-      <div class="tc-num">1</div>
-      <div class="tc-body">
-        <div class="tc-title">フィールドと引数の区別</div>
-        <div class="tc-code">this.name = name;</div>
-        <div class="tc-desc">引数名とフィールド名が同じとき、<code>this.フィールド名</code> でフィールドを指定する</div>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">第7章 ▶ クラスとオブジェクト</div>
+
+        <h1>7-3. thisキーワード・メソッド</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
       </div>
-    </div>
-    <div class="this-card">
-      <div class="tc-num">2</div>
-      <div class="tc-body">
-        <div class="tc-title">自分自身を返す（メソッドチェーン）</div>
-        <div class="tc-code">return this;</div>
-        <div class="tc-desc">メソッドの戻り値として <code>this</code> を返すと、メソッドを連続して呼び出せる</div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../7-2/7-2_fields_constructors.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../7-4/7-4_access_modifiers.html">＞</a>
+        </div>
       </div>
-    </div>
-    <div class="this-card">
-      <div class="tc-num">3</div>
-      <div class="tc-body">
-        <div class="tc-title">別コンストラクタへの委譲</div>
-        <div class="tc-code">this(side, side);</div>
-        <div class="tc-desc">コンストラクタの先頭行で別のコンストラクタを呼び出し、処理を再利用する</div>
-      </div>
-    </div>
-  </div>
 
-  <!-- 使い方1 -->
-  <h3>使い方1：フィールドと引数の区別</h3>
-  <div class="code-wrap">
-    <div class="code-label">this で区別する</div>
-    <pre><code>public class Person {
+      <!-- ===== 解説 ===== -->
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>this の3つの使い方</h3>
+      <p>
+        <code>this</code>
+        はクラスの<strong>インスタンス自身</strong>を指すキーワードです。主に3つの場面で使われます。
+      </p>
+
+      <div class="this-cards">
+        <div class="this-card">
+          <div class="tc-num">1</div>
+          <div class="tc-body">
+            <div class="tc-title">フィールドと引数の区別</div>
+            <div class="tc-code">this.name = name;</div>
+            <div class="tc-desc">
+              引数名とフィールド名が同じとき、<code>this.フィールド名</code>
+              でフィールドを指定する
+            </div>
+          </div>
+        </div>
+        <div class="this-card">
+          <div class="tc-num">2</div>
+          <div class="tc-body">
+            <div class="tc-title">自分自身を返す（メソッドチェーン）</div>
+            <div class="tc-code">return this;</div>
+            <div class="tc-desc">
+              メソッドの戻り値として
+              <code>this</code> を返すと、メソッドを連続して呼び出せる
+            </div>
+          </div>
+        </div>
+        <div class="this-card">
+          <div class="tc-num">3</div>
+          <div class="tc-body">
+            <div class="tc-title">別コンストラクタへの委譲</div>
+            <div class="tc-code">this(side, side);</div>
+            <div class="tc-desc">
+              コンストラクタの先頭行で別のコンストラクタを呼び出し、処理を再利用する
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 使い方1 -->
+      <h3>使い方1：フィールドと引数の区別</h3>
+      <div class="code-wrap">
+        <div class="code-label">this で区別する</div>
+        <pre><code>public class Person {
     String name;
     int    age;
 
@@ -183,33 +478,36 @@
         this.name = name;  // セッターでも同様
     }
 }</code></pre>
-  </div>
+      </div>
 
-  <!-- 使い方2：メソッドチェーン -->
-  <h3>使い方2：メソッドチェーン（this を返す）</h3>
-  <p>メソッドが <code>this</code> を返すことで、メソッドを連続して呼び出せます。</p>
+      <!-- 使い方2：メソッドチェーン -->
+      <h3>使い方2：メソッドチェーン（this を返す）</h3>
+      <p>
+        メソッドが
+        <code>this</code> を返すことで、メソッドを連続して呼び出せます。
+      </p>
 
-  <div class="chain-diagram">
-    <div class="cd-title">▶ return this でメソッドを連鎖できる</div>
-    <div class="chain-row">
-      <div class="chain-method">new Builder()</div>
-      <div class="chain-arrow">.</div>
-      <div class="chain-method">add("Hello")</div>
-      <div class="chain-return">→ this</div>
-      <div class="chain-arrow">.</div>
-      <div class="chain-method">add(", ")</div>
-      <div class="chain-return">→ this</div>
-      <div class="chain-arrow">.</div>
-      <div class="chain-method">addLine("World!")</div>
-      <div class="chain-return">→ this</div>
-      <div class="chain-arrow">.</div>
-      <div class="chain-method">build()</div>
-    </div>
-  </div>
+      <div class="chain-diagram">
+        <div class="cd-title">▶ return this でメソッドを連鎖できる</div>
+        <div class="chain-row">
+          <div class="chain-method">new Builder()</div>
+          <div class="chain-arrow">.</div>
+          <div class="chain-method">add("Hello")</div>
+          <div class="chain-return">→ this</div>
+          <div class="chain-arrow">.</div>
+          <div class="chain-method">add(", ")</div>
+          <div class="chain-return">→ this</div>
+          <div class="chain-arrow">.</div>
+          <div class="chain-method">addLine("World!")</div>
+          <div class="chain-return">→ this</div>
+          <div class="chain-arrow">.</div>
+          <div class="chain-method">build()</div>
+        </div>
+      </div>
 
-  <div class="code-wrap">
-    <div class="code-label">メソッドチェーンの実装</div>
-    <pre><code>public class Builder {
+      <div class="code-wrap">
+        <div class="code-label">メソッドチェーンの実装</div>
+        <pre><code>public class Builder {
     String text = "";
 
     public Builder add(String s) {
@@ -232,13 +530,13 @@ String result = new Builder()
     .build();
 
 System.out.println(result);  // Hello, World!</code></pre>
-  </div>
+      </div>
 
-  <!-- 使い方3：コンストラクタ委譲 -->
-  <h3>使い方3：コンストラクタの委譲（this()）</h3>
-  <div class="code-wrap">
-    <div class="code-label">Rectangle のコンストラクタ委譲</div>
-    <pre><code>public class Rectangle {
+      <!-- 使い方3：コンストラクタ委譲 -->
+      <h3>使い方3：コンストラクタの委譲（this()）</h3>
+      <div class="code-wrap">
+        <div class="code-label">Rectangle のコンストラクタ委譲</div>
+        <pre><code>public class Rectangle {
     double width;
     double height;
 
@@ -262,21 +560,25 @@ System.out.println(result);  // Hello, World!</code></pre>
 Rectangle r1 = new Rectangle(4.0, 6.0);  // 4×6
 Rectangle r2 = new Rectangle(5.0);       // 5×5
 Rectangle r3 = new Rectangle();          // 1×1</code></pre>
-  </div>
+      </div>
 
-  <div class="callout">
-    <strong>⚠️ this() はコンストラクタの先頭行に書く</strong><br>
-    <code>this(引数)</code> はコンストラクタの<strong>最初の文</strong>でなければなりません。<br>
-    他の処理の後に書くとコンパイルエラーになります。
-  </div>
+      <div class="callout">
+        <strong>⚠️ this() はコンストラクタの先頭行に書く</strong><br />
+        <code>this(引数)</code>
+        はコンストラクタの<strong>最初の文</strong>でなければなりません。<br />
+        他の処理の後に書くとコンパイルエラーになります。
+      </div>
 
-  <!-- アクセサ -->
-  <h3>アクセサメソッド（getter / setter）</h3>
-  <p>フィールドを <code>private</code> にして、<code>getter</code> / <code>setter</code> で制御するのがカプセル化の基本です。</p>
+      <!-- アクセサ -->
+      <h3>アクセサメソッド（getter / setter）</h3>
+      <p>
+        フィールドを <code>private</code> にして、<code>getter</code> /
+        <code>setter</code> で制御するのがカプセル化の基本です。
+      </p>
 
-  <div class="code-wrap">
-    <div class="code-label">Circle クラスの getter / setter</div>
-    <pre><code>public class Circle {
+      <div class="code-wrap">
+        <div class="code-label">Circle クラスの getter / setter</div>
+        <pre><code>public class Circle {
     private double radius;  // private で外から直接アクセス不可
 
     public Circle(double radius) {
@@ -296,23 +598,40 @@ Rectangle r3 = new Rectangle();          // 1×1</code></pre>
         return Math.PI * radius * radius;
     }
 }</code></pre>
-  </div>
+      </div>
 
-  <!-- static vs instance -->
-  <h3>インスタンスメソッド vs クラスメソッド（static）</h3>
-  <table class="data-table">
-    <thead><tr><th>種類</th><th>宣言</th><th>呼び出し</th><th>フィールドアクセス</th></tr></thead>
-    <tbody>
-      <tr><td>インスタンスメソッド</td><td><code>public void method()</code></td><td><code>obj.method()</code></td><td>フィールドにアクセス可</td></tr>
-      <tr><td>クラスメソッド（static）</td><td><code>public static void method()</code></td><td><code>ClassName.method()</code></td><td>static フィールドのみ</td></tr>
-    </tbody>
-  </table>
+      <!-- static vs instance -->
+      <h3>インスタンスメソッド vs クラスメソッド（static）</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>種類</th>
+            <th>宣言</th>
+            <th>呼び出し</th>
+            <th>フィールドアクセス</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>インスタンスメソッド</td>
+            <td><code>public void method()</code></td>
+            <td><code>obj.method()</code></td>
+            <td>フィールドにアクセス可</td>
+          </tr>
+          <tr>
+            <td>クラスメソッド（static）</td>
+            <td><code>public static void method()</code></td>
+            <td><code>ClassName.method()</code></td>
+            <td>static フィールドのみ</td>
+          </tr>
+        </tbody>
+      </table>
 
-  <!-- コード例 -->
-  <h3>コード例：Pizza ビルダー</h3>
-  <div class="code-wrap">
-    <div class="code-label">Pizza.java</div>
-    <pre><code>public class Pizza {
+      <!-- コード例 -->
+      <h3>コード例：Pizza ビルダー</h3>
+      <div class="code-wrap">
+        <div class="code-label">Pizza.java</div>
+        <pre><code>public class Pizza {
     String  size;
     String  crust;
     boolean cheese;
@@ -345,25 +664,27 @@ Rectangle r3 = new Rectangle();          // 1×1</code></pre>
 // Main
 new Pizza("M").crust("thick").pepperoni().order();
 // → Mサイズ / thickクラスト / チーズあり / ペパロニあり</code></pre>
-  </div>
-
-  <!-- ===== 問題 ===== -->
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 7-3-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>class Vector2D {
+
+      <!-- ===== 問題 ===== -->
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 7-3-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>class Vector2D {
     double x;
     double y;
 
@@ -402,43 +723,58 @@ public class Q1 {
         v1.show();  // v1 は変化しない
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>(1.0, 2.0)
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>(1.0, 2.0)
 (3.0, 4.0)
 (4.0, 6.0)
 (3.0, 6.0)
 (1.0, 2.0)</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>v1.add(v2)</code> は <code>v1</code> と <code>v2</code> を足した<strong>新しいインスタンス</strong>を返します。<code>v1</code> 自体は変化しません。</li>
-            <li><code>v1.scale(3.0)</code> も同様に新しいインスタンスを返します（<code>1.0×3=3.0</code>、<code>2.0×3=6.0</code>）。</li>
-            <li>最後の <code>v1.show()</code> は元のまま <code>(1.0, 2.0)</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>v1.add(v2)</code> は <code>v1</code> と
+                  <code>v2</code>
+                  を足した<strong>新しいインスタンス</strong>を返します。<code
+                    >v1</code
+                  >
+                  自体は変化しません。
+                </li>
+                <li>
+                  <code>v1.scale(3.0)</code>
+                  も同様に新しいインスタンスを返します（<code>1.0×3=3.0</code>、<code>2.0×3=6.0</code>）。
+                </li>
+                <li>
+                  最後の <code>v1.show()</code> は元のまま
+                  <code>(1.0, 2.0)</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 7-3-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>class Config {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 7-3-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>class Config {
     String host;
     int    port;
     int    timeout;
@@ -485,51 +821,95 @@ public class Q2 {
         c3.show();
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>localhost:8080 (timeout=30s)
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>localhost:8080 (timeout=30s)
 example.com:443 (timeout=60s)
 localhost:9000 (timeout=30s)</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>c1</code> はデフォルト値のまま（<code>localhost:8080 timeout=30</code>）。</li>
-            <li><code>c2</code> は <code>host</code>・<code>port</code>・<code>timeout</code> をすべてメソッドチェーンで設定。各メソッドは <code>this</code> を返すため連続呼び出しが可能。</li>
-            <li><code>c3</code> は <code>port</code> だけ <code>9000</code> に変更。<code>host</code> と <code>timeout</code> はデフォルト値のまま。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>c1</code> はデフォルト値のまま（<code
+                    >localhost:8080 timeout=30</code
+                  >）。
+                </li>
+                <li>
+                  <code>c2</code> は <code>host</code>・<code>port</code>・<code
+                    >timeout</code
+                  >
+                  をすべてメソッドチェーンで設定。各メソッドは
+                  <code>this</code> を返すため連続呼び出しが可能。
+                </li>
+                <li>
+                  <code>c3</code> は <code>port</code> だけ
+                  <code>9000</code> に変更。<code>host</code> と
+                  <code>timeout</code> はデフォルト値のまま。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 7-3-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text"><code>ShoppingCart</code>（買い物かご）クラスを作成してください。</p>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>要素</th><th>内容</th></tr></thead>
-        <tbody>
-          <tr><td>フィールド</td><td><code>String[] items</code>、<code>int[] prices</code>、<code>int count</code></td></tr>
-          <tr><td>コンストラクタ</td><td>引数なし。配列を最大10個で初期化、<code>count=0</code></td></tr>
-          <tr><td><code>addItem(String, int)</code></td><td>商品を追加。満杯なら <code>"かごがいっぱいです"</code> を出力。追加後メッセージを出力。<code>this</code> を返す</td></tr>
-          <tr><td><code>total()</code></td><td>合計金額を <code>int</code> で返す</td></tr>
-          <tr><td><code>showCart()</code></td><td>全商品と合計を出力</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>[りんご] を追加（150円）
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 7-3-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            <code>ShoppingCart</code>（買い物かご）クラスを作成してください。
+          </p>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>要素</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>フィールド</td>
+                <td>
+                  <code>String[] items</code>、<code>int[] prices</code>、<code
+                    >int count</code
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>コンストラクタ</td>
+                <td>引数なし。配列を最大10個で初期化、<code>count=0</code></td>
+              </tr>
+              <tr>
+                <td><code>addItem(String, int)</code></td>
+                <td>
+                  商品を追加。満杯なら
+                  <code>"かごがいっぱいです"</code>
+                  を出力。追加後メッセージを出力。<code>this</code> を返す
+                </td>
+              </tr>
+              <tr>
+                <td><code>total()</code></td>
+                <td>合計金額を <code>int</code> で返す</td>
+              </tr>
+              <tr>
+                <td><code>showCart()</code></td>
+                <td>全商品と合計を出力</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>[りんご] を追加（150円）
 [パン] を追加（200円）
 [牛乳] を追加（180円）
 ---
@@ -537,17 +917,22 @@ localhost:9000 (timeout=30s)</code></pre>
 パン: 200円
 牛乳: 180円
 合計: 530円</code></pre>
-      </div>
-      <div class="hint" style="margin-top:10px;">
-        <strong>💡 ヒント</strong>：<code>addItem</code> が <code>this</code> を返すことで、<br>
-        <code>cart.addItem("りんご", 150).addItem("パン", 200).addItem("牛乳", 180);</code> のようにチェーンできます。
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">ShoppingCart.java + Main.java</div>
-            <pre><code>class ShoppingCart {
+          </div>
+          <div class="hint" style="margin-top: 10px">
+            <strong>💡 ヒント</strong>：<code>addItem</code> が
+            <code>this</code> を返すことで、<br />
+            <code
+              >cart.addItem("りんご", 150).addItem("パン", 200).addItem("牛乳",
+              180);</code
+            >
+            のようにチェーンできます。
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">ShoppingCart.java + Main.java</div>
+                <pre><code>class ShoppingCart {
     String[] items;
     int[]    prices;
     int      count;
@@ -596,18 +981,40 @@ public class Main {
         cart.showCart();
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>addItem</code> は <code>this</code> を返すため、メソッドチェーンで連続呼び出しできます。</li>
-            <li><code>total()</code> は <code>prices</code> 配列を <code>count</code> の個数だけ合計します。</li>
-            <li><code>showCart()</code> は <code>items[i]</code> と <code>prices[i]</code> を出力し、最後に <code>total()</code> で合計を表示します。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>addItem</code> は
+                  <code>this</code>
+                  を返すため、メソッドチェーンで連続呼び出しできます。
+                </li>
+                <li>
+                  <code>total()</code> は <code>prices</code> 配列を
+                  <code>count</code> の個数だけ合計します。
+                </li>
+                <li>
+                  <code>showCart()</code> は <code>items[i]</code> と
+                  <code>prices[i]</code> を出力し、最後に
+                  <code>total()</code> で合計を表示します。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../7-2/7-2_fields_constructors.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../7-4/7-4_access_modifiers.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

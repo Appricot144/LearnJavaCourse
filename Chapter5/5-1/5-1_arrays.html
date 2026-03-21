@@ -1,204 +1,502 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>5-1. 一次元配列の宣言・操作</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>5-1. 一次元配列の宣言・操作</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    /* Header */
-    .page-header {
-      background: linear-gradient(135deg, #1a365d, #2b6cb0);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      /* Header */
+      .page-header {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    /* Section title */
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #1a365d;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      /* Section title */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a365d;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #bee3f8;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    /* Code */
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      /* Code */
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+        letter-spacing: 0.05em;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    /* Callout / hint */
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      /* Callout / hint */
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    /* Tables */
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #2b6cb0; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #ebf8ff; }
+      /* Tables */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2b6cb0;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #ebf8ff;
+      }
 
-    /* Array visualizer */
-    .array-vis {
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 20px 24px; margin: 14px 0; overflow-x: auto;
-    }
-    .array-vis .av-label { font-size: 0.78rem; color: #718096; margin-bottom: 10px; font-weight: 600; }
-    .av-row { display: flex; gap: 0; margin-bottom: 4px; }
-    .av-cell {
-      min-width: 56px; height: 44px; display: flex;
-      align-items: center; justify-content: center;
-      font-weight: 700; font-size: 0.95rem;
-      border-right: 1px solid #e2e8f0;
-    }
-    .av-cell:first-child { border-radius: 8px 0 0 8px; }
-    .av-cell:last-child  { border-radius: 0 8px 8px 0; border-right: none; }
-    .av-val  { background: #2b6cb0; color: white; }
-    .av-idx  { background: #edf2f7; color: #718096; font-size: 0.8rem; font-weight: 600; }
-    .av-highlight { background: #f6ad55; color: white; }
+      /* Array visualizer */
+      .array-vis {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+        overflow-x: auto;
+      }
+      .array-vis .av-label {
+        font-size: 0.78rem;
+        color: #718096;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+      .av-row {
+        display: flex;
+        gap: 0;
+        margin-bottom: 4px;
+      }
+      .av-cell {
+        min-width: 56px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border-right: 1px solid #e2e8f0;
+      }
+      .av-cell:first-child {
+        border-radius: 8px 0 0 8px;
+      }
+      .av-cell:last-child {
+        border-radius: 0 8px 8px 0;
+        border-right: none;
+      }
+      .av-val {
+        background: #2b6cb0;
+        color: white;
+      }
+      .av-idx {
+        background: #edf2f7;
+        color: #718096;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+      .av-highlight {
+        background: #f6ad55;
+        color: white;
+      }
 
-    /* Declaration patterns */
-    .decl-cards { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
-    .decl-card {
-      background: #fff; border-radius: 8px; overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #2b6cb0;
-    }
-    .decl-card .dc-label {
-      background: #ebf8ff; padding: 6px 14px;
-      font-size: 0.78rem; font-weight: 700; color: #2b6cb0;
-    }
+      /* Declaration patterns */
+      .decl-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 14px 0;
+      }
+      .decl-card {
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        border-left: 4px solid #2b6cb0;
+      }
+      .decl-card .dc-label {
+        background: #ebf8ff;
+        padding: 6px 14px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #2b6cb0;
+      }
 
-    /* Output box */
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      /* Output box */
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    /* Problem cards */
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      /* Problem cards */
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #ebf8ff;
+        border-bottom: 1px solid #bee3f8;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a365d;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    /* Answer toggle */
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #2b6cb0; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      /* Answer toggle */
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2b6cb0;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #2c5282;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <!-- Header -->
-  <div class="page-header">
-    <div class="chapter-label">第5章 ▶ 配列</div>
-    <h1>5-1. 一次元配列の宣言・操作</h1>
-    <div class="meta">難易度：⭐⭐⭐☆☆　|　問題数：4問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <!-- ===== 解説 ===== -->
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2b6cb0;
+        border-radius: 7px;
+      }
 
-  <h3>配列とは？</h3>
-  <p><strong>同じ型の値を複数まとめて管理できる変数</strong>です。<br>
-  番号（インデックス）で各要素にアクセスします。インデックスは <strong>0から始まります</strong>。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <!-- 配列の図 -->
-  <div class="array-vis">
-    <div class="av-label">int[] scores = {80, 65, 90, 70, 55};</div>
-    <div class="av-row">
-      <div class="av-cell av-val">80</div>
-      <div class="av-cell av-val">65</div>
-      <div class="av-cell av-val av-highlight">90</div>
-      <div class="av-cell av-val">70</div>
-      <div class="av-cell av-val">55</div>
-    </div>
-    <div class="av-row">
-      <div class="av-cell av-idx">[0]</div>
-      <div class="av-cell av-idx">[1]</div>
-      <div class="av-cell av-idx">[2] ← scores[2]</div>
-      <div class="av-cell av-idx">[3]</div>
-      <div class="av-cell av-idx">[4]</div>
-    </div>
-  </div>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">第5章 ▶ 配列</div>
 
-  <!-- 宣言方法 -->
-  <h3>配列の宣言方法</h3>
-  <div class="decl-cards">
-    <div class="decl-card">
-      <div class="dc-label">方法1：宣言と同時に初期化</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre><code>int[] scores = {80, 65, 90, 70, 55};</code></pre>
+        <h1>5-1. 一次元配列の宣言・操作</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐☆☆　|　問題数：4問　|　形式：出力を答える・コード記述
+        </div>
       </div>
-    </div>
-    <div class="decl-card">
-      <div class="dc-label">方法2：サイズを指定して宣言（初期値はデフォルト値）</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre><code>int[]    nums  = new int[5];      // 全て 0
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter4/4-3/4-3_break_continue.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../5-2/5-2_multidimensional_arrays.html">＞</a>
+        </div>
+      </div>
+
+      <!-- ===== 解説 ===== -->
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>配列とは？</h3>
+      <p>
+        <strong>同じ型の値を複数まとめて管理できる変数</strong>です。<br />
+        番号（インデックス）で各要素にアクセスします。インデックスは
+        <strong>0から始まります</strong>。
+      </p>
+
+      <!-- 配列の図 -->
+      <div class="array-vis">
+        <div class="av-label">int[] scores = {80, 65, 90, 70, 55};</div>
+        <div class="av-row">
+          <div class="av-cell av-val">80</div>
+          <div class="av-cell av-val">65</div>
+          <div class="av-cell av-val av-highlight">90</div>
+          <div class="av-cell av-val">70</div>
+          <div class="av-cell av-val">55</div>
+        </div>
+        <div class="av-row">
+          <div class="av-cell av-idx">[0]</div>
+          <div class="av-cell av-idx">[1]</div>
+          <div class="av-cell av-idx">[2] ← scores[2]</div>
+          <div class="av-cell av-idx">[3]</div>
+          <div class="av-cell av-idx">[4]</div>
+        </div>
+      </div>
+
+      <!-- 宣言方法 -->
+      <h3>配列の宣言方法</h3>
+      <div class="decl-cards">
+        <div class="decl-card">
+          <div class="dc-label">方法1：宣言と同時に初期化</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre><code>int[] scores = {80, 65, 90, 70, 55};</code></pre>
+          </div>
+        </div>
+        <div class="decl-card">
+          <div class="dc-label">
+            方法2：サイズを指定して宣言（初期値はデフォルト値）
+          </div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre><code>int[]    nums  = new int[5];      // 全て 0
 String[] names = new String[3];  // 全て null</code></pre>
-      </div>
-    </div>
-    <div class="decl-card">
-      <div class="dc-label">方法3：宣言後に new で初期化</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre><code>int[] data;
+          </div>
+        </div>
+        <div class="decl-card">
+          <div class="dc-label">方法3：宣言後に new で初期化</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre><code>int[] data;
 data = new int[]{10, 20, 30};</code></pre>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- デフォルト値 -->
-  <h3>型ごとのデフォルト値</h3>
-  <table class="data-table">
-    <thead><tr><th>型</th><th>デフォルト値</th></tr></thead>
-    <tbody>
-      <tr><td><code>int</code> / <code>long</code> / <code>short</code> / <code>byte</code></td><td><code>0</code></td></tr>
-      <tr><td><code>double</code> / <code>float</code></td><td><code>0.0</code></td></tr>
-      <tr><td><code>boolean</code></td><td><code>false</code></td></tr>
-      <tr><td><code>char</code></td><td><code>'\u0000'</code>（null文字）</td></tr>
-      <tr><td>参照型（<code>String</code> など）</td><td><code>null</code></td></tr>
-    </tbody>
-  </table>
+      <!-- デフォルト値 -->
+      <h3>型ごとのデフォルト値</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>型</th>
+            <th>デフォルト値</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <code>int</code> / <code>long</code> / <code>short</code> /
+              <code>byte</code>
+            </td>
+            <td><code>0</code></td>
+          </tr>
+          <tr>
+            <td><code>double</code> / <code>float</code></td>
+            <td><code>0.0</code></td>
+          </tr>
+          <tr>
+            <td><code>boolean</code></td>
+            <td><code>false</code></td>
+          </tr>
+          <tr>
+            <td><code>char</code></td>
+            <td><code>'\u0000'</code>（null文字）</td>
+          </tr>
+          <tr>
+            <td>参照型（<code>String</code> など）</td>
+            <td><code>null</code></td>
+          </tr>
+        </tbody>
+      </table>
 
-  <!-- 要素へのアクセス -->
-  <h3>要素へのアクセス・書き換え</h3>
-  <div class="code-wrap">
-    <div class="code-label">読み取りと書き込み</div>
-    <pre><code>int[] scores = {80, 65, 90, 70, 55};
+      <!-- 要素へのアクセス -->
+      <h3>要素へのアクセス・書き換え</h3>
+      <div class="code-wrap">
+        <div class="code-label">読み取りと書き込み</div>
+        <pre><code>int[] scores = {80, 65, 90, 70, 55};
 
 // 読み取り
 System.out.println(scores[0]);  // 80
@@ -207,39 +505,44 @@ System.out.println(scores[2]);  // 90
 // 書き込み（上書き）
 scores[1] = 75;
 System.out.println(scores[1]);  // 75</code></pre>
-  </div>
+      </div>
 
-  <!-- length -->
-  <h3>配列の長さ：length</h3>
-  <div class="code-wrap">
-    <div class="code-label">length の使い方</div>
-    <pre><code>int[] scores = {80, 65, 90, 70, 55};
+      <!-- length -->
+      <h3>配列の長さ：length</h3>
+      <div class="code-wrap">
+        <div class="code-label">length の使い方</div>
+        <pre><code>int[] scores = {80, 65, 90, 70, 55};
 System.out.println(scores.length);  // 5</code></pre>
-  </div>
+      </div>
 
-  <div class="hint">
-    <strong>💡 length の注意点</strong><br>
-    配列の <code>length</code> はフィールドのため <code>()</code> は不要です。<br>
-    <code>String</code> の <code>length()</code> とは異なります（こちらはメソッド）。
-  </div>
+      <div class="hint">
+        <strong>💡 length の注意点</strong><br />
+        配列の <code>length</code> はフィールドのため
+        <code>()</code> は不要です。<br />
+        <code>String</code> の
+        <code>length()</code> とは異なります（こちらはメソッド）。
+      </div>
 
-  <!-- 範囲外アクセス -->
-  <div class="callout">
-    <strong>⚠️ ArrayIndexOutOfBoundsException に注意</strong><br>
-    有効なインデックスは <code>0</code> 〜 <code>length - 1</code> です。<br>
-    範囲外にアクセスすると実行時例外が発生します。
-    <div class="code-wrap" style="margin-top:8px;">
-      <pre style="padding:10px 14px;font-size:0.82rem;"><code>int[] arr = {10, 20, 30};    // length = 3
+      <!-- 範囲外アクセス -->
+      <div class="callout">
+        <strong>⚠️ ArrayIndexOutOfBoundsException に注意</strong><br />
+        有効なインデックスは <code>0</code> 〜
+        <code>length - 1</code> です。<br />
+        範囲外にアクセスすると実行時例外が発生します。
+        <div class="code-wrap" style="margin-top: 8px">
+          <pre
+            style="padding: 10px 14px; font-size: 0.82rem"
+          ><code>int[] arr = {10, 20, 30};    // length = 3
 System.out.println(arr[2]);  // 30  ← OK（最後の要素）
 System.out.println(arr[3]);  // ❌ 例外発生！</code></pre>
-    </div>
-  </div>
+        </div>
+      </div>
 
-  <!-- コード例 -->
-  <h3>コード例</h3>
-  <div class="code-wrap">
-    <div class="code-label">ArrayExample.java</div>
-    <pre><code>public class ArrayExample {
+      <!-- コード例 -->
+      <h3>コード例</h3>
+      <div class="code-wrap">
+        <div class="code-label">ArrayExample.java</div>
+        <pre><code>public class ArrayExample {
     public static void main(String[] args) {
         int[] scores = {85, 62, 90, 71, 55};
 
@@ -256,35 +559,37 @@ System.out.println(arr[3]);  // ❌ 例外発生！</code></pre>
         System.out.println("最小値: " + min);
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>要素数: 5
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>要素数: 5
 scores[0] = 85
 scores[1] = 62
 scores[2] = 90
 scores[3] = 71
 scores[4] = 55
 最小値: 55</code></pre>
-  </div>
-
-  <!-- ===== 問題 ===== -->
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 5-1-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐☆☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>public class Q1 {
+
+      <!-- ===== 問題 ===== -->
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 5-1-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐☆☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>public class Q1 {
     public static void main(String[] args) {
         String[] fruits = {"apple", "banana", "cherry", "date"};
 
@@ -296,43 +601,55 @@ scores[4] = 55
         System.out.println(fruits[1]);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>4
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>4
 apple
 cherry
 blueberry</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>fruits.length</code> は要素数 <code>4</code>。</li>
-            <li><code>fruits[0]</code> は先頭要素 <code>"apple"</code>。</li>
-            <li><code>fruits[2]</code> は3番目の要素 <code>"cherry"</code>（インデックスは0始まり）。</li>
-            <li><code>fruits[1] = "blueberry"</code> で上書き後、<code>fruits[1]</code> は <code>"blueberry"</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li><code>fruits.length</code> は要素数 <code>4</code>。</li>
+                <li>
+                  <code>fruits[0]</code> は先頭要素 <code>"apple"</code>。
+                </li>
+                <li>
+                  <code>fruits[2]</code> は3番目の要素
+                  <code>"cherry"</code>（インデックスは0始まり）。
+                </li>
+                <li>
+                  <code>fruits[1] = "blueberry"</code> で上書き後、<code
+                    >fruits[1]</code
+                  >
+                  は <code>"blueberry"</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 5-1-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>public class Q2 {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 5-1-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>public class Q2 {
     public static void main(String[] args) {
         int[] nums = new int[5];
         System.out.println(nums[0]);
@@ -351,42 +668,50 @@ blueberry</code></pre>
         System.out.println(sum);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>0
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>0
 0
 30
 150</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>new int[5]</code> の初期値は全て <code>0</code>。</li>
-            <li>ループで <code>nums[i] = (i+1)*10</code> → <code>{10, 20, 30, 40, 50}</code>。</li>
-            <li><code>nums[2]</code> は <code>30</code>、合計は <code>10+20+30+40+50 = 150</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li><code>new int[5]</code> の初期値は全て <code>0</code>。</li>
+                <li>
+                  ループで <code>nums[i] = (i+1)*10</code> →
+                  <code>{10, 20, 30, 40, 50}</code>。
+                </li>
+                <li>
+                  <code>nums[2]</code> は <code>30</code>、合計は
+                  <code>10+20+30+40+50 = 150</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 5-1-3</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q3.java</div>
-        <pre><code>public class Q3 {
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 5-1-3</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q3.java</div>
+            <pre><code>public class Q3 {
     public static void main(String[] args) {
         int[] data = {5, 2, 8, 1, 9, 3, 7, 4, 6};
 
@@ -406,69 +731,101 @@ blueberry</code></pre>
         System.out.println("平均: " + (double) sum / data.length);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>最大: 9
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>最大: 9
 最小: 1
 合計: 45
 平均: 5.0</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li>最大は <code>9</code>、最小は <code>1</code>。</li>
-            <li>合計は <code>5+2+8+1+9+3+7+4+6 = 45</code>。</li>
-            <li>平均は <code>45 ÷ 9 = 5.0</code>。<code>data.length</code> は <code>9</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>最大は <code>9</code>、最小は <code>1</code>。</li>
+                <li>合計は <code>5+2+8+1+9+3+7+4+6 = 45</code>。</li>
+                <li>
+                  平均は <code>45 ÷ 9 = 5.0</code>。<code>data.length</code> は
+                  <code>9</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 4 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 5-1-4</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次の条件を満たす <code>ScoreAnalyzer</code> クラスを作成してください。</p>
-      <ul>
-        <li><code>int</code> 型配列 <code>scores</code> に <code>{72, 88, 55, 91, 63, 77, 84, 49, 95, 68}</code> を代入する</li>
-        <li>下表の内容をすべて出力する</li>
-      </ul>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>出力内容</th><th>説明</th></tr></thead>
-        <tbody>
-          <tr><td>受験者数</td><td><code>scores.length</code></td></tr>
-          <tr><td>合計点</td><td>全要素の合計</td></tr>
-          <tr><td>平均点</td><td>小数で出力</td></tr>
-          <tr><td>最高点</td><td>最大値</td></tr>
-          <tr><td>最低点</td><td>最小値</td></tr>
-          <tr><td>合格者数</td><td>70点以上の人数</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>受験者数: 10
+
+      <!-- 問題 4 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 5-1-4</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たす
+            <code>ScoreAnalyzer</code> クラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              <code>int</code> 型配列 <code>scores</code> に
+              <code>{72, 88, 55, 91, 63, 77, 84, 49, 95, 68}</code> を代入する
+            </li>
+            <li>下表の内容をすべて出力する</li>
+          </ul>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>出力内容</th>
+                <th>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>受験者数</td>
+                <td><code>scores.length</code></td>
+              </tr>
+              <tr>
+                <td>合計点</td>
+                <td>全要素の合計</td>
+              </tr>
+              <tr>
+                <td>平均点</td>
+                <td>小数で出力</td>
+              </tr>
+              <tr>
+                <td>最高点</td>
+                <td>最大値</td>
+              </tr>
+              <tr>
+                <td>最低点</td>
+                <td>最小値</td>
+              </tr>
+              <tr>
+                <td>合格者数</td>
+                <td>70点以上の人数</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>受験者数: 10
 合計点: 742
 平均点: 74.2
 最高点: 95
 最低点: 49
 合格者数: 7</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">ScoreAnalyzer.java</div>
-            <pre><code>public class ScoreAnalyzer {
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">ScoreAnalyzer.java</div>
+                <pre><code>public class ScoreAnalyzer {
     public static void main(String[] args) {
         int[] scores = {72, 88, 55, 91, 63, 77, 84, 49, 95, 68};
 
@@ -492,18 +849,37 @@ blueberry</code></pre>
         System.out.println("合格者数: " + passed);
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li>拡張for文で1回のループで合計・最大・最小・合格者数をすべて求めています。</li>
-            <li>合計 <code>742 / 10 = 74.2</code>（<code>(double)</code> キャストが必要）。</li>
-            <li>70点以上：72・88・91・77・84・95・は6つ…合格者を数えると72・88・91・77・84・95＋もう1つ → 72, 88, 91, 77, 84, 95, 63以外でカウントすると合計7名。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  拡張for文で1回のループで合計・最大・最小・合格者数をすべて求めています。
+                </li>
+                <li>
+                  合計 <code>742 / 10 = 74.2</code>（<code>(double)</code>
+                  キャストが必要）。
+                </li>
+                <li>
+                  70点以上：72・88・91・77・84・95・は6つ…合格者を数えると72・88・91・77・84・95＋もう1つ
+                  → 72, 88, 91, 77, 84, 95, 63以外でカウントすると合計7名。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter4/4-3/4-3_break_continue.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../5-2/5-2_multidimensional_arrays.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

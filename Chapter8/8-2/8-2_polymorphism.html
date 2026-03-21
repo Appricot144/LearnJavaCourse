@@ -1,164 +1,498 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>8-2. ポリモーフィズム</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>8-2. ポリモーフィズム</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    .page-header {
-      background: linear-gradient(135deg, #22543d, #276749);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      .page-header {
+        background: linear-gradient(135deg, #22543d, #276749);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #22543d;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #9ae6b4;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #276749; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #22543d;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #9ae6b4;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #276749;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #f0fff4; color: #276749; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #f0fff4;
+        color: #276749;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #276749; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #f0fff4; }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #276749;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #f0fff4;
+      }
 
-    /* Polymorphism dispatch diagram */
-    .dispatch-diagram {
-      background: #fff; border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 20px 24px; margin: 14px 0;
-    }
-    .dd-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 14px; }
-    .dd-call-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
-    .dd-var { background: #ebf8ff; color: #2b6cb0; padding: 6px 12px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; font-weight: 600; }
-    .dd-arrow { color: #276749; font-size: 1.2rem; font-weight: 700; }
-    .dd-obj { padding: 6px 14px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; font-weight: 600; }
-    .dd-dog    { background: #fefcbf; color: #744210; }
-    .dd-cat    { background: #fed7d7; color: #742a2a; }
-    .dd-result { color: #718096; font-size: 0.82rem; }
+      /* Polymorphism dispatch diagram */
+      .dispatch-diagram {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+      }
+      .dd-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 14px;
+      }
+      .dd-call-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      .dd-var {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .dd-arrow {
+        color: #276749;
+        font-size: 1.2rem;
+        font-weight: 700;
+      }
+      .dd-obj {
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .dd-dog {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .dd-cat {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+      .dd-result {
+        color: #718096;
+        font-size: 0.82rem;
+      }
 
-    /* Hierarchy diagram */
-    .hierarchy {
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 18px 20px; margin: 14px 0;
-    }
-    .hy-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 12px; }
-    .hy-parent {
-      background: #276749; color: white; border-radius: 8px;
-      padding: 10px 16px; font-family: monospace; font-weight: 700; font-size: 0.9rem;
-      display: inline-block; margin-bottom: 8px;
-    }
-    .hy-children { display: flex; gap: 12px; margin-left: 24px; flex-wrap: wrap; }
-    .hy-child {
-      border-radius: 8px; padding: 10px 16px;
-      font-family: monospace; font-weight: 700; font-size: 0.85rem;
-    }
-    .hy-c1 { background: #fefcbf; color: #744210; border: 2px solid #f6e05e; }
-    .hy-c2 { background: #fed7d7; color: #742a2a; border: 2px solid #fc8181; }
-    .hy-c3 { background: #e9d8fd; color: #44337a; border: 2px solid #d6bcfa; }
-    .hy-arrow { color: #a0aec0; font-size: 1.2rem; margin: 0 4px; }
+      /* Hierarchy diagram */
+      .hierarchy {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 18px 20px;
+        margin: 14px 0;
+      }
+      .hy-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 12px;
+      }
+      .hy-parent {
+        background: #276749;
+        color: white;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-family: monospace;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-bottom: 8px;
+      }
+      .hy-children {
+        display: flex;
+        gap: 12px;
+        margin-left: 24px;
+        flex-wrap: wrap;
+      }
+      .hy-child {
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-family: monospace;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+      .hy-c1 {
+        background: #fefcbf;
+        color: #744210;
+        border: 2px solid #f6e05e;
+      }
+      .hy-c2 {
+        background: #fed7d7;
+        color: #742a2a;
+        border: 2px solid #fc8181;
+      }
+      .hy-c3 {
+        background: #e9d8fd;
+        color: #44337a;
+        border: 2px solid #d6bcfa;
+      }
+      .hy-arrow {
+        color: #a0aec0;
+        font-size: 1.2rem;
+        margin: 0 4px;
+      }
 
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f0fff4; border-bottom: 1px solid #9ae6b4; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #22543d; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #f0fff4;
+        border-bottom: 1px solid #9ae6b4;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #22543d;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #276749; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #22543d; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #276749; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #276749;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #22543d;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #276749;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <div class="page-header">
-    <div class="chapter-label">第8章 ▶ オブジェクト指向の概念</div>
-    <h1>8-2. ポリモーフィズム</h1>
-    <div class="meta">難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #276749;
+        border-radius: 7px;
+      }
 
-  <h3>ポリモーフィズムとは？</h3>
-  <p><strong>同じ操作（メソッド呼び出し）に対して、オブジェクトの種類によって異なる振る舞いをする</strong>性質です。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <table class="data-table">
-    <thead><tr><th>種類</th><th>仕組み</th><th>解決タイミング</th></tr></thead>
-    <tbody>
-      <tr><td>コンパイル時</td><td>メソッドのオーバーロード</td><td>コンパイル時</td></tr>
-      <tr><td>実行時</td><td>メソッドのオーバーライド＋継承/インターフェース</td><td>実行時（動的ディスパッチ）</td></tr>
-    </tbody>
-  </table>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第8章 ▶ オブジェクト指向の概念</div>
 
-  <!-- オーバーライド -->
-  <h3>オーバーライドとは？</h3>
-  <p>サブクラスが親クラスのメソッドを<strong>再定義</strong>することです。<code>@Override</code> アノテーションで意図を明示します。</p>
+        <h1>8-2. ポリモーフィズム</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../8-1/8-1_encapsulation.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../8-3/8-3_abstract_classes.html">＞</a>
+        </div>
+      </div>
 
-  <!-- 継承階層図 -->
-  <div class="hierarchy">
-    <div class="hy-title">▶ Animal を継承した Dog / Cat / Bird</div>
-    <div class="hy-parent">Animal　speak() → "..."</div>
-    <div style="color:#a0aec0;margin-left:12px;font-size:1.1rem;">↓ extends</div>
-    <div class="hy-children">
-      <div class="hy-child hy-c1">Dog<br><small>speak() → "ワン！"</small></div>
-      <div class="hy-child hy-c2">Cat<br><small>speak() → "ニャー！"</small></div>
-      <div class="hy-child hy-c3">Bird<br><small>speak() → "チュン！"</small></div>
-    </div>
-  </div>
+      <div class="section-title"><span>📖</span> 解説</div>
 
-  <div class="code-wrap">
-    <div class="code-label">オーバーライドの例</div>
-    <pre><code>class Animal {
+      <h3>ポリモーフィズムとは？</h3>
+      <p>
+        <strong
+          >同じ操作（メソッド呼び出し）に対して、オブジェクトの種類によって異なる振る舞いをする</strong
+        >性質です。
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>種類</th>
+            <th>仕組み</th>
+            <th>解決タイミング</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>コンパイル時</td>
+            <td>メソッドのオーバーロード</td>
+            <td>コンパイル時</td>
+          </tr>
+          <tr>
+            <td>実行時</td>
+            <td>メソッドのオーバーライド＋継承/インターフェース</td>
+            <td>実行時（動的ディスパッチ）</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- オーバーライド -->
+      <h3>オーバーライドとは？</h3>
+      <p>
+        サブクラスが親クラスのメソッドを<strong>再定義</strong>することです。<code
+          >@Override</code
+        >
+        アノテーションで意図を明示します。
+      </p>
+
+      <!-- 継承階層図 -->
+      <div class="hierarchy">
+        <div class="hy-title">▶ Animal を継承した Dog / Cat / Bird</div>
+        <div class="hy-parent">Animal　speak() → "..."</div>
+        <div style="color: #a0aec0; margin-left: 12px; font-size: 1.1rem">
+          ↓ extends
+        </div>
+        <div class="hy-children">
+          <div class="hy-child hy-c1">
+            Dog<br /><small>speak() → "ワン！"</small>
+          </div>
+          <div class="hy-child hy-c2">
+            Cat<br /><small>speak() → "ニャー！"</small>
+          </div>
+          <div class="hy-child hy-c3">
+            Bird<br /><small>speak() → "チュン！"</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">オーバーライドの例</div>
+        <pre><code>class Animal {
     public void speak() { System.out.println("..."); }
 }
 
@@ -171,32 +505,36 @@ class Cat extends Animal {
     @Override
     public void speak() { System.out.println("ニャー！"); }
 }</code></pre>
-  </div>
+      </div>
 
-  <!-- 参照型の多態性 -->
-  <h3>参照型の多態性（動的ディスパッチ）</h3>
-  <p>親クラス型の変数でサブクラスのインスタンスを参照できます。<br>
-  呼ばれるメソッドは<strong>実際のオブジェクトの型</strong>によって決まります。</p>
+      <!-- 参照型の多態性 -->
+      <h3>参照型の多態性（動的ディスパッチ）</h3>
+      <p>
+        親クラス型の変数でサブクラスのインスタンスを参照できます。<br />
+        呼ばれるメソッドは<strong>実際のオブジェクトの型</strong>によって決まります。
+      </p>
 
-  <div class="dispatch-diagram">
-    <div class="dd-title">▶ Animal 型でも、実際のオブジェクトの speak() が呼ばれる</div>
-    <div class="dd-call-row">
-      <div class="dd-var">Animal a1 = new Dog()</div>
-      <div class="dd-arrow">→</div>
-      <div class="dd-obj dd-dog">Dog の speak()</div>
-      <div class="dd-result">→ "ワン！"</div>
-    </div>
-    <div class="dd-call-row">
-      <div class="dd-var">Animal a2 = new Cat()</div>
-      <div class="dd-arrow">→</div>
-      <div class="dd-obj dd-cat">Cat の speak()</div>
-      <div class="dd-result">→ "ニャー！"</div>
-    </div>
-  </div>
+      <div class="dispatch-diagram">
+        <div class="dd-title">
+          ▶ Animal 型でも、実際のオブジェクトの speak() が呼ばれる
+        </div>
+        <div class="dd-call-row">
+          <div class="dd-var">Animal a1 = new Dog()</div>
+          <div class="dd-arrow">→</div>
+          <div class="dd-obj dd-dog">Dog の speak()</div>
+          <div class="dd-result">→ "ワン！"</div>
+        </div>
+        <div class="dd-call-row">
+          <div class="dd-var">Animal a2 = new Cat()</div>
+          <div class="dd-arrow">→</div>
+          <div class="dd-obj dd-cat">Cat の speak()</div>
+          <div class="dd-result">→ "ニャー！"</div>
+        </div>
+      </div>
 
-  <div class="code-wrap">
-    <div class="code-label">配列とポリモーフィズム</div>
-    <pre><code>Animal[] animals = { new Dog(), new Cat(), new Dog() };
+      <div class="code-wrap">
+        <div class="code-label">配列とポリモーフィズム</div>
+        <pre><code>Animal[] animals = { new Dog(), new Cat(), new Dog() };
 
 for (Animal a : animals) {
     a.speak();  // それぞれの実装が呼ばれる
@@ -204,13 +542,13 @@ for (Animal a : animals) {
 // → ワン！
 // → ニャー！
 // → ワン！</code></pre>
-  </div>
+      </div>
 
-  <!-- instanceof -->
-  <h3>instanceof 演算子</h3>
-  <div class="code-wrap">
-    <div class="code-label">型チェックとダウンキャスト</div>
-    <pre><code>Animal a = new Dog();
+      <!-- instanceof -->
+      <h3>instanceof 演算子</h3>
+      <div class="code-wrap">
+        <div class="code-label">型チェックとダウンキャスト</div>
+        <pre><code>Animal a = new Dog();
 
 System.out.println(a instanceof Animal);  // true
 System.out.println(a instanceof Dog);     // true
@@ -221,13 +559,13 @@ if (a instanceof Dog) {
     Dog dog = (Dog) a;   // ダウンキャスト
     dog.fetch();         // Dog 固有のメソッド
 }</code></pre>
-  </div>
+      </div>
 
-  <!-- toString -->
-  <h3>toString() のオーバーライド</h3>
-  <div class="code-wrap">
-    <div class="code-label">println で自動的に呼ばれる toString()</div>
-    <pre><code>class Point {
+      <!-- toString -->
+      <h3>toString() のオーバーライド</h3>
+      <div class="code-wrap">
+        <div class="code-label">println で自動的に呼ばれる toString()</div>
+        <pre><code>class Point {
     int x, y;
     public Point(int x, int y) { this.x = x; this.y = y; }
 
@@ -240,13 +578,13 @@ if (a instanceof Dog) {
 Point p = new Point(3, 4);
 System.out.println(p);           // Point(3, 4)
 System.out.println("座標: " + p); // 座標: Point(3, 4)</code></pre>
-  </div>
+      </div>
 
-  <!-- コード例 -->
-  <h3>コード例：図形の面積計算</h3>
-  <div class="code-wrap">
-    <div class="code-label">Shape / Circle / Rectangle</div>
-    <pre><code>class Shape {
+      <!-- コード例 -->
+      <h3>コード例：図形の面積計算</h3>
+      <div class="code-wrap">
+        <div class="code-label">Shape / Circle / Rectangle</div>
+        <pre><code>class Shape {
     String color;
     public Shape(String color) { this.color = color; }
     public double area() { return 0.0; }
@@ -284,31 +622,33 @@ Shape[] shapes = {
 double total = 0;
 for (Shape s : shapes) { s.show(); total += s.area(); }
 System.out.printf("合計面積: %.2f%n", total);</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>Circle（赤）面積: 78.54
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>Circle（赤）面積: 78.54
 Rectangle（青）面積: 24.00
 Circle（緑）面積: 28.27
 合計面積: 130.81</code></pre>
-  </div>
-
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 8-2-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>class Vehicle {
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 8-2-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>class Vehicle {
     String name;
     public Vehicle(String name) { this.name = name; }
     public String move() { return name + " が移動する"; }
@@ -347,13 +687,13 @@ public class Q1 {
         }
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>トヨタ が走る 🚗
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>トヨタ が走る 🚗
 フェリー が泳ぐ 🚢
 JAL が飛ぶ ✈
 ホンダ が走る 🚗
@@ -366,32 +706,45 @@ false
 false
 [Car] ホンダ
 true</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>Vehicle[]</code> に混在させ、<code>move()</code> を呼ぶと各クラスのオーバーライドが実行されます。</li>
-            <li><code>toString()</code> は <code>getClass().getSimpleName()</code> でサブクラス名を取得します。</li>
-            <li><code>v instanceof Car</code> は <code>Car</code> のインスタンスのみ <code>true</code> になります。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>Vehicle[]</code> に混在させ、<code>move()</code>
+                  を呼ぶと各クラスのオーバーライドが実行されます。
+                </li>
+                <li>
+                  <code>toString()</code> は
+                  <code>getClass().getSimpleName()</code>
+                  でサブクラス名を取得します。
+                </li>
+                <li>
+                  <code>v instanceof Car</code> は
+                  <code>Car</code> のインスタンスのみ
+                  <code>true</code> になります。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 8-2-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>class Animal {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 8-2-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>class Animal {
     private String name;
     public Animal(String name) { this.name = name; }
     public String getName()    { return name; }
@@ -427,69 +780,120 @@ public class Q2 {
         System.out.println(ref instanceof PoliceDog);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>... と言って動く
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>... と言って動く
 ワン と言って動く
 ガウ と言って動く
 レックス: ガウ と言って動く
 ガウ
 true
 true</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>action()</code> は内部で <code>speak()</code> を呼びます。動的ディスパッチにより実際のオブジェクトの <code>speak()</code> が呼ばれます。</li>
-            <li><code>pd.action()</code> → <code>PoliceDog</code> の <code>speak()</code> = <code>"ガウ"</code> → <code>"ガウ と言って動く"</code>。</li>
-            <li><code>Animal ref = pd</code> でも <code>ref.speak()</code> は <code>PoliceDog</code> の実装 <code>"ガウ"</code> が呼ばれます。</li>
-            <li><code>pd</code> は <code>PoliceDog → Dog → Animal</code> の順に継承するため、<code>instanceof Dog</code> も <code>instanceof PoliceDog</code> も <code>true</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>action()</code> は内部で
+                  <code>speak()</code>
+                  を呼びます。動的ディスパッチにより実際のオブジェクトの
+                  <code>speak()</code> が呼ばれます。
+                </li>
+                <li>
+                  <code>pd.action()</code> → <code>PoliceDog</code> の
+                  <code>speak()</code> = <code>"ガウ"</code> →
+                  <code>"ガウ と言って動く"</code>。
+                </li>
+                <li>
+                  <code>Animal ref = pd</code> でも <code>ref.speak()</code> は
+                  <code>PoliceDog</code> の実装
+                  <code>"ガウ"</code> が呼ばれます。
+                </li>
+                <li>
+                  <code>pd</code> は
+                  <code>PoliceDog → Dog → Animal</code>
+                  の順に継承するため、<code>instanceof Dog</code> も
+                  <code>instanceof PoliceDog</code> も <code>true</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 8-2-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のクラス群を作成してください。</p>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>クラス</th><th>内容</th></tr></thead>
-        <tbody>
-          <tr><td><code>Employee</code></td><td><code>name</code>・<code>baseSalary</code> フィールド。<code>calcSalary()</code> は <code>baseSalary</code> を返す。<code>show()</code> で給与を出力</td></tr>
-          <tr><td><code>Manager</code></td><td><code>Employee</code> を継承。<code>bonus</code> フィールド追加。<code>calcSalary()</code> を <code>baseSalary + bonus</code> にオーバーライド</td></tr>
-          <tr><td><code>PartTimer</code></td><td><code>Employee</code> を継承。<code>hoursWorked</code> フィールド追加。<code>calcSalary()</code> を <code>baseSalary × hoursWorked</code> にオーバーライド</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>[田中] 給与: 300000円
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 8-2-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">次のクラス群を作成してください。</p>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>クラス</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Employee</code></td>
+                <td>
+                  <code>name</code>・<code>baseSalary</code> フィールド。<code
+                    >calcSalary()</code
+                  >
+                  は <code>baseSalary</code> を返す。<code>show()</code>
+                  で給与を出力
+                </td>
+              </tr>
+              <tr>
+                <td><code>Manager</code></td>
+                <td>
+                  <code>Employee</code> を継承。<code>bonus</code>
+                  フィールド追加。<code>calcSalary()</code> を
+                  <code>baseSalary + bonus</code> にオーバーライド
+                </td>
+              </tr>
+              <tr>
+                <td><code>PartTimer</code></td>
+                <td>
+                  <code>Employee</code> を継承。<code>hoursWorked</code>
+                  フィールド追加。<code>calcSalary()</code> を
+                  <code>baseSalary × hoursWorked</code> にオーバーライド
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>[田中] 給与: 300000円
 [佐藤] 給与: 450000円
 [山田] 給与: 112000円
 ---
 合計給与: 862000円</code></pre>
-      </div>
-      <div class="hint" style="margin-top:10px;">
-        <strong>💡 ヒント</strong>：<code>Employee[]</code> に3種を混在させて一括処理します。<br>
-        <code>show()</code> 内の <code>calcSalary()</code> は動的ディスパッチで各クラスの実装が呼ばれます。
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">Employee / Manager / PartTimer + Main</div>
-            <pre><code>class Employee {
+          </div>
+          <div class="hint" style="margin-top: 10px">
+            <strong>💡 ヒント</strong>：<code>Employee[]</code>
+            に3種を混在させて一括処理します。<br />
+            <code>show()</code> 内の
+            <code>calcSalary()</code>
+            は動的ディスパッチで各クラスの実装が呼ばれます。
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">
+                  Employee / Manager / PartTimer + Main
+                </div>
+                <pre><code>class Employee {
     String name;
     int    baseSalary;
 
@@ -542,19 +946,41 @@ public class Main {
         System.out.println("合計給与: " + total + "円");
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>Employee[]</code> に3種を混在させ、<code>e.show()</code> と <code>e.calcSalary()</code> を統一的に呼べます。</li>
-            <li><code>show()</code> 内の <code>calcSalary()</code> は動的ディスパッチで各サブクラスの実装が呼ばれます。</li>
-            <li><code>Manager</code>：<code>300000 + 150000 = 450000</code>。</li>
-            <li><code>PartTimer</code>：<code>1400 × 80 = 112000</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>Employee[]</code> に3種を混在させ、<code>e.show()</code>
+                  と <code>e.calcSalary()</code> を統一的に呼べます。
+                </li>
+                <li>
+                  <code>show()</code> 内の
+                  <code>calcSalary()</code>
+                  は動的ディスパッチで各サブクラスの実装が呼ばれます。
+                </li>
+                <li>
+                  <code>Manager</code>：<code>300000 + 150000 = 450000</code>。
+                </li>
+                <li>
+                  <code>PartTimer</code>：<code>1400 × 80 = 112000</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../8-1/8-1_encapsulation.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../8-3/8-3_abstract_classes.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

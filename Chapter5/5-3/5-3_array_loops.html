@@ -1,175 +1,486 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>5-3. 配列の繰り返し処理</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>5-3. 配列の繰り返し処理</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    /* Header */
-    .page-header {
-      background: linear-gradient(135deg, #1a365d, #2b6cb0);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      /* Header */
+      .page-header {
+        background: linear-gradient(135deg, #1a365d, #2b6cb0);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    /* Section title */
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #1a365d;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      /* Section title */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a365d;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #bee3f8;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    /* Code */
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      /* Code */
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+        letter-spacing: 0.05em;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    /* Callout / hint */
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      /* Callout / hint */
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    /* Pattern cards */
-    .pattern-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0; }
-    .pattern-card {
-      background: #fff; border-radius: 10px; padding: 14px 16px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.07); text-align: center;
-    }
-    .pattern-card .pc-icon { font-size: 1.8rem; margin-bottom: 6px; }
-    .pattern-card .pc-name { font-weight: 700; font-size: 0.9rem; color: #1a365d; margin-bottom: 4px; }
-    .pattern-card .pc-desc { font-size: 0.78rem; color: #718096; }
+      /* Pattern cards */
+      .pattern-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .pattern-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 14px 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+        text-align: center;
+      }
+      .pattern-card .pc-icon {
+        font-size: 1.8rem;
+        margin-bottom: 6px;
+      }
+      .pattern-card .pc-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #1a365d;
+        margin-bottom: 4px;
+      }
+      .pattern-card .pc-desc {
+        font-size: 0.78rem;
+        color: #718096;
+      }
 
-    /* Search trace */
-    .search-trace {
-      background: #fff; border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 18px 20px; margin: 14px 0; overflow-x: auto;
-    }
-    .st-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 10px; }
-    .st-row { display: flex; gap: 4px; margin-bottom: 4px; }
-    .st-cell {
-      min-width: 44px; height: 38px; border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 0.88rem; flex-shrink: 0;
-    }
-    .st-normal  { background: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8; }
-    .st-check   { background: #fefcbf; color: #744210; border: 1px solid #f6e05e; }
-    .st-found   { background: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
-    .st-idx     { background: #edf2f7; color: #718096; font-size: 0.72rem; border: none; }
-    .st-legend  { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
-    .st-leg-item { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #718096; }
-    .st-leg-box { width: 14px; height: 14px; border-radius: 3px; }
+      /* Search trace */
+      .search-trace {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 18px 20px;
+        margin: 14px 0;
+        overflow-x: auto;
+      }
+      .st-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 10px;
+      }
+      .st-row {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 4px;
+      }
+      .st-cell {
+        min-width: 44px;
+        height: 38px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.88rem;
+        flex-shrink: 0;
+      }
+      .st-normal {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        border: 1px solid #bee3f8;
+      }
+      .st-check {
+        background: #fefcbf;
+        color: #744210;
+        border: 1px solid #f6e05e;
+      }
+      .st-found {
+        background: #c6f6d5;
+        color: #22543d;
+        border: 1px solid #9ae6b4;
+      }
+      .st-idx {
+        background: #edf2f7;
+        color: #718096;
+        font-size: 0.72rem;
+        border: none;
+      }
+      .st-legend {
+        display: flex;
+        gap: 12px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      .st-leg-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.75rem;
+        color: #718096;
+      }
+      .st-leg-box {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+      }
 
-    /* Copy comparison */
-    .copy-compare {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0;
-    }
-    .copy-card {
-      background: #fff; border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    }
-    .copy-card .cc-header { padding: 9px 14px; font-weight: 700; font-size: 0.85rem; }
-    .cc-ref   { background: #fed7d7; color: #742a2a; }
-    .cc-copy  { background: #c6f6d5; color: #22543d; }
+      /* Copy comparison */
+      .copy-compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin: 14px 0;
+      }
+      .copy-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      }
+      .copy-card .cc-header {
+        padding: 9px 14px;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+      .cc-ref {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+      .cc-copy {
+        background: #c6f6d5;
+        color: #22543d;
+      }
 
-    /* Tables */
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #2b6cb0; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #ebf8ff; }
+      /* Tables */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2b6cb0;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #ebf8ff;
+      }
 
-    /* Output box */
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      /* Output box */
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    /* Problem cards */
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      /* Problem cards */
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #ebf8ff;
+        border-bottom: 1px solid #bee3f8;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #1a365d;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    /* Answer toggle */
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #2b6cb0; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      /* Answer toggle */
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2b6cb0;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #2c5282;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2b6cb0;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <!-- Header -->
-  <div class="page-header">
-    <div class="chapter-label">第5章 ▶ 配列</div>
-    <h1>5-3. 配列の繰り返し処理</h1>
-    <div class="meta">難易度：⭐⭐⭐☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <!-- ===== 解説 ===== -->
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2b6cb0;
+        border-radius: 7px;
+      }
 
-  <h3>配列とループの3つの操作パターン</h3>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <div class="pattern-grid">
-    <div class="pattern-card">
-      <div class="pc-icon">🔍</div>
-      <div class="pc-name">走査（トラバース）</div>
-      <div class="pc-desc">全要素を順番に参照・出力・集計する</div>
-    </div>
-    <div class="pattern-card">
-      <div class="pc-icon">🎯</div>
-      <div class="pc-name">検索</div>
-      <div class="pc-desc">特定の値や条件に合う要素を見つける</div>
-    </div>
-    <div class="pattern-card">
-      <div class="pc-icon">🔄</div>
-      <div class="pc-name">変換</div>
-      <div class="pc-desc">各要素を加工して新しい配列を作る</div>
-    </div>
-  </div>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">第5章 ▶ 配列</div>
 
-  <!-- パターン1：走査 -->
-  <h3>パターン1：走査（全要素の出力・集計）</h3>
-  <div class="code-wrap">
-    <div class="code-label">インデックス付き出力と合計</div>
-    <pre><code>int[] nums = {3, 7, 2, 9, 1, 5};
+        <h1>5-3. 配列の繰り返し処理</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐☆☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../5-2/5-2_multidimensional_arrays.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter6/6-1/6-1_method_definition.html">＞</a>
+        </div>
+      </div>
+
+      <!-- ===== 解説 ===== -->
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>配列とループの3つの操作パターン</h3>
+
+      <div class="pattern-grid">
+        <div class="pattern-card">
+          <div class="pc-icon">🔍</div>
+          <div class="pc-name">走査（トラバース）</div>
+          <div class="pc-desc">全要素を順番に参照・出力・集計する</div>
+        </div>
+        <div class="pattern-card">
+          <div class="pc-icon">🎯</div>
+          <div class="pc-name">検索</div>
+          <div class="pc-desc">特定の値や条件に合う要素を見つける</div>
+        </div>
+        <div class="pattern-card">
+          <div class="pc-icon">🔄</div>
+          <div class="pc-name">変換</div>
+          <div class="pc-desc">各要素を加工して新しい配列を作る</div>
+        </div>
+      </div>
+
+      <!-- パターン1：走査 -->
+      <h3>パターン1：走査（全要素の出力・集計）</h3>
+      <div class="code-wrap">
+        <div class="code-label">インデックス付き出力と合計</div>
+        <pre><code>int[] nums = {3, 7, 2, 9, 1, 5};
 
 // インデックス付きで出力
 for (int i = 0; i &lt; nums.length; i++) {
@@ -180,40 +491,62 @@ for (int i = 0; i &lt; nums.length; i++) {
 int sum = 0;
 for (int n : nums) { sum += n; }
 System.out.println("合計: " + sum);  // 合計: 27</code></pre>
-  </div>
+      </div>
 
-  <!-- パターン2：検索 -->
-  <h3>パターン2：検索（線形探索）</h3>
-  <p>配列を先頭から順番に調べて目的の値を探します。</p>
+      <!-- パターン2：検索 -->
+      <h3>パターン2：検索（線形探索）</h3>
+      <p>配列を先頭から順番に調べて目的の値を探します。</p>
 
-  <div class="search-trace">
-    <div class="st-title">▶ {3, 7, 2, 9, 1, 5} から 9 を探す</div>
-    <div class="st-row">
-      <div class="st-cell st-check">3</div>
-      <div class="st-cell st-check">7</div>
-      <div class="st-cell st-check">2</div>
-      <div class="st-cell st-found">9 ✓</div>
-      <div class="st-cell st-normal" style="opacity:0.4;">1</div>
-      <div class="st-cell st-normal" style="opacity:0.4;">5</div>
-    </div>
-    <div class="st-row">
-      <div class="st-cell st-idx">[0]</div>
-      <div class="st-cell st-idx">[1]</div>
-      <div class="st-cell st-idx">[2]</div>
-      <div class="st-cell st-idx">[3]✓</div>
-      <div class="st-cell st-idx">[4]</div>
-      <div class="st-cell st-idx">[5]</div>
-    </div>
-    <div class="st-legend">
-      <div class="st-leg-item"><div class="st-leg-box" style="background:#fefcbf;border:1px solid #f6e05e;"></div>チェック済み</div>
-      <div class="st-leg-item"><div class="st-leg-box" style="background:#c6f6d5;border:1px solid #9ae6b4;"></div>発見！</div>
-      <div class="st-leg-item"><div class="st-leg-box" style="background:#ebf8ff;border:1px solid #bee3f8;opacity:0.4;"></div>未チェック（breakで省略）</div>
-    </div>
-  </div>
+      <div class="search-trace">
+        <div class="st-title">▶ {3, 7, 2, 9, 1, 5} から 9 を探す</div>
+        <div class="st-row">
+          <div class="st-cell st-check">3</div>
+          <div class="st-cell st-check">7</div>
+          <div class="st-cell st-check">2</div>
+          <div class="st-cell st-found">9 ✓</div>
+          <div class="st-cell st-normal" style="opacity: 0.4">1</div>
+          <div class="st-cell st-normal" style="opacity: 0.4">5</div>
+        </div>
+        <div class="st-row">
+          <div class="st-cell st-idx">[0]</div>
+          <div class="st-cell st-idx">[1]</div>
+          <div class="st-cell st-idx">[2]</div>
+          <div class="st-cell st-idx">[3]✓</div>
+          <div class="st-cell st-idx">[4]</div>
+          <div class="st-cell st-idx">[5]</div>
+        </div>
+        <div class="st-legend">
+          <div class="st-leg-item">
+            <div
+              class="st-leg-box"
+              style="background: #fefcbf; border: 1px solid #f6e05e"
+            ></div>
+            チェック済み
+          </div>
+          <div class="st-leg-item">
+            <div
+              class="st-leg-box"
+              style="background: #c6f6d5; border: 1px solid #9ae6b4"
+            ></div>
+            発見！
+          </div>
+          <div class="st-leg-item">
+            <div
+              class="st-leg-box"
+              style="
+                background: #ebf8ff;
+                border: 1px solid #bee3f8;
+                opacity: 0.4;
+              "
+            ></div>
+            未チェック（breakで省略）
+          </div>
+        </div>
+      </div>
 
-  <div class="code-wrap">
-    <div class="code-label">線形探索の実装</div>
-    <pre><code>int[] nums = {3, 7, 2, 9, 1, 5};
+      <div class="code-wrap">
+        <div class="code-label">線形探索の実装</div>
+        <pre><code>int[] nums = {3, 7, 2, 9, 1, 5};
 int target = 9;
 int foundIndex = -1;  // 見つからない場合のデフォルト値
 
@@ -230,13 +563,13 @@ if (foundIndex != -1) {
     System.out.println(target + " は見つかりませんでした");
 }
 // → 9 は index 3 にあります</code></pre>
-  </div>
+      </div>
 
-  <!-- パターン3：変換 -->
-  <h3>パターン3：変換（要素を加工して新しい配列を作る）</h3>
-  <div class="code-wrap">
-    <div class="code-label">全要素を2倍にした配列を作る</div>
-    <pre><code>int[] original = {1, 2, 3, 4, 5};
+      <!-- パターン3：変換 -->
+      <h3>パターン3：変換（要素を加工して新しい配列を作る）</h3>
+      <div class="code-wrap">
+        <div class="code-label">全要素を2倍にした配列を作る</div>
+        <pre><code>int[] original = {1, 2, 3, 4, 5};
 int[] doubled  = new int[original.length];
 
 for (int i = 0; i &lt; original.length; i++) {
@@ -245,53 +578,72 @@ for (int i = 0; i &lt; original.length; i++) {
 
 for (int n : doubled) { System.out.print(n + " "); }
 // → 2 4 6 8 10</code></pre>
-  </div>
+      </div>
 
-  <!-- 配列のコピー -->
-  <h3>配列のコピー：参照コピー vs 独立コピー</h3>
+      <!-- 配列のコピー -->
+      <h3>配列のコピー：参照コピー vs 独立コピー</h3>
 
-  <div class="copy-compare">
-    <div class="copy-card">
-      <div class="cc-header cc-ref">❌ 参照コピー（b = a）</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>int[] a = {1, 2, 3};
+      <div class="copy-compare">
+        <div class="copy-card">
+          <div class="cc-header cc-ref">❌ 参照コピー（b = a）</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre style="font-size: 0.82rem"><code>int[] a = {1, 2, 3};
 int[] b = a;   // 同じ配列を指す
 b[0] = 99;
 // a[0] も 99 になる！</code></pre>
-      </div>
-    </div>
-    <div class="copy-card">
-      <div class="cc-header cc-copy">✅ 独立コピー（Arrays.copyOf）</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>int[] a = {1, 2, 3};
+          </div>
+        </div>
+        <div class="copy-card">
+          <div class="cc-header cc-copy">✅ 独立コピー（Arrays.copyOf）</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre style="font-size: 0.82rem"><code>int[] a = {1, 2, 3};
 int[] c = Arrays.copyOf(a, a.length);
 c[0] = 99;
 // a[0] は 1 のまま！</code></pre>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="callout">
-    <strong>⚠️ 配列は参照型</strong><br>
-    <code>int[] b = a;</code> は「コピー」ではなく「同じ配列への参照」です。<br>
-    独立したコピーには <code>Arrays.copyOf()</code> または <code>System.arraycopy()</code> を使いましょう。
-  </div>
+      <div class="callout">
+        <strong>⚠️ 配列は参照型</strong><br />
+        <code>int[] b = a;</code>
+        は「コピー」ではなく「同じ配列への参照」です。<br />
+        独立したコピーには <code>Arrays.copyOf()</code> または
+        <code>System.arraycopy()</code> を使いましょう。
+      </div>
 
-  <!-- Arrays メソッド -->
-  <h3>Arrays クラスのよく使うメソッド</h3>
-  <table class="data-table">
-    <thead><tr><th>メソッド</th><th>説明</th></tr></thead>
-    <tbody>
-      <tr><td><code>Arrays.sort(arr)</code></td><td>配列を昇順にソート</td></tr>
-      <tr><td><code>Arrays.toString(arr)</code></td><td>配列を <code>[1, 2, 3]</code> 形式の文字列に変換</td></tr>
-      <tr><td><code>Arrays.copyOf(arr, len)</code></td><td>配列を独立してコピー</td></tr>
-      <tr><td><code>Arrays.copyOfRange(arr, from, to)</code></td><td>配列の一部をコピー</td></tr>
-    </tbody>
-  </table>
+      <!-- Arrays メソッド -->
+      <h3>Arrays クラスのよく使うメソッド</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>メソッド</th>
+            <th>説明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Arrays.sort(arr)</code></td>
+            <td>配列を昇順にソート</td>
+          </tr>
+          <tr>
+            <td><code>Arrays.toString(arr)</code></td>
+            <td>配列を <code>[1, 2, 3]</code> 形式の文字列に変換</td>
+          </tr>
+          <tr>
+            <td><code>Arrays.copyOf(arr, len)</code></td>
+            <td>配列を独立してコピー</td>
+          </tr>
+          <tr>
+            <td><code>Arrays.copyOfRange(arr, from, to)</code></td>
+            <td>配列の一部をコピー</td>
+          </tr>
+        </tbody>
+      </table>
 
-  <div class="code-wrap">
-    <div class="code-label">Arrays の使用例</div>
-    <pre><code>import java.util.Arrays;
+      <div class="code-wrap">
+        <div class="code-label">Arrays の使用例</div>
+        <pre><code>import java.util.Arrays;
 
 int[] nums = {3, 1, 4, 1, 5, 9, 2, 6};
 
@@ -302,13 +654,13 @@ System.out.println(Arrays.toString(nums));
 int[] part = Arrays.copyOfRange(nums, 2, 5);
 System.out.println(Arrays.toString(part));
 // → [2, 3, 4]</code></pre>
-  </div>
+      </div>
 
-  <!-- コード例 -->
-  <h3>コード例：逆順出力と反転</h3>
-  <div class="code-wrap">
-    <div class="code-label">ArrayLoop.java</div>
-    <pre><code>public class ArrayLoop {
+      <!-- コード例 -->
+      <h3>コード例：逆順出力と反転</h3>
+      <div class="code-wrap">
+        <div class="code-label">ArrayLoop.java</div>
+        <pre><code>public class ArrayLoop {
     public static void main(String[] args) {
         int[] nums = {10, 20, 30, 40, 50};
 
@@ -331,30 +683,32 @@ System.out.println(Arrays.toString(part));
         System.out.println();
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>逆順: 50 40 30 20 10
-反転後: 50 40 30 20 10</code></pre>
-  </div>
-
-  <!-- ===== 問題 ===== -->
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 5-3-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>import java.util.Arrays;
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>逆順: 50 40 30 20 10
+反転後: 50 40 30 20 10</code></pre>
+      </div>
+
+      <!-- ===== 問題 ===== -->
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 5-3-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>import java.util.Arrays;
 
 public class Q1 {
     public static void main(String[] args) {
@@ -379,40 +733,49 @@ public class Q1 {
         System.out.println("ソート後: " + Arrays.toString(nums));
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>最大値: 9
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>最大値: 9
 2番目の最大値: 8
 ソート後: [1, 2, 3, 4, 5, 6, 7, 8, 9]</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li>最大値は <code>9</code>、2番目の最大値は <code>8</code>。</li>
-            <li><code>Arrays.sort()</code> で昇順ソート、<code>Arrays.toString()</code> で <code>[1, 2, 3, 4, 5, 6, 7, 8, 9]</code> と表示。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  最大値は <code>9</code>、2番目の最大値は <code>8</code>。
+                </li>
+                <li>
+                  <code>Arrays.sort()</code> で昇順ソート、<code
+                    >Arrays.toString()</code
+                  >
+                  で <code>[1, 2, 3, 4, 5, 6, 7, 8, 9]</code> と表示。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 5-3-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>public class Q2 {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 5-3-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>public class Q2 {
     public static void main(String[] args) {
         int[] a = {1, 2, 3};
         int[] b = a;          // 参照コピー
@@ -428,66 +791,104 @@ public class Q1 {
         System.out.println(c[1]);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>10
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>10
 2
 10
 1
 20</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>b = a</code> は参照コピーなので <code>b[0] = 10</code> にすると <code>a[0]</code> も <code>10</code> に変わります。</li>
-            <li><code>c = Arrays.copyOf(...)</code> は独立したコピーなので <code>c[1] = 20</code> にしても <code>a[1]</code> は <code>2</code> のまま。</li>
-            <li><code>c[0]</code> はコピー時点の <code>a[0]</code> の値 <code>1</code>（<code>b[0]</code> の変更前にコピーされているため <code>1</code>）。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>b = a</code> は参照コピーなので
+                  <code>b[0] = 10</code> にすると <code>a[0]</code> も
+                  <code>10</code> に変わります。
+                </li>
+                <li>
+                  <code>c = Arrays.copyOf(...)</code> は独立したコピーなので
+                  <code>c[1] = 20</code> にしても <code>a[1]</code> は
+                  <code>2</code> のまま。
+                </li>
+                <li>
+                  <code>c[0]</code> はコピー時点の <code>a[0]</code> の値
+                  <code>1</code>（<code>b[0]</code>
+                  の変更前にコピーされているため <code>1</code>）。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 5-3-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次の条件を満たす <code>ArrayProcessor</code> クラスを作成してください。</p>
-      <ul>
-        <li><code>int</code> 型配列 <code>nums</code> に <code>{4, 7, 2, 9, 1, 5, 8, 3, 6, 10}</code> を代入する</li>
-        <li>下表の4つの処理をすべて行い出力する</li>
-      </ul>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>処理</th><th>内容</th></tr></thead>
-        <tbody>
-          <tr><td>偶数のみ抽出</td><td>偶数を順番に出力（スペース区切り）</td></tr>
-          <tr><td>線形探索</td><td>値 <code>7</code> が何番目（0始まり）にあるかを出力</td></tr>
-          <tr><td>2倍配列</td><td>全要素を2倍した新しい配列を作り <code>Arrays.toString</code> で出力</td></tr>
-          <tr><td>逆順出力</td><td>元の配列を逆順に出力</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>偶数: 4 2 8 6 10 
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 5-3-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たす
+            <code>ArrayProcessor</code> クラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              <code>int</code> 型配列 <code>nums</code> に
+              <code>{4, 7, 2, 9, 1, 5, 8, 3, 6, 10}</code> を代入する
+            </li>
+            <li>下表の4つの処理をすべて行い出力する</li>
+          </ul>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>処理</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>偶数のみ抽出</td>
+                <td>偶数を順番に出力（スペース区切り）</td>
+              </tr>
+              <tr>
+                <td>線形探索</td>
+                <td>値 <code>7</code> が何番目（0始まり）にあるかを出力</td>
+              </tr>
+              <tr>
+                <td>2倍配列</td>
+                <td>
+                  全要素を2倍した新しい配列を作り
+                  <code>Arrays.toString</code> で出力
+                </td>
+              </tr>
+              <tr>
+                <td>逆順出力</td>
+                <td>元の配列を逆順に出力</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>偶数: 4 2 8 6 10 
 7 のインデックス: 1
 2倍: [8, 14, 4, 18, 2, 10, 16, 6, 12, 20]
 逆順: 10 6 3 8 5 1 9 2 7 4 </code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">ArrayProcessor.java</div>
-            <pre><code>import java.util.Arrays;
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">ArrayProcessor.java</div>
+                <pre><code>import java.util.Arrays;
 
 public class ArrayProcessor {
     public static void main(String[] args) {
@@ -523,19 +924,42 @@ public class ArrayProcessor {
         System.out.println();
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li>偶数判定は <code>n % 2 == 0</code> で確認します。</li>
-            <li>線形探索は先頭から順に <code>nums[i] == target</code> をチェックし、見つかったら <code>break</code>。</li>
-            <li>2倍配列は新しい配列 <code>doubled</code> を作り、<code>nums[i] * 2</code> を代入します。</li>
-            <li>逆順は <code>i = nums.length - 1</code> から <code>i >= 0</code> の間、<code>i--</code> で走査します。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>偶数判定は <code>n % 2 == 0</code> で確認します。</li>
+                <li>
+                  線形探索は先頭から順に
+                  <code>nums[i] == target</code> をチェックし、見つかったら
+                  <code>break</code>。
+                </li>
+                <li>
+                  2倍配列は新しい配列 <code>doubled</code> を作り、<code
+                    >nums[i] * 2</code
+                  >
+                  を代入します。
+                </li>
+                <li>
+                  逆順は <code>i = nums.length - 1</code> から
+                  <code>i >= 0</code> の間、<code>i--</code> で走査します。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../5-2/5-2_multidimensional_arrays.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter6/6-1/6-1_method_definition.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

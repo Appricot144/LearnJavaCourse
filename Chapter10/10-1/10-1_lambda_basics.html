@@ -1,235 +1,551 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>10-1. ラムダ式の基本構文</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>10-1. ラムダ式の基本構文</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    .page-header {
-      background: linear-gradient(135deg, #7b341e, #c05621);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      .page-header {
+        background: linear-gradient(135deg, #7b341e, #c05621);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #7b341e;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #fbd38d;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #c05621; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #7b341e;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #fbd38d;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #c05621;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #fffaf0; color: #c05621; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #fffaf0;
+        color: #c05621;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #276749; }
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
 
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #c05621; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; }
-    .data-table tbody tr:hover { background: #fffaf0; }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #c05621;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #fffaf0;
+      }
 
-    /* Lambda evolution diagram */
-    .evolution {
-      background: #fff; border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 20px 24px; margin: 14px 0;
-    }
-    .ev-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 14px; }
-    .ev-step {
-      display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px;
-    }
-    .ev-num {
-      background: #c05621; color: white; width: 26px; height: 26px;
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 0.78rem; font-weight: 700; flex-shrink: 0; margin-top: 2px;
-    }
-    .ev-content { flex: 1; }
-    .ev-label { font-size: 0.75rem; font-weight: 700; color: #c05621; margin-bottom: 4px; }
+      /* Lambda evolution diagram */
+      .evolution {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+      }
+      .ev-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 14px;
+      }
+      .ev-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .ev-num {
+        background: #c05621;
+        color: white;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .ev-content {
+        flex: 1;
+      }
+      .ev-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #c05621;
+        margin-bottom: 4px;
+      }
 
-    /* Syntax parts */
-    .lambda-syntax {
-      background: #fff; border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 20px 24px; margin: 14px 0;
-    }
-    .ls-row {
-      display: flex; align-items: stretch; gap: 4px;
-      font-family: monospace; font-size: 0.95rem; font-weight: 700;
-      justify-content: center; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;
-    }
-    .ls-part { padding: 10px 16px; border-radius: 8px; text-align: center; }
-    .ls-param  { background: #ebf8ff; color: #2b6cb0; }
-    .ls-arrow  { background: #c05621; color: white; }
-    .ls-body   { background: #c6f6d5; color: #22543d; }
-    .ls-labels { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-    .ls-label  { font-size: 0.72rem; color: #718096; text-align: center; padding: 0 16px; }
+      /* Syntax parts */
+      .lambda-syntax {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+      }
+      .ls-row {
+        display: flex;
+        align-items: stretch;
+        gap: 4px;
+        font-family: monospace;
+        font-size: 0.95rem;
+        font-weight: 700;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .ls-part {
+        padding: 10px 16px;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .ls-param {
+        background: #ebf8ff;
+        color: #2b6cb0;
+      }
+      .ls-arrow {
+        background: #c05621;
+        color: white;
+      }
+      .ls-body {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .ls-labels {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .ls-label {
+        font-size: 0.72rem;
+        color: #718096;
+        text-align: center;
+        padding: 0 16px;
+      }
 
-    /* Shorthand cards */
-    .shorthand-cards { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
-    .sh-card { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #c05621; }
-    .sh-card .sh-label { background: #fffaf0; padding: 6px 14px; font-size: 0.78rem; font-weight: 700; color: #c05621; }
+      /* Shorthand cards */
+      .shorthand-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 14px 0;
+      }
+      .sh-card {
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        border-left: 4px solid #c05621;
+      }
+      .sh-card .sh-label {
+        background: #fffaf0;
+        padding: 6px 14px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #c05621;
+      }
 
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #fffaf0; border-bottom: 1px solid #fbd38d; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #7b341e; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #fffaf0;
+        border-bottom: 1px solid #fbd38d;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #7b341e;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #c05621; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #7b341e; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #c05621; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #c05621;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #7b341e;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #c05621;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <div class="page-header">
-    <div class="chapter-label">第10章 ▶ ラムダ式</div>
-    <h1>10-1. ラムダ式の基本構文</h1>
-    <div class="meta">難易度：⭐⭐⭐⭐⭐　|　問題数：3問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #c05621;
+        border-radius: 7px;
+      }
 
-  <h3>ラムダ式とは？</h3>
-  <p><strong>メソッドを1行で書ける匿名関数</strong>です（Java 8以降）。<br>
-  関数型インターフェース（抽象メソッドが1つだけのインターフェース）を実装する際に使います。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <!-- 構文図 -->
-  <h3>ラムダ式の構文</h3>
-  <div class="lambda-syntax">
-    <div class="ls-row">
-      <div class="ls-part ls-param">(引数)</div>
-      <div class="ls-part ls-arrow">-&gt;</div>
-      <div class="ls-part ls-body">{ 処理 }</div>
-    </div>
-    <div class="ls-labels">
-      <span class="ls-label" style="min-width:100px;">引数リスト</span>
-      <span class="ls-label" style="min-width:60px;">アロー演算子</span>
-      <span class="ls-label" style="min-width:100px;">処理内容</span>
-    </div>
-  </div>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第10章 ▶ ラムダ式</div>
 
-  <!-- 匿名クラスからの進化 -->
-  <h3>匿名クラス → ラムダ式への進化</h3>
+        <h1>10-1. ラムダ式の基本構文</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐⭐　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter9/9-3/9-3_enum.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../10-2/10-2_functional_interfaces.html">＞</a>
+        </div>
+      </div>
 
-  <div class="evolution">
-    <div class="ev-title">▶ 同じ処理を3通りの書き方で表す</div>
-    <div class="ev-step">
-      <div class="ev-num">1</div>
-      <div class="ev-content">
-        <div class="ev-label">通常のクラス実装</div>
-        <div class="code-wrap" style="margin:0;">
-          <pre style="font-size:0.82rem;"><code>class MyRunnable implements Runnable {
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>ラムダ式とは？</h3>
+      <p>
+        <strong>メソッドを1行で書ける匿名関数</strong>です（Java 8以降）。<br />
+        関数型インターフェース（抽象メソッドが1つだけのインターフェース）を実装する際に使います。
+      </p>
+
+      <!-- 構文図 -->
+      <h3>ラムダ式の構文</h3>
+      <div class="lambda-syntax">
+        <div class="ls-row">
+          <div class="ls-part ls-param">(引数)</div>
+          <div class="ls-part ls-arrow">-&gt;</div>
+          <div class="ls-part ls-body">{ 処理 }</div>
+        </div>
+        <div class="ls-labels">
+          <span class="ls-label" style="min-width: 100px">引数リスト</span>
+          <span class="ls-label" style="min-width: 60px">アロー演算子</span>
+          <span class="ls-label" style="min-width: 100px">処理内容</span>
+        </div>
+      </div>
+
+      <!-- 匿名クラスからの進化 -->
+      <h3>匿名クラス → ラムダ式への進化</h3>
+
+      <div class="evolution">
+        <div class="ev-title">▶ 同じ処理を3通りの書き方で表す</div>
+        <div class="ev-step">
+          <div class="ev-num">1</div>
+          <div class="ev-content">
+            <div class="ev-label">通常のクラス実装</div>
+            <div class="code-wrap" style="margin: 0">
+              <pre
+                style="font-size: 0.82rem"
+              ><code>class MyRunnable implements Runnable {
     public void run() { System.out.println("Hello"); }
 }
 new Thread(new MyRunnable()).start();</code></pre>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="ev-step">
-      <div class="ev-num">2</div>
-      <div class="ev-content">
-        <div class="ev-label">匿名クラス</div>
-        <div class="code-wrap" style="margin:0;">
-          <pre style="font-size:0.82rem;"><code>new Thread(new Runnable() {
+        <div class="ev-step">
+          <div class="ev-num">2</div>
+          <div class="ev-content">
+            <div class="ev-label">匿名クラス</div>
+            <div class="code-wrap" style="margin: 0">
+              <pre style="font-size: 0.82rem"><code>new Thread(new Runnable() {
     public void run() { System.out.println("Hello"); }
 }).start();</code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="ev-step" style="margin-bottom: 0">
+          <div class="ev-num">3</div>
+          <div class="ev-content">
+            <div class="ev-label">ラムダ式（最も簡潔）</div>
+            <div class="code-wrap" style="margin: 0">
+              <pre
+                style="font-size: 0.82rem"
+              ><code>new Thread(() -> System.out.println("Hello")).start();</code></pre>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="ev-step" style="margin-bottom:0;">
-      <div class="ev-num">3</div>
-      <div class="ev-content">
-        <div class="ev-label">ラムダ式（最も簡潔）</div>
-        <div class="code-wrap" style="margin:0;">
-          <pre style="font-size:0.82rem;"><code>new Thread(() -> System.out.println("Hello")).start();</code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- 省略ルール -->
-  <h3>ラムダ式の省略ルール</h3>
-  <div class="shorthand-cards">
-    <div class="sh-card">
-      <div class="sh-label">省略1：引数の型は推論される（省略可）</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>(int x, int y) -> x + y   // 型あり
+      <!-- 省略ルール -->
+      <h3>ラムダ式の省略ルール</h3>
+      <div class="shorthand-cards">
+        <div class="sh-card">
+          <div class="sh-label">省略1：引数の型は推論される（省略可）</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="font-size: 0.82rem"
+            ><code>(int x, int y) -> x + y   // 型あり
 (x, y)         -> x + y   // 型省略（推論）← こちらが一般的</code></pre>
-      </div>
-    </div>
-    <div class="sh-card">
-      <div class="sh-label">省略2：引数が1つなら括弧省略可</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>(x) -> x * 2   // 括弧あり
+          </div>
+        </div>
+        <div class="sh-card">
+          <div class="sh-label">省略2：引数が1つなら括弧省略可</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre style="font-size: 0.82rem"><code>(x) -> x * 2   // 括弧あり
  x  -> x * 2   // 括弧省略 ← 引数が1つのとき</code></pre>
-      </div>
-    </div>
-    <div class="sh-card">
-      <div class="sh-label">省略3：処理が1行なら {} と return 省略可</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>x -> { return x * 2; }   // ブロック形式
+          </div>
+        </div>
+        <div class="sh-card">
+          <div class="sh-label">省略3：処理が1行なら {} と return 省略可</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="font-size: 0.82rem"
+            ><code>x -> { return x * 2; }   // ブロック形式
 x ->          x * 2      // 式形式（return 不要）← こちらが一般的</code></pre>
+          </div>
+        </div>
+        <div class="sh-card">
+          <div class="sh-label">省略4：引数なしは () のみ</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="font-size: 0.82rem"
+            ><code>() -> System.out.println("Hello")</code></pre>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="sh-card">
-      <div class="sh-label">省略4：引数なしは () のみ</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>() -> System.out.println("Hello")</code></pre>
-      </div>
-    </div>
-  </div>
 
-  <!-- 関数型インターフェース -->
-  <h3>関数型インターフェースとは？</h3>
-  <p>ラムダ式は<strong>抽象メソッドが1つだけ</strong>のインターフェース（関数型インターフェース）にのみ使えます。</p>
+      <!-- 関数型インターフェース -->
+      <h3>関数型インターフェースとは？</h3>
+      <p>
+        ラムダ式は<strong>抽象メソッドが1つだけ</strong>のインターフェース（関数型インターフェース）にのみ使えます。
+      </p>
 
-  <div class="code-wrap">
-    <div class="code-label">独自の関数型インターフェースを定義する</div>
-    <pre><code>@FunctionalInterface  // 関数型インターフェースであることを明示（省略可）
+      <div class="code-wrap">
+        <div class="code-label">独自の関数型インターフェースを定義する</div>
+        <pre><code>@FunctionalInterface  // 関数型インターフェースであることを明示（省略可）
 interface Calculator {
     int calc(int a, int b);
 }
@@ -242,13 +558,13 @@ Calculator max = (a, b) -> a > b ? a : b;
 System.out.println(add.calc(3, 4));  // 7
 System.out.println(mul.calc(3, 4));  // 12
 System.out.println(max.calc(3, 4));  // 4</code></pre>
-  </div>
+      </div>
 
-  <!-- Comparator との組み合わせ -->
-  <h3>Comparator との組み合わせ（ソートへの応用）</h3>
-  <div class="code-wrap">
-    <div class="code-label">ラムダ式でソート条件を指定する</div>
-    <pre><code>import java.util.Arrays;
+      <!-- Comparator との組み合わせ -->
+      <h3>Comparator との組み合わせ（ソートへの応用）</h3>
+      <div class="code-wrap">
+        <div class="code-label">ラムダ式でソート条件を指定する</div>
+        <pre><code>import java.util.Arrays;
 import java.util.Comparator;
 
 String[] fruits = {"banana", "apple", "cherry", "date"};
@@ -262,13 +578,13 @@ System.out.println(Arrays.toString(fruits));
 Arrays.sort(fruits, (a, b) -> b.compareTo(a));
 System.out.println(Arrays.toString(fruits));
 // → [date, cherry, banana, apple]</code></pre>
-  </div>
+      </div>
 
-  <!-- コード例 -->
-  <h3>コード例：ラムダ式の様々な書き方</h3>
-  <div class="code-wrap">
-    <div class="code-label">LambdaExample.java</div>
-    <pre><code>@FunctionalInterface
+      <!-- コード例 -->
+      <h3>コード例：ラムダ式の様々な書き方</h3>
+      <div class="code-wrap">
+        <div class="code-label">LambdaExample.java</div>
+        <pre><code>@FunctionalInterface
 interface StringProcessor {
     String process(String s);
 }
@@ -296,31 +612,33 @@ public class LambdaExample {
         System.out.println(repeat.process(word));   // hellohellohello
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>HELLO
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>HELLO
 olleh
 hello!
 hellohellohello</code></pre>
-  </div>
-
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 10-1-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>import java.util.Arrays;
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 10-1-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>import java.util.Arrays;
 
 public class Q1 {
 
@@ -354,45 +672,60 @@ public class Q1 {
         return op.apply(x, y);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>13
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>13
 7
 30
 10
 9
 20
 [1, 2, 3, 5, 8, 9]</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>add.apply(10,3)</code> = <code>13</code>、<code>sub</code> = <code>7</code>、<code>mul</code> = <code>30</code>、<code>max</code> = <code>10</code>。</li>
-            <li><code>compute(5,4,add)</code> = <code>9</code>、<code>compute(5,4,mul)</code> = <code>20</code>（ラムダを引数として渡せる）。</li>
-            <li><code>Arrays.sort(int[])</code> は昇順ソート。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>add.apply(10,3)</code> = <code>13</code>、<code
+                    >sub</code
+                  >
+                  = <code>7</code>、<code>mul</code> = <code>30</code>、<code
+                    >max</code
+                  >
+                  = <code>10</code>。
+                </li>
+                <li>
+                  <code>compute(5,4,add)</code> = <code>9</code>、<code
+                    >compute(5,4,mul)</code
+                  >
+                  = <code>20</code>（ラムダを引数として渡せる）。
+                </li>
+                <li><code>Arrays.sort(int[])</code> は昇順ソート。</li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 10-1-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>import java.util.Arrays;
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 10-1-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>import java.util.Arrays;
 
 public class Q2 {
 
@@ -428,61 +761,90 @@ public class Q2 {
         System.out.println(Arrays.toString(special));
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>[2, 4, 6, 8, 10]
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>[2, 4, 6, 8, 10]
 [1, 3, 5, 7, 9]
 [6, 7, 8, 9, 10]
 [6, 9]</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>evens</code>：偶数 → <code>[2, 4, 6, 8, 10]</code>。</li>
-            <li><code>odds</code>：奇数 → <code>[1, 3, 5, 7, 9]</code>。</li>
-            <li><code>big</code>：5より大きい → <code>[6, 7, 8, 9, 10]</code>。</li>
-            <li><code>special</code>：3の倍数かつ4より大きい → <code>6</code>（3×2）と <code>9</code>（3×3）→ <code>[6, 9]</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>evens</code>：偶数 → <code>[2, 4, 6, 8, 10]</code>。
+                </li>
+                <li>
+                  <code>odds</code>：奇数 → <code>[1, 3, 5, 7, 9]</code>。
+                </li>
+                <li>
+                  <code>big</code>：5より大きい →
+                  <code>[6, 7, 8, 9, 10]</code>。
+                </li>
+                <li>
+                  <code>special</code>：3の倍数かつ4より大きい →
+                  <code>6</code>（3×2）と <code>9</code>（3×3）→
+                  <code>[6, 9]</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 10-1-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次の条件を満たすクラスを作成してください。</p>
-      <ul>
-        <li>関数型インターフェース <code>Transformer&lt;T&gt;</code> を定義する（<code>T transform(T input)</code> メソッド1つ）</li>
-        <li>静的メソッド <code>applyAll(String s, Transformer&lt;String&gt;... ops)</code> を定義する。<code>s</code> に対して <code>ops</code> を順に適用した結果を返す</li>
-        <li>以下のラムダ式を定義して使う：<code>trim</code>（前後空白除去）、<code>upper</code>（大文字変換）、<code>exclaim</code>（末尾に <code>"!"</code> を付加）</li>
-      </ul>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>HELLO!
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 10-1-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たすクラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              関数型インターフェース
+              <code>Transformer&lt;T&gt;</code> を定義する（<code
+                >T transform(T input)</code
+              >
+              メソッド1つ）
+            </li>
+            <li>
+              静的メソッド
+              <code>applyAll(String s, Transformer&lt;String&gt;... ops)</code>
+              を定義する。<code>s</code> に対して
+              <code>ops</code> を順に適用した結果を返す
+            </li>
+            <li>
+              以下のラムダ式を定義して使う：<code>trim</code>（前後空白除去）、<code>upper</code>（大文字変換）、<code>exclaim</code>（末尾に
+              <code>"!"</code> を付加）
+            </li>
+          </ul>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>HELLO!
 WORLD!
   java  → JAVA!</code></pre>
-      </div>
-      <div class="hint" style="margin-top:10px;">
-        <strong>💡 ヒント</strong>：可変長引数 <code>Transformer&lt;String&gt;... ops</code> は配列として受け取れます。<br>
-        <code>@SafeVarargs</code> アノテーションが必要な場合があります。
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">Main.java</div>
-            <pre><code>public class Main {
+          </div>
+          <div class="hint" style="margin-top: 10px">
+            <strong>💡 ヒント</strong>：可変長引数
+            <code>Transformer&lt;String&gt;... ops</code>
+            は配列として受け取れます。<br />
+            <code>@SafeVarargs</code> アノテーションが必要な場合があります。
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">Main.java</div>
+                <pre><code>public class Main {
 
     @FunctionalInterface
     interface Transformer&lt;T&gt; {
@@ -509,18 +871,37 @@ WORLD!
         System.out.println(input + " → " + applyAll(input, trim, upper, exclaim));
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>applyAll</code> は <code>ops</code> の各ラムダを順に適用します。</li>
-            <li><code>"  hello  " → trim → "hello" → upper → "HELLO" → exclaim → "HELLO!"</code>。</li>
-            <li>ラムダ式を変数に代入して再利用できるのがポイントです。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>applyAll</code> は
+                  <code>ops</code> の各ラムダを順に適用します。
+                </li>
+                <li>
+                  <code
+                    >" hello " → trim → "hello" → upper → "HELLO" → exclaim →
+                    "HELLO!"</code
+                  >。
+                </li>
+                <li>ラムダ式を変数に代入して再利用できるのがポイントです。</li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+        <!-- 次のページ・目次・前のページ -->
+        <div class="pagenation-bar">
+          <div class="page-button">
+            <a href="../../Chapter9/9-3/9-3_enum.html">＜</a>
+          </div>
+          <div class="page-button">
+            <a href="../../TableOfContents/java_course_toc.html">目次</a>
+          </div>
+          <div class="page-button">
+            <a href="../10-2/10-2_functional_interfaces.html">＞</a>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>

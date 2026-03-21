@@ -1,163 +1,453 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>9-1. 継承（extends / override）</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
-      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
-    }
-    .container { max-width: 860px; margin: 0 auto; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>9-1. 継承（extends / override）</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
 
-    .page-header {
-      background: linear-gradient(135deg, #44337a, #6b46c1);
-      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
-    }
-    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
-    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+      .page-header {
+        background: linear-gradient(135deg, #44337a, #6b46c1);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
 
-    .section-title {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 1.2rem; font-weight: 700; color: #44337a;
-      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #d6bcfa;
-    }
-    h3 { font-size: 1rem; font-weight: 700; color: #6b46c1; margin: 24px 0 10px; }
-    p  { margin-bottom: 12px; }
-    ul, ol { padding-left: 20px; margin-bottom: 10px; }
-    li { margin-bottom: 4px; font-size: 0.9rem; }
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #44337a;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #d6bcfa;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #6b46c1;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
 
-    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
-    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; }
-    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
-    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
-    p code, li code, td code {
-      background: #faf5ff; color: #6b46c1; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
-    }
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #faf5ff;
+        color: #6b46c1;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
 
-    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .callout strong { color: #c05621; }
-    .hint { border-left: 4px solid #9f7aea; background: #faf5ff; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
-    .hint strong { color: #6b46c1; }
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #9f7aea;
+        background: #faf5ff;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #6b46c1;
+      }
 
-    .data-table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
-    }
-    .data-table thead { background: #6b46c1; color: white; }
-    .data-table thead th { padding: 10px 14px; text-align: left; }
-    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
-    .data-table tbody tr:last-child { border-bottom: none; }
-    .data-table tbody td { padding: 9px 14px; text-align: center; }
-    .data-table tbody td:first-child { text-align: left; }
-    .data-table tbody tr:hover { background: #faf5ff; }
-    .ok { color: #22543d; font-weight: 700; }
-    .ng { color: #c53030; font-weight: 700; }
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #6b46c1;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+        text-align: center;
+      }
+      .data-table tbody td:first-child {
+        text-align: left;
+      }
+      .data-table tbody tr:hover {
+        background: #faf5ff;
+      }
+      .ok {
+        color: #22543d;
+        font-weight: 700;
+      }
+      .ng {
+        color: #c53030;
+        font-weight: 700;
+      }
 
-    /* Inheritance diagram */
-    .inherit-diagram {
-      background: #fff; border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-      padding: 20px 24px; margin: 14px 0;
-    }
-    .id-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 14px; }
-    .id-parent {
-      background: #6b46c1; color: white; border-radius: 8px;
-      padding: 10px 20px; font-family: monospace; font-weight: 700; font-size: 0.9rem;
-      display: inline-block;
-    }
-    .id-arrow { color: #a0aec0; font-size: 1.2rem; margin: 4px 0 4px 16px; display: block; }
-    .id-children { display: flex; gap: 12px; margin-left: 24px; flex-wrap: wrap; }
-    .id-child {
-      border: 2px solid #6b46c1; border-radius: 8px;
-      padding: 10px 16px; font-family: monospace; font-size: 0.85rem;
-      background: #faf5ff;
-    }
-    .id-child .ic-name { font-weight: 700; color: #44337a; margin-bottom: 4px; }
-    .id-child .ic-extra { font-size: 0.75rem; color: #9f7aea; }
-    .id-grandchild {
-      margin-left: 48px; margin-top: 8px;
-      border: 2px solid #9f7aea; border-radius: 8px;
-      padding: 8px 14px; font-family: monospace; font-size: 0.82rem;
-      background: #faf5ff; display: inline-block;
-    }
+      /* Inheritance diagram */
+      .inherit-diagram {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+      }
+      .id-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 14px;
+      }
+      .id-parent {
+        background: #6b46c1;
+        color: white;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-family: monospace;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-block;
+      }
+      .id-arrow {
+        color: #a0aec0;
+        font-size: 1.2rem;
+        margin: 4px 0 4px 16px;
+        display: block;
+      }
+      .id-children {
+        display: flex;
+        gap: 12px;
+        margin-left: 24px;
+        flex-wrap: wrap;
+      }
+      .id-child {
+        border: 2px solid #6b46c1;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        background: #faf5ff;
+      }
+      .id-child .ic-name {
+        font-weight: 700;
+        color: #44337a;
+        margin-bottom: 4px;
+      }
+      .id-child .ic-extra {
+        font-size: 0.75rem;
+        color: #9f7aea;
+      }
+      .id-grandchild {
+        margin-left: 48px;
+        margin-top: 8px;
+        border: 2px solid #9f7aea;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-family: monospace;
+        font-size: 0.82rem;
+        background: #faf5ff;
+        display: inline-block;
+      }
 
-    /* super usage cards */
-    .super-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
-    .super-card {
-      background: #fff; border-radius: 10px; overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06); border-left: 4px solid #6b46c1;
-    }
-    .super-card .sc-label { background: #faf5ff; padding: 6px 14px; font-size: 0.78rem; font-weight: 700; color: #6b46c1; }
+      /* super usage cards */
+      .super-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .super-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        border-left: 4px solid #6b46c1;
+      }
+      .super-card .sc-label {
+        background: #faf5ff;
+        padding: 6px 14px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #6b46c1;
+      }
 
-    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
-    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
-    .output-box pre { padding: 0; }
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
 
-    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
-    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #faf5ff; border-bottom: 1px solid #d6bcfa; }
-    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #44337a; }
-    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
-    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-    .badge-type-output { background: #c6f6d5; color: #22543d; }
-    .badge-type-code   { background: #fefcbf; color: #744210; }
-    .badge-level       { background: #e9d8fd; color: #44337a; }
-    .problem-body { padding: 18px 20px; }
-    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #faf5ff;
+        border-bottom: 1px solid #d6bcfa;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #44337a;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
 
-    .answer-toggle { margin-top: 16px; }
-    .answer-toggle summary {
-      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-      background: #6b46c1; color: white; border: none;
-      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
-    }
-    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #44337a; }
-    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
-    .answer-body .explain-title { font-weight: 700; color: #6b46c1; margin: 12px 0 6px; font-size: 0.88rem; }
-  </style>
-</head>
-<body>
-<div class="container">
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #6b46c1;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #44337a;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #6b46c1;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
 
-  <div class="page-header">
-    <div class="chapter-label">第9章 ▶ 継承・インターフェース・Enum</div>
-    <h1>9-1. 継承（extends / override）</h1>
-    <div class="meta">難易度：⭐⭐⭐⭐☆　|　問題数：4問　|　形式：出力を答える・コード記述</div>
-  </div>
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
 
-  <div class="section-title"><span>📖</span> 解説</div>
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #6b46c1;
+        border-radius: 7px;
+      }
 
-  <h3>継承とは？</h3>
-  <p><strong>既存のクラス（親クラス）の機能を引き継いで、新しいクラス（子クラス）を作る</strong>仕組みです。</p>
+      .page-button:hover {
+        opacity: 90%;
+      }
 
-  <!-- 継承図 -->
-  <div class="inherit-diagram">
-    <div class="id-title">▶ Animal → Dog → GuideDog の継承チェーン</div>
-    <div class="id-parent">Animal　name / age / eat() / sleep()</div>
-    <div class="id-arrow">↓ extends</div>
-    <div class="id-children">
-      <div class="id-child">
-        <div class="ic-name">Dog</div>
-        <div class="ic-extra">+ breed / bark()</div>
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第9章 ▶ 継承・インターフェース・Enum</div>
+
+        <h1>9-1. 継承（extends / override）</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐☆　|　問題数：4問　|　形式：出力を答える・コード記述
+        </div>
       </div>
-      <div class="id-child">
-        <div class="ic-name">Cat</div>
-        <div class="ic-extra">+ purr() / eat() override</div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter8/8-3/8-3_abstract_classes.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../9-2/9-2_interfaces.html">＞</a>
+        </div>
       </div>
-    </div>
-    <div class="id-arrow" style="margin-left:36px;">↓ extends</div>
-    <div class="id-grandchild">GuideDog　+ owner / guide()</div>
-  </div>
 
-  <!-- extends -->
-  <h3>extends による継承</h3>
-  <div class="code-wrap">
-    <div class="code-label">Animal → Dog の継承</div>
-    <pre><code>public class Animal {
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>継承とは？</h3>
+      <p>
+        <strong
+          >既存のクラス（親クラス）の機能を引き継いで、新しいクラス（子クラス）を作る</strong
+        >仕組みです。
+      </p>
+
+      <!-- 継承図 -->
+      <div class="inherit-diagram">
+        <div class="id-title">▶ Animal → Dog → GuideDog の継承チェーン</div>
+        <div class="id-parent">Animal　name / age / eat() / sleep()</div>
+        <div class="id-arrow">↓ extends</div>
+        <div class="id-children">
+          <div class="id-child">
+            <div class="ic-name">Dog</div>
+            <div class="ic-extra">+ breed / bark()</div>
+          </div>
+          <div class="id-child">
+            <div class="ic-name">Cat</div>
+            <div class="ic-extra">+ purr() / eat() override</div>
+          </div>
+        </div>
+        <div class="id-arrow" style="margin-left: 36px">↓ extends</div>
+        <div class="id-grandchild">GuideDog　+ owner / guide()</div>
+      </div>
+
+      <!-- extends -->
+      <h3>extends による継承</h3>
+      <div class="code-wrap">
+        <div class="code-label">Animal → Dog の継承</div>
+        <pre><code>public class Animal {
     String name;
     int    age;
 
@@ -179,37 +469,39 @@ public class Dog extends Animal {
 
     public void bark() { System.out.println(name + " が吠える：ワン！"); }
 }</code></pre>
-  </div>
+      </div>
 
-  <!-- super -->
-  <h3>super キーワードの2つの使い方</h3>
-  <div class="super-cards">
-    <div class="super-card">
-      <div class="sc-label">使い方1：親のコンストラクタを呼ぶ</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>public Dog(String name, int age) {
+      <!-- super -->
+      <h3>super キーワードの2つの使い方</h3>
+      <div class="super-cards">
+        <div class="super-card">
+          <div class="sc-label">使い方1：親のコンストラクタを呼ぶ</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="font-size: 0.82rem"
+            ><code>public Dog(String name, int age) {
     super(name, age);  // 先頭行に必須
     // 以降に子クラスの初期化
 }</code></pre>
-      </div>
-    </div>
-    <div class="super-card">
-      <div class="sc-label">使い方2：親のメソッドを呼ぶ</div>
-      <div class="code-wrap" style="margin:0;border-radius:0;">
-        <pre style="font-size:0.82rem;"><code>@Override
+          </div>
+        </div>
+        <div class="super-card">
+          <div class="sc-label">使い方2：親のメソッドを呼ぶ</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre style="font-size: 0.82rem"><code>@Override
 public void eat() {
     super.eat();  // 親の処理を実行
     System.out.println("（骨つきで）");
 }</code></pre>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- オーバーライド -->
-  <h3>メソッドのオーバーライド</h3>
-  <div class="code-wrap">
-    <div class="code-label">@Override で親のメソッドを再定義</div>
-    <pre><code>public class Cat extends Animal {
+      <!-- オーバーライド -->
+      <h3>メソッドのオーバーライド</h3>
+      <div class="code-wrap">
+        <div class="code-label">@Override で親のメソッドを再定義</div>
+        <pre><code>public class Cat extends Animal {
     public Cat(String name, int age) { super(name, age); }
 
     @Override
@@ -219,35 +511,63 @@ public void eat() {
 
     public void purr() { System.out.println(name + " がゴロゴロ言う"); }
 }</code></pre>
-  </div>
+      </div>
 
-  <div class="hint">
-    <strong>💡 @Override を付ける理由</strong><br>
-    <code>@Override</code> を付けると、親クラスに該当メソッドがなければコンパイルエラーになります。<br>
-    メソッド名のタイプミスによるバグを防ぐために必ず付けましょう。
-  </div>
+      <div class="hint">
+        <strong>💡 @Override を付ける理由</strong><br />
+        <code>@Override</code>
+        を付けると、親クラスに該当メソッドがなければコンパイルエラーになります。<br />
+        メソッド名のタイプミスによるバグを防ぐために必ず付けましょう。
+      </div>
 
-  <!-- アクセス修飾子 -->
-  <h3>継承とアクセス修飾子</h3>
-  <table class="data-table">
-    <thead><tr><th>修飾子</th><th>同じクラス</th><th>サブクラス</th><th>他のクラス</th></tr></thead>
-    <tbody>
-      <tr><td><code>private</code></td><td class="ok">✅</td><td class="ng">❌</td><td class="ng">❌</td></tr>
-      <tr><td><code>protected</code></td><td class="ok">✅</td><td class="ok">✅</td><td class="ng">❌</td></tr>
-      <tr><td><code>public</code></td><td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅</td></tr>
-    </tbody>
-  </table>
+      <!-- アクセス修飾子 -->
+      <h3>継承とアクセス修飾子</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>修飾子</th>
+            <th>同じクラス</th>
+            <th>サブクラス</th>
+            <th>他のクラス</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>private</code></td>
+            <td class="ok">✅</td>
+            <td class="ng">❌</td>
+            <td class="ng">❌</td>
+          </tr>
+          <tr>
+            <td><code>protected</code></td>
+            <td class="ok">✅</td>
+            <td class="ok">✅</td>
+            <td class="ng">❌</td>
+          </tr>
+          <tr>
+            <td><code>public</code></td>
+            <td class="ok">✅</td>
+            <td class="ok">✅</td>
+            <td class="ok">✅</td>
+          </tr>
+        </tbody>
+      </table>
 
-  <div class="callout">
-    <strong>⚠️ private フィールドはサブクラスから直接アクセスできない</strong><br>
-    サブクラスからアクセスするには <code>protected</code> にするか、<code>getter</code> / <code>setter</code> を使います。
-  </div>
+      <div class="callout">
+        <strong
+          >⚠️ private フィールドはサブクラスから直接アクセスできない</strong
+        ><br />
+        サブクラスからアクセスするには <code>protected</code> にするか、<code
+          >getter</code
+        >
+        / <code>setter</code> を使います。
+      </div>
 
-  <!-- コード例 -->
-  <h3>コード例：ElectricCar が Vehicle を継承</h3>
-  <div class="code-wrap">
-    <div class="code-label">Vehicle + ElectricCar</div>
-    <pre><code>class Vehicle {
+      <!-- コード例 -->
+      <h3>コード例：ElectricCar が Vehicle を継承</h3>
+      <div class="code-wrap">
+        <div class="code-label">Vehicle + ElectricCar</div>
+        <pre><code>class Vehicle {
     protected String maker;
     protected int    speed;
 
@@ -281,32 +601,34 @@ class ElectricCar extends Vehicle {
         return super.getInfo() + " バッテリー:" + battery + "%";
     }
 }</code></pre>
-  </div>
-  <div class="output-box">
-    <div class="output-label">▶ 出力結果</div>
-    <pre><code>Tesla 速度: 60km/h
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>Tesla 速度: 60km/h
 バッテリー残量: 94%
 Tesla 速度: 100km/h
 バッテリー残量: 90%
 Tesla（100km/h） バッテリー:90%</code></pre>
-  </div>
-
-  <div class="section-title"><span>✏️</span> 問題</div>
-
-  <!-- 問題 1 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 9-1-1</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐☆</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q1.java</div>
-        <pre><code>class Person {
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 9-1-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>class Person {
     String name; int age;
     public Person(String name, int age) { this.name=name; this.age=age; }
     public String greet() { return "こんにちは、"+name+"（"+age+"歳）です"; }
@@ -349,42 +671,53 @@ public class Q1 {
         System.out.println(s);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>こんにちは、田中（45歳）です
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>こんにちは、田中（45歳）です
 こんにちは、山田（20歳）です。東大 に通っています
 こんにちは、鈴木（24歳）です。京大 に通っています（AI研究室 所属）
 Person[田中, 45]
 Student[山田, 20, 東大]</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>GradStudent.greet()</code> は <code>super.greet()</code>（Student）→ <code>super.greet()</code>（Person）と連鎖的に文字列を組み立てます。</li>
-            <li><code>toString()</code> は <code>GradStudent</code> に定義されていないため <code>Student</code> の実装が使われます。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>GradStudent.greet()</code> は
+                  <code>super.greet()</code>（Student）→
+                  <code>super.greet()</code
+                  >（Person）と連鎖的に文字列を組み立てます。
+                </li>
+                <li>
+                  <code>toString()</code> は
+                  <code>GradStudent</code> に定義されていないため
+                  <code>Student</code> の実装が使われます。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 2 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 9-1-2</span>
-      <div class="badges">
-        <span class="badge badge-type-output">出力を答える</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
-      <div class="code-wrap">
-        <div class="code-label">Q2.java</div>
-        <pre><code>class Shape {
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 9-1-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>class Shape {
     protected String color;
     public Shape(String color) { this.color = color; }
     public double area() { return 0.0; }
@@ -424,63 +757,109 @@ public class Q2 {
         System.out.println(shapes[0] instanceof Circle);
     }
 }</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="output-box">
-            <div class="output-label">▶ 出力結果</div>
-            <pre><code>Circle（赤）面積: 28.274333882308138
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>Circle（赤）面積: 28.274333882308138
 Triangle（青）面積: 12.0
 Circle（緑）面積: 3.141592653589793
 合計面積: 43.42
 true
 true</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>describe()</code> 内の <code>area()</code> は動的ディスパッチで各サブクラスの実装が呼ばれます。</li>
-            <li>合計面積：<code>28.274... + 12.0 + 3.141... = 43.42</code>（小数第2位で丸め）。</li>
-            <li><code>shapes[0]</code> は <code>Circle</code> インスタンスなので <code>instanceof Shape</code> も <code>instanceof Circle</code> も <code>true</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>describe()</code> 内の
+                  <code>area()</code>
+                  は動的ディスパッチで各サブクラスの実装が呼ばれます。
+                </li>
+                <li>
+                  合計面積：<code>28.274... + 12.0 + 3.141... = 43.42</code
+                  >（小数第2位で丸め）。
+                </li>
+                <li>
+                  <code>shapes[0]</code> は
+                  <code>Circle</code> インスタンスなので
+                  <code>instanceof Shape</code> も
+                  <code>instanceof Circle</code> も <code>true</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 3 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 9-1-3</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text"><code>Item</code>・<code>DiscountItem</code>・<code>BundleItem</code> クラスを作成してください。</p>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>クラス</th><th>内容</th></tr></thead>
-        <tbody>
-          <tr><td><code>Item</code></td><td><code>name</code>・<code>price</code>。<code>getPrice()</code> は <code>price</code>。<code>toString()</code> は <code>"name（price円）"</code></td></tr>
-          <tr><td><code>DiscountItem</code></td><td><code>Item</code> 継承。<code>discountRate(%)</code> 追加。<code>getPrice()</code> を <code>price*(100-rate)/100</code> にオーバーライド</td></tr>
-          <tr><td><code>BundleItem</code></td><td><code>Item</code> 継承。<code>quantity</code> 追加。<code>getPrice()</code> を <code>price*quantity</code> にオーバーライド</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>りんご（150円）
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 9-1-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            <code>Item</code>・<code>DiscountItem</code>・<code
+              >BundleItem</code
+            >
+            クラスを作成してください。
+          </p>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>クラス</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Item</code></td>
+                <td>
+                  <code>name</code>・<code>price</code>。<code>getPrice()</code>
+                  は <code>price</code>。<code>toString()</code> は
+                  <code>"name（price円）"</code>
+                </td>
+              </tr>
+              <tr>
+                <td><code>DiscountItem</code></td>
+                <td>
+                  <code>Item</code> 継承。<code>discountRate(%)</code>
+                  追加。<code>getPrice()</code> を
+                  <code>price*(100-rate)/100</code> にオーバーライド
+                </td>
+              </tr>
+              <tr>
+                <td><code>BundleItem</code></td>
+                <td>
+                  <code>Item</code> 継承。<code>quantity</code> 追加。<code
+                    >getPrice()</code
+                  >
+                  を <code>price*quantity</code> にオーバーライド
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>りんご（150円）
 バナナ（200円 → 割引後170円）
 みかんセット × 5（100円）合計: 500円
 ---
 合計金額: 820円</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">Item / DiscountItem / BundleItem + Main</div>
-            <pre><code>class Item {
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">
+                  Item / DiscountItem / BundleItem + Main
+                </div>
+                <pre><code>class Item {
     String name; int price;
     public Item(String name, int price) { this.name=name; this.price=price; }
     public int getPrice() { return price; }
@@ -522,49 +901,78 @@ public class Main {
         System.out.println("合計金額: " + total + "円");
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>DiscountItem.getPrice()</code>：<code>200 × 85 / 100 = 170</code>。</li>
-            <li><code>BundleItem.getPrice()</code>：<code>100 × 5 = 500</code>。</li>
-            <li>合計：<code>150 + 170 + 500 = 820</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>DiscountItem.getPrice()</code>：<code
+                    >200 × 85 / 100 = 170</code
+                  >。
+                </li>
+                <li>
+                  <code>BundleItem.getPrice()</code>：<code>100 × 5 = 500</code
+                  >。
+                </li>
+                <li>合計：<code>150 + 170 + 500 = 820</code>。</li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
-    </div>
-  </div>
-
-  <!-- 問題 4 -->
-  <div class="problem-card">
-    <div class="problem-header">
-      <span class="problem-num">問題 9-1-4</span>
-      <div class="badges">
-        <span class="badge badge-type-code">コード記述</span>
-        <span class="badge badge-level">⭐⭐⭐</span>
       </div>
-    </div>
-    <div class="problem-body">
-      <p class="question-text"><code>Account</code> と <code>SavingsAccount</code> クラスを作成してください。</p>
-      <table class="data-table" style="margin-top:10px;">
-        <thead><tr><th>要素</th><th>内容</th></tr></thead>
-        <tbody>
-          <tr><td><code>Account</code></td><td><code>id</code>・<code>owner</code>・<code>protected balance</code>。<code>deposit()</code>・<code>withdraw()</code>（残高不足なら <code>false</code>）・<code>toString()</code></td></tr>
-          <tr><td><code>SavingsAccount</code></td><td><code>Account</code> 継承。<code>interestRate</code> 追加。<code>applyInterest()</code> で利息を加算して出力</td></tr>
-        </tbody>
-      </table>
-      <div class="output-box" style="margin-top:12px;">
-        <div class="output-label">▶ 期待される出力</div>
-        <pre><code>[A001] 田中: 100000円
+
+      <!-- 問題 4 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 9-1-4</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            <code>Account</code> と
+            <code>SavingsAccount</code> クラスを作成してください。
+          </p>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>要素</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Account</code></td>
+                <td>
+                  <code>id</code>・<code>owner</code>・<code
+                    >protected balance</code
+                  >。<code>deposit()</code>・<code>withdraw()</code>（残高不足なら
+                  <code>false</code>）・<code>toString()</code>
+                </td>
+              </tr>
+              <tr>
+                <td><code>SavingsAccount</code></td>
+                <td>
+                  <code>Account</code> 継承。<code>interestRate</code>
+                  追加。<code>applyInterest()</code> で利息を加算して出力
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>[A001] 田中: 100000円
 入金後: [A001] 田中: 150000円
 利息適用: 利息7500円追加 → 残高157500円
 [A001] 田中: 157500円</code></pre>
-      </div>
-      <details class="answer-toggle">
-        <summary>▶ 答えを見る</summary>
-        <div class="answer-body">
-          <div class="code-wrap">
-            <div class="code-label">Account + SavingsAccount + Main</div>
-            <pre><code>class Account {
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">Account + SavingsAccount + Main</div>
+                <pre><code>class Account {
     String id; String owner; protected int balance;
 
     public Account(String id, String owner, int initialBalance) {
@@ -609,17 +1017,35 @@ public class Main {
         System.out.println(sa);
     }
 }</code></pre>
-          </div>
-          <div class="explain-title">解説</div>
-          <ul>
-            <li><code>balance</code> は <code>protected</code> なので <code>SavingsAccount</code> から直接アクセスできます。</li>
-            <li>利息：<code>150000 × 0.05 = 7500</code>、残高：<code>150000 + 7500 = 157500</code>。</li>
-          </ul>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>balance</code> は <code>protected</code> なので
+                  <code>SavingsAccount</code> から直接アクセスできます。
+                </li>
+                <li>
+                  利息：<code>150000 × 0.05 = 7500</code>、残高：<code
+                    >150000 + 7500 = 157500</code
+                  >。
+                </li>
+              </ul>
+            </div>
+          </details>
         </div>
-      </details>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter8/8-3/8-3_abstract_classes.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../9-2/9-2_interfaces.html">＞</a>
+        </div>
+      </div>
     </div>
-  </div>
-
-</div>
-</body>
+  </body>
 </html>
