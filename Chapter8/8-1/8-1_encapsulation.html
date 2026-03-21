@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>8-1. カプセル化（フィールドとアクセサ）</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    .page-header {
+      background: linear-gradient(135deg, #22543d, #276749);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #22543d;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #9ae6b4;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #276749; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #f0fff4; color: #276749; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #276749; }
+
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #276749; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #f0fff4; }
+
+    /* OOP 3 pillars */
+    .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0; }
+    .pillar-card {
+      border-radius: 10px; padding: 14px 16px; text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+    }
+    .pillar-active  { background: #c6f6d5; border: 2px solid #68d391; }
+    .pillar-inactive { background: #edf2f7; border: 2px dashed #cbd5e0; opacity: 0.6; }
+    .pillar-card .pi-icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .pillar-card .pi-name { font-weight: 700; font-size: 0.9rem; color: #22543d; }
+    .pillar-inactive .pi-name { color: #718096; }
+    .pillar-card .pi-desc { font-size: 0.75rem; color: #718096; margin-top: 4px; }
+
+    /* Capsule box diagram */
+    .capsule-box {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px 24px; margin: 14px 0;
+    }
+    .cb-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 12px; }
+    .cb-public-zone {
+      border: 2px solid #68d391; border-radius: 10px; padding: 12px 16px; margin-bottom: 8px;
+    }
+    .cb-public-label { font-size: 0.72rem; font-weight: 700; color: #22543d; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .cb-method { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 0.85rem; }
+    .cb-plus { color: #22543d; font-weight: 700; }
+    .cb-method-name { font-family: monospace; font-weight: 600; }
+    .cb-private-zone {
+      border: 2px solid #fc8181; border-radius: 10px; padding: 12px 16px;
+      margin-left: 20px; background: #fff5f5;
+    }
+    .cb-private-label { font-size: 0.72rem; font-weight: 700; color: #742a2a; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .cb-field { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 0.85rem; }
+    .cb-minus { color: #742a2a; font-weight: 700; }
+    .cb-lock { font-size: 0.9rem; }
+
+    /* Benefits grid */
+    .benefit-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 14px 0; }
+    .benefit-card {
+      background: #fff; border-radius: 10px; padding: 14px 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07); border-left: 4px solid #68d391;
+    }
+    .benefit-card .bc-title { font-weight: 700; font-size: 0.9rem; color: #22543d; margin-bottom: 4px; }
+    .benefit-card .bc-desc { font-size: 0.82rem; color: #718096; }
+
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #f0fff4; border-bottom: 1px solid #9ae6b4; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #22543d; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #276749; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #22543d; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #276749; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <div class="chapter-label">第8章 ▶ オブジェクト指向の概念</div>
+    <h1>8-1. カプセル化（フィールドとアクセサ）</h1>
+    <div class="meta">難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <h3>オブジェクト指向の3大原則</h3>
+  <div class="pillars">
+    <div class="pillar-card pillar-active">
+      <div class="pi-icon">🔒</div>
+      <div class="pi-name">カプセル化</div>
+      <div class="pi-desc">← 今ここ</div>
+    </div>
+    <div class="pillar-card pillar-inactive">
+      <div class="pi-icon">🧬</div>
+      <div class="pi-name">継承</div>
+      <div class="pi-desc">第9章</div>
+    </div>
+    <div class="pillar-card pillar-inactive">
+      <div class="pi-icon">🔄</div>
+      <div class="pi-name">ポリモーフィズム</div>
+      <div class="pi-desc">第8-2節</div>
+    </div>
+  </div>
+
+  <h3>カプセル化とは？</h3>
+  <p><strong>データ（フィールド）と処理（メソッド）をクラスにまとめ、外部からの直接アクセスを隠す</strong>設計原則です。</p>
+
+  <div class="capsule-box">
+    <div class="cb-title">▶ BankAccount クラスのカプセル化イメージ</div>
+    <div class="cb-public-zone">
+      <div class="cb-public-label">外部から見える部分（public）</div>
+      <div class="cb-method"><span class="cb-plus">+</span><span class="cb-method-name">deposit(amount)</span></div>
+      <div class="cb-method"><span class="cb-plus">+</span><span class="cb-method-name">withdraw(amount)</span></div>
+      <div class="cb-method"><span class="cb-plus">+</span><span class="cb-method-name">getBalance()</span></div>
+    </div>
+    <div class="cb-private-zone">
+      <div class="cb-private-label">外部から見えない部分（private）<span class="cb-lock">🔒</span></div>
+      <div class="cb-field"><span class="cb-minus">−</span><span class="cb-method-name">balance</span></div>
+      <div class="cb-field"><span class="cb-minus">−</span><span class="cb-method-name">owner</span></div>
+    </div>
+  </div>
+
+  <h3>カプセル化の実装パターン</h3>
+  <div class="code-wrap">
+    <div class="code-label">Person クラスの実装</div>
+    <pre><code>public class Person {
+    // 1. private フィールド
+    private String name;
+    private int    age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        setAge(age);  // setter 経由で検証
+    }
+
+    // 2. getter（読み取り用）
+    public String getName() { return name; }
+    public int    getAge()  { return age;  }
+
+    // 3. setter（検証つき書き込み）
+    public void setName(String name) {
+        if (name == null || name.isBlank())
+            throw new IllegalArgumentException("名前は空にできません");
+        this.name = name;
+    }
+
+    public void setAge(int age) {
+        if (age &lt; 0 || age > 150)
+            throw new IllegalArgumentException("年齢が不正: " + age);
+        this.age = age;
+    }
+}</code></pre>
+  </div>
+
+  <h3>読み取り専用フィールドと final</h3>
+  <p>変更させたくないフィールドには <code>final</code> を付け、getter のみ提供します。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">イミュータブルな Point クラス</div>
+    <pre><code>public class Point {
+    private final int x;  // final：一度設定したら変更不可
+    private final int y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() { return x; }
+    public int getY() { return y; }
+
+    // 変更ではなく新しいインスタンスを返す
+    public Point translate(int dx, int dy) {
+        return new Point(x + dx, y + dy);
+    }
+
+    public String toString() { return "(" + x + ", " + y + ")"; }
+}</code></pre>
+  </div>
+
+  <div class="callout">
+    <strong>⚠️ final フィールドはコンストラクタで初期化が必須</strong><br>
+    <code>final</code> を付けたフィールドはコンストラクタで必ず初期化しなければなりません。<br>
+    初期化後は再代入できません（<code>this.x = 5;</code> と後から書くとコンパイルエラー）。
+  </div>
+
+  <h3>カプセル化のメリット</h3>
+  <div class="benefit-grid">
+    <div class="benefit-card">
+      <div class="bc-title">🛡️ 安全性</div>
+      <div class="bc-desc">不正な値（負の年齢など）の設定を防げる</div>
+    </div>
+    <div class="benefit-card">
+      <div class="bc-title">🔧 保守性</div>
+      <div class="bc-desc">内部実装を変えても外部への影響がない</div>
+    </div>
+    <div class="benefit-card">
+      <div class="bc-title">📖 可読性</div>
+      <div class="bc-desc">メソッド名で操作の意図が明確になる</div>
+    </div>
+    <div class="benefit-card">
+      <div class="bc-title">♻️ 再利用性</div>
+      <div class="bc-desc">検証ロジックが setter に集約される</div>
+    </div>
+  </div>
+
+  <h3>コード例：BankAccount</h3>
+  <div class="code-wrap">
+    <div class="code-label">BankAccount.java</div>
+    <pre><code>public class BankAccount {
+    private final String id;     // 変更不可
+    private final String owner;  // 変更不可
+    private int balance;         // 入出金で変わる
+
+    public BankAccount(String id, String owner, int initialBalance) {
+        this.id    = id;
+        this.owner = owner;
+        setBalance(initialBalance);
+    }
+
+    public String getId()      { return id; }
+    public String getOwner()   { return owner; }
+    public int    getBalance() { return balance; }
+
+    private void setBalance(int balance) {
+        if (balance &lt; 0) throw new IllegalArgumentException("残高は0以上");
+        this.balance = balance;
+    }
+
+    public void deposit(int amount) {
+        if (amount &lt;= 0) throw new IllegalArgumentException("入金額は1以上");
+        balance += amount;
+    }
+
+    public boolean withdraw(int amount) {
+        if (amount &lt;= 0)       throw new IllegalArgumentException("出金額は1以上");
+        if (amount > balance)  return false;
+        balance -= amount;
+        return true;
+    }
+
+    public String toString() {
+        return "[" + id + "] " + owner + " 残高:" + balance + "円";
+    }
+}</code></pre>
+  </div>
+
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 8-1-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>class Thermometer {
+    private double temperature;
+    private double maxRecorded;
+    private double minRecorded;
+
+    public Thermometer(double initial) {
+        this.temperature = initial;
+        this.maxRecorded = initial;
+        this.minRecorded = initial;
+    }
+
+    public void setTemperature(double temp) {
+        this.temperature = temp;
+        if (temp > maxRecorded) maxRecorded = temp;
+        if (temp &lt; minRecorded) minRecorded = temp;
+    }
+
+    public double getTemperature() { return temperature; }
+    public double getMax()         { return maxRecorded; }
+    public double getMin()         { return minRecorded; }
+
+    public void show() {
+        System.out.println("現在:" + temperature
+            + " 最高:" + maxRecorded
+            + " 最低:" + minRecorded);
+    }
+}
+
+public class Q1 {
+    public static void main(String[] args) {
+        Thermometer t = new Thermometer(20.0);
+        t.show();
+
+        t.setTemperature(35.5);
+        t.setTemperature(12.3);
+        t.setTemperature(28.0);
+        t.show();
+
+        System.out.println(t.getMax() - t.getMin());
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>現在:20.0 最高:20.0 最低:20.0
+現在:28.0 最高:35.5 最低:12.3
+23.2</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li>初期値は <code>20.0</code>。最高・最低ともに <code>20.0</code>。</li>
+            <li><code>35.5</code> → 最高更新。<code>12.3</code> → 最低更新。<code>28.0</code> → 現在値のみ更新。</li>
+            <li><code>35.5 - 12.3 = 23.2</code>。</li>
+            <li><code>temperature</code> は <code>private</code> なので外から直接変更はできません。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 8-1-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>class ImmutablePoint {
+    private final int x;
+    private final int y;
+
+    public ImmutablePoint(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() { return x; }
+    public int getY() { return y; }
+
+    public ImmutablePoint translate(int dx, int dy) {
+        return new ImmutablePoint(x + dx, y + dy);
+    }
+
+    public double distanceTo(ImmutablePoint other) {
+        int dx = this.x - other.x;
+        int dy = this.y - other.y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    public String toString() { return "(" + x + ", " + y + ")"; }
+}
+
+public class Q2 {
+    public static void main(String[] args) {
+        ImmutablePoint p1 = new ImmutablePoint(0, 0);
+        ImmutablePoint p2 = p1.translate(3, 4);
+        ImmutablePoint p3 = p2.translate(1, 0);
+
+        System.out.println(p1);
+        System.out.println(p2);
+        System.out.println(p3);
+        System.out.println(p1.distanceTo(p2));
+        System.out.println(p2.distanceTo(p3));
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>(0, 0)
+(3, 4)
+(4, 4)
+5.0
+1.0</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>p1</code> は <code>final</code> フィールドで変化しません（イミュータブル設計）。</li>
+            <li><code>translate</code> は元のインスタンスを変えず、新しいインスタンスを返します。</li>
+            <li><code>p1→p2</code> の距離：<code>√(3²+4²) = √25 = 5.0</code>（三平方の定理）。</li>
+            <li><code>p2→p3</code> の距離：<code>√(1²+0²) = 1.0</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 8-1-3</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text"><code>Student</code>（学生）クラスを作成してください。</p>
+      <table class="data-table" style="margin-top:10px;">
+        <thead><tr><th>要素</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td><code>private final String id</code></td><td>学籍番号（変更不可）</td></tr>
+          <tr><td><code>private String name</code></td><td>氏名</td></tr>
+          <tr><td><code>private final int[] scores</code></td><td>テストの点数（最大5教科）</td></tr>
+          <tr><td><code>private int scoreCount</code></td><td>登録した点数の数</td></tr>
+          <tr><td><code>getId() / getName()</code></td><td>getter</td></tr>
+          <tr><td><code>setName(String)</code></td><td>空文字は拒否</td></tr>
+          <tr><td><code>addScore(int)</code></td><td>0〜100の範囲チェック後に追加。満杯なら <code>"これ以上追加できません"</code> を出力</td></tr>
+          <tr><td><code>getAverage()</code></td><td>平均を <code>double</code> で返す（0件なら0.0）</td></tr>
+          <tr><td><code>show()</code></td><td><code>"[id] name 平均:X.X点"</code> の形式で出力</td></tr>
+        </tbody>
+      </table>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>[S001] 田中太郎 平均:0.0点
+[S001] 田中太郎 平均:78.0点
+[S001] 田中太郎 平均:76.0点</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">Student.java + Main.java</div>
+            <pre><code>public class Student {
+    private final String id;
+    private String name;
+    private final int[] scores;
+    private int scoreCount;
+
+    public Student(String id, String name) {
+        this.id         = id;
+        this.name       = name;
+        this.scores     = new int[5];
+        this.scoreCount = 0;
+    }
+
+    public String getId()   { return id; }
+    public String getName() { return name; }
+
+    public void setName(String name) {
+        if (name == null || name.isBlank())
+            throw new IllegalArgumentException("名前は空にできません");
+        this.name = name;
+    }
+
+    public void addScore(int score) {
+        if (score &lt; 0 || score > 100)
+            throw new IllegalArgumentException("点数は0〜100の範囲で");
+        if (scoreCount >= scores.length) {
+            System.out.println("これ以上追加できません");
+            return;
+        }
+        scores[scoreCount++] = score;
+    }
+
+    public double getAverage() {
+        if (scoreCount == 0) return 0.0;
+        int sum = 0;
+        for (int i = 0; i &lt; scoreCount; i++) sum += scores[i];
+        return (double) sum / scoreCount;
+    }
+
+    public void show() {
+        System.out.printf("[%s] %s 平均:%.1f点%n",
+            id, name, getAverage());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Student s = new Student("S001", "田中太郎");
+        s.show();
+
+        s.addScore(80);
+        s.addScore(75);
+        s.addScore(79);
+        s.show();
+
+        s.addScore(68);
+        s.addScore(78);
+        s.show();
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>id</code> と <code>scores</code> は <code>final</code> なので再代入不可です。</li>
+            <li><code>addScore</code> は範囲チェックと上限チェックを行います。</li>
+            <li><code>getAverage</code> は <code>scoreCount == 0</code> のとき <code>0.0</code> を返して0除算を防ぎます。</li>
+            <li><code>printf</code> で小数第1位まで出力します。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

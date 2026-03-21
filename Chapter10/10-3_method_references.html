@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10-3. メソッド参照</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    .page-header {
+      background: linear-gradient(135deg, #7b341e, #c05621);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #7b341e;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #fbd38d;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #c05621; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #fffaf0; color: #c05621; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #276749; }
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #c05621; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #fffaf0; }
+
+    /* Method ref type cards */
+    .mr-cards { display: flex; flex-direction: column; gap: 12px; margin: 14px 0; }
+    .mr-card {
+      background: #fff; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      display: flex; align-items: stretch;
+    }
+    .mr-card .mc-num {
+      background: #c05621; color: white; font-size: 1rem; font-weight: 700;
+      padding: 0 16px; display: flex; align-items: center; flex-shrink: 0; min-width: 48px; justify-content: center;
+    }
+    .mr-card .mc-body { padding: 12px 16px; flex: 1; }
+    .mr-card .mc-title { font-weight: 700; font-size: 0.9rem; color: #7b341e; margin-bottom: 2px; }
+    .mr-card .mc-syntax { font-family: monospace; font-size: 0.88rem; color: #c05621; background: #fffaf0; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+    .mr-card .mc-example { font-size: 0.82rem; color: #718096; }
+
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #fffaf0; border-bottom: 1px solid #fbd38d; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #7b341e; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #c05621; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #7b341e; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #c05621; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <div class="chapter-label">第10章 ▶ ラムダ式</div>
+    <h1>10-3. メソッド参照</h1>
+    <div class="meta">難易度：⭐⭐⭐⭐⭐　|　問題数：3問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <h3>メソッド参照とは？</h3>
+  <p>ラムダ式が<strong>既存のメソッドをそのまま呼び出すだけ</strong>のとき、<code>::</code> 演算子で<br>
+  より簡潔に書ける記法です。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">ラムダ式 → メソッド参照への書き換え</div>
+    <pre><code>// ラムダ式
+Function&lt;String, Integer&gt; len1 = s -> s.length();
+
+// メソッド参照（同じ意味）
+Function&lt;String, Integer&gt; len2 = String::length;</code></pre>
+  </div>
+
+  <!-- 4種類 -->
+  <h3>メソッド参照の4種類</h3>
+
+  <div class="mr-cards">
+    <div class="mr-card">
+      <div class="mc-num">1</div>
+      <div class="mc-body">
+        <div class="mc-title">静的メソッド参照</div>
+        <div class="mc-syntax">クラス名::静的メソッド名</div>
+        <div class="mc-example">例：<code>Integer::parseInt</code>、<code>Math::abs</code>、<code>System.out::println</code></div>
+        <div class="code-wrap" style="margin:6px 0 0;">
+          <pre style="padding:8px 12px;font-size:0.82rem;"><code>Function&lt;String, Integer&gt; parse = Integer::parseInt;
+parse.apply("42");  // 42</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="mr-card">
+      <div class="mc-num">2</div>
+      <div class="mc-body">
+        <div class="mc-title">特定インスタンスのメソッド参照</div>
+        <div class="mc-syntax">インスタンス変数::メソッド名</div>
+        <div class="mc-example">例：<code>System.out::println</code>、<code>str::startsWith</code></div>
+        <div class="code-wrap" style="margin:6px 0 0;">
+          <pre style="padding:8px 12px;font-size:0.82rem;"><code>Consumer&lt;String&gt; print = System.out::println;
+print.accept("Hello");  // Hello</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="mr-card">
+      <div class="mc-num">3</div>
+      <div class="mc-body">
+        <div class="mc-title">任意インスタンスのメソッド参照</div>
+        <div class="mc-syntax">クラス名::インスタンスメソッド名</div>
+        <div class="mc-example">例：<code>String::toLowerCase</code>、<code>String::length</code>（引数のインスタンスを対象にする）</div>
+        <div class="code-wrap" style="margin:6px 0 0;">
+          <pre style="padding:8px 12px;font-size:0.82rem;"><code>Function&lt;String, String&gt; lower = String::toLowerCase;
+lower.apply("HELLO");  // hello</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="mr-card">
+      <div class="mc-num">4</div>
+      <div class="mc-body">
+        <div class="mc-title">コンストラクタ参照</div>
+        <div class="mc-syntax">クラス名::new</div>
+        <div class="mc-example">例：<code>ArrayList::new</code>、<code>StringBuilder::new</code></div>
+        <div class="code-wrap" style="margin:6px 0 0;">
+          <pre style="padding:8px 12px;font-size:0.82rem;"><code>Supplier&lt;StringBuilder&gt; sb = StringBuilder::new;
+sb.get();  // 新しい StringBuilder</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 比較表 -->
+  <h3>ラムダ式 vs メソッド参照の対応表</h3>
+  <table class="data-table">
+    <thead><tr><th>ラムダ式</th><th>メソッド参照</th><th>種類</th></tr></thead>
+    <tbody>
+      <tr><td><code>s -> Integer.parseInt(s)</code></td><td><code>Integer::parseInt</code></td><td>静的</td></tr>
+      <tr><td><code>s -> System.out.println(s)</code></td><td><code>System.out::println</code></td><td>特定インスタンス</td></tr>
+      <tr><td><code>s -> s.toLowerCase()</code></td><td><code>String::toLowerCase</code></td><td>任意インスタンス</td></tr>
+      <tr><td><code>(s, n) -> s.substring(n)</code></td><td><code>String::substring</code></td><td>任意インスタンス（2引数）</td></tr>
+      <tr><td><code>() -> new ArrayList&lt;&gt;()</code></td><td><code>ArrayList::new</code></td><td>コンストラクタ</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>⚠️ メソッド参照が使える条件</strong><br>
+    ラムダ式の処理が「引数をそのままメソッドに渡すだけ」のとき使えます。<br>
+    加工や条件分岐がある場合はラムダ式のままが読みやすいです。
+  </div>
+
+  <!-- Arrays.sort との組み合わせ -->
+  <h3>Arrays.sort とメソッド参照</h3>
+  <div class="code-wrap">
+    <div class="code-label">ソートにメソッド参照を活用</div>
+    <pre><code>import java.util.Arrays;
+
+String[] words = {"banana", "apple", "cherry", "date"};
+
+// ラムダ式
+Arrays.sort(words, (a, b) -> a.compareTo(b));
+
+// メソッド参照（同じ意味）
+Arrays.sort(words, String::compareTo);
+
+System.out.println(Arrays.toString(words));
+// → [apple, banana, cherry, date]
+
+// 逆順（Comparator.reverseOrder()）
+Arrays.sort(words, Comparator.reverseOrder());
+System.out.println(Arrays.toString(words));
+// → [date, cherry, banana, apple]</code></pre>
+  </div>
+
+  <!-- コード例 -->
+  <h3>コード例：様々なメソッド参照の活用</h3>
+  <div class="code-wrap">
+    <div class="code-label">MethodRefExample.java</div>
+    <pre><code>import java.util.function.*;
+import java.util.Arrays;
+
+public class MethodRefExample {
+    static String shout(String s) {
+        return s.toUpperCase() + "!!!";
+    }
+
+    public static void main(String[] args) {
+        // 静的メソッド参照
+        Function&lt;String, String&gt; shoutRef = MethodRefExample::shout;
+        System.out.println(shoutRef.apply("hello"));  // HELLO!!!
+
+        // 任意インスタンスのメソッド参照
+        Function&lt;String, Integer&gt; lenRef    = String::length;
+        Function&lt;String, String&gt;  upperRef  = String::toUpperCase;
+        Function&lt;String, Boolean&gt; emptyRef  = String::isEmpty;
+
+        System.out.println(lenRef.apply("Java"));    // 4
+        System.out.println(upperRef.apply("java"));  // JAVA
+        System.out.println(emptyRef.apply(""));      // true
+
+        // 特定インスタンスのメソッド参照
+        String prefix = "Hello, ";
+        Function&lt;String, String&gt; greet = prefix::concat;
+        System.out.println(greet.apply("World"));  // Hello, World
+
+        // コンストラクタ参照
+        Function&lt;String, StringBuilder&gt; sbFactory = StringBuilder::new;
+        StringBuilder sb = sbFactory.apply("initial");
+        System.out.println(sb.toString());  // initial
+
+        // Consumer でメソッド参照
+        String[] fruits = {"apple", "banana", "cherry"};
+        Arrays.sort(fruits, String::compareTo);
+        Arrays.stream(fruits).forEach(System.out::println);
+    }
+}</code></pre>
+  </div>
+  <div class="output-box">
+    <div class="output-label">▶ 出力結果</div>
+    <pre><code>HELLO!!!
+4
+JAVA
+true
+Hello, World
+initial
+apple
+banana
+cherry</code></pre>
+  </div>
+
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 10-3-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>import java.util.function.*;
+import java.util.Arrays;
+
+public class Q1 {
+
+    static int doubleIt(int n) { return n * 2; }
+
+    public static void main(String[] args) {
+        // 静的メソッド参照
+        Function&lt;String, Integer&gt;  parseInt  = Integer::parseInt;
+        Function&lt;Double, Double&gt;   absVal    = Math::abs;
+        Function&lt;Integer, Integer&gt; doubleRef = Q1::doubleIt;
+
+        System.out.println(parseInt.apply("123"));
+        System.out.println(absVal.apply(-3.14));
+        System.out.println(doubleRef.apply(7));
+
+        // 任意インスタンスのメソッド参照
+        Function&lt;String, String&gt;  trim  = String::trim;
+        Function&lt;String, Integer&gt; len   = String::length;
+        Predicate&lt;String&gt;         blank = String::isBlank;
+
+        System.out.println(trim.apply("  hello  "));
+        System.out.println(len.apply("Java"));
+        System.out.println(blank.test("   "));
+        System.out.println(blank.test("hi"));
+
+        // Consumer でメソッド参照
+        String[] words = {"cat", "apple", "bee"};
+        Arrays.sort(words, String::compareTo);
+        Arrays.stream(words).forEach(System.out::println);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>123
+3.14
+14
+hello
+4
+true
+false
+apple
+bee
+cat</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>Integer::parseInt</code> で <code>"123"</code> → <code>123</code>。</li>
+            <li><code>Math::abs</code> で <code>-3.14</code> → <code>3.14</code>。</li>
+            <li><code>Q1::doubleIt</code> で <code>7 × 2 = 14</code>。</li>
+            <li><code>String::trim</code> で前後空白除去 → <code>"hello"</code>。</li>
+            <li><code>String::isBlank</code>：<code>"   "</code> は空白のみなので <code>true</code>、<code>"hi"</code> は <code>false</code>。</li>
+            <li><code>String::compareTo</code> でアルファベット昇順ソート → <code>apple, bee, cat</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 10-3-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>import java.util.function.*;
+import java.util.Arrays;
+
+public class Q2 {
+
+    static class Person {
+        String name; int age;
+        Person(String name, int age) { this.name = name; this.age = age; }
+        String getName() { return name; }
+        int    getAge()  { return age; }
+        String greet()   { return "Hi, I'm " + name + "!"; }
+
+        @Override public String toString() { return name + "(" + age + ")"; }
+    }
+
+    public static void main(String[] args) {
+        BiFunction&lt;String, Integer, Person&gt; maker = Person::new;
+
+        Person p1 = maker.apply("Alice", 30);
+        Person p2 = maker.apply("Bob",   25);
+        Person p3 = maker.apply("Carol", 28);
+
+        Person[] people = { p1, p2, p3 };
+
+        // 年齢順ソート（メソッド参照でなくラムダ）
+        Arrays.sort(people, (a, b) -> a.getAge() - b.getAge());
+        System.out.println(Arrays.toString(people));
+
+        // 名前でソート（メソッド参照）
+        Arrays.sort(people, Comparator.comparing(Person::getName));
+        System.out.println(Arrays.toString(people));
+
+        // Consumer でメソッド参照
+        Consumer&lt;Person&gt; greetAll = p -> System.out.println(p.greet());
+        Arrays.stream(people).forEach(greetAll);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>[Bob(25), Carol(28), Alice(30)]
+[Alice(30), Bob(25), Carol(28)]
+Hi, I'm Alice!
+Hi, I'm Bob!
+Hi, I'm Carol!</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>Person::new</code> はコンストラクタ参照（<code>BiFunction&lt;String,Integer,Person&gt;</code>）。</li>
+            <li>年齢順：Bob(25) → Carol(28) → Alice(30)。</li>
+            <li><code>Comparator.comparing(Person::getName)</code> は名前でソート → Alice, Bob, Carol のアルファベット順。</li>
+            <li><code>greetAll</code> Consumer でアルファベット順（Alice, Bob, Carol）に挨拶を出力。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 10-3-3</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次の条件を満たすクラスを作成してください。</p>
+      <ul>
+        <li><code>Product</code> クラス：<code>name</code>（String）・<code>price</code>（int）フィールド。コンストラクタ・getter・<code>toString()</code> を定義する</li>
+        <li><code>BiFunction&lt;String, Integer, Product&gt;</code> を使い、コンストラクタ参照でインスタンスを生成する</li>
+        <li>3つの商品を生成し、価格の安い順に並び替えて出力する（<code>Comparator.comparingInt</code> と <code>Product::getPrice</code> を使う）</li>
+        <li>全商品を <code>System.out::println</code> で出力する</li>
+        <li>最高価格の商品名を <code>Function&lt;Product, String&gt;</code> と <code>Product::getName</code> で取得して出力する</li>
+      </ul>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>バナナ(120円)
+りんご(200円)
+メロン(800円)
+最高価格商品: メロン</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">Main.java</div>
+            <pre><code>import java.util.function.*;
+import java.util.Arrays;
+
+public class Main {
+
+    static class Product {
+        String name; int price;
+        Product(String name, int price) { this.name=name; this.price=price; }
+        String getName()  { return name; }
+        int    getPrice() { return price; }
+        @Override public String toString() { return name+"("+price+"円)"; }
+    }
+
+    public static void main(String[] args) {
+        BiFunction&lt;String, Integer, Product&gt; maker = Product::new;
+
+        Product[] products = {
+            maker.apply("りんご", 200),
+            maker.apply("メロン",  800),
+            maker.apply("バナナ",  120)
+        };
+
+        // 価格の安い順にソート
+        Arrays.sort(products, Comparator.comparingInt(Product::getPrice));
+
+        // 出力
+        Arrays.stream(products).forEach(System.out::println);
+
+        // 最高価格（ソート後の最後）
+        Function&lt;Product, String&gt; getName = Product::getName;
+        System.out.println("最高価格商品: "
+            + getName.apply(products[products.length - 1]));
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>Product::new</code>（コンストラクタ参照）で <code>BiFunction</code> 経由でインスタンスを生成します。</li>
+            <li><code>Comparator.comparingInt(Product::getPrice)</code> で価格昇順ソートします。</li>
+            <li><code>System.out::println</code>（特定インスタンスのメソッド参照）で出力します。</li>
+            <li><code>Product::getName</code>（任意インスタンスのメソッド参照）で名前を取得します。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4-1. for文</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* Header */
+    .page-header {
+      background: linear-gradient(135deg, #1a365d, #2b6cb0);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    /* Section title */
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #1a365d;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    /* Code */
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    /* Callout / hint */
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #276749; }
+
+    /* Tables */
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #2b6cb0; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #ebf8ff; }
+
+    /* For syntax diagram */
+    .for-syntax {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px 24px; margin: 14px 0;
+    }
+    .for-syntax-row {
+      display: flex; align-items: stretch; gap: 0;
+      font-family: monospace; font-size: 0.9rem; font-weight: 700;
+      justify-content: center; flex-wrap: wrap; gap: 4px; margin-bottom: 10px;
+    }
+    .fs-keyword { color: #2b6cb0; padding: 8px 10px; }
+    .fs-part {
+      padding: 8px 14px; border-radius: 8px; text-align: center;
+    }
+    .fs-init   { background: #ebf8ff; color: #2b6cb0; }
+    .fs-cond   { background: #c6f6d5; color: #22543d; }
+    .fs-update { background: #fefcbf; color: #744210; }
+    .fs-sep    { color: #718096; padding: 8px 4px; }
+    .fs-labels {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 4px;
+    }
+    .fs-label {
+      font-size: 0.72rem; color: #718096; text-align: center; padding: 0 14px;
+    }
+
+    /* Flow steps */
+    .flow-steps {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 16px 20px; margin: 14px 0;
+    }
+    .flow-steps .fs-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 10px; }
+    .flow-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 0.86rem; }
+    .flow-num {
+      background: #2b6cb0; color: white; width: 24px; height: 24px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+    }
+    .flow-once { background: #9f7aea; }
+    .flow-arrow { color: #a0aec0; }
+    .badge-once { background: #e9d8fd; color: #44337a; font-size: 0.72rem; padding: 1px 8px; border-radius: 10px; font-weight: 600; }
+    .badge-loop { background: #bee3f8; color: #2b6cb0; font-size: 0.72rem; padding: 1px 8px; border-radius: 10px; font-weight: 600; }
+
+    /* Output box */
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    /* Problem cards */
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    /* Answer toggle */
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #2b6cb0; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="chapter-label">第4章 ▶ 繰り返し処理</div>
+    <h1>4-1. for文</h1>
+    <div class="meta">難易度：⭐⭐⭐☆☆　|　問題数：4問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <!-- ===== 解説 ===== -->
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <h3>繰り返し処理とは？</h3>
+  <p>同じ処理を何度も実行したいとき、<strong>繰り返し処理（ループ）</strong>を使います。<br>
+  Javaには <code>for</code>・<code>while</code>・<code>do-while</code> の3種類があります。</p>
+
+  <!-- 構文図 -->
+  <h3>for文の基本構造</h3>
+
+  <div class="for-syntax">
+    <div class="for-syntax-row">
+      <span class="fs-keyword">for</span>
+      <span class="fs-sep">(</span>
+      <div class="fs-part fs-init">初期化式</div>
+      <span class="fs-sep">;</span>
+      <div class="fs-part fs-cond">条件式</div>
+      <span class="fs-sep">;</span>
+      <div class="fs-part fs-update">更新式</div>
+      <span class="fs-sep">)</span>
+    </div>
+    <div class="fs-labels">
+      <span class="fs-label" style="min-width:120px;">開始前に1回だけ</span>
+      <span class="fs-label" style="min-width:20px;"></span>
+      <span class="fs-label" style="min-width:120px;">毎回の前に評価</span>
+      <span class="fs-label" style="min-width:20px;"></span>
+      <span class="fs-label" style="min-width:120px;">毎回の後に実行</span>
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead><tr><th>部分</th><th>タイミング</th><th>役割</th></tr></thead>
+    <tbody>
+      <tr><td><code>初期化式</code></td><td>ループ開始前に1回だけ</td><td>カウンタ変数の初期化</td></tr>
+      <tr><td><code>条件式</code></td><td>各繰り返しの前に評価</td><td><code>false</code> になったらループ終了</td></tr>
+      <tr><td><code>更新式</code></td><td>各繰り返しの後に実行</td><td>カウンタ変数の更新</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 実行フロー -->
+  <h3>実行フロー（i = 0 〜 4 の場合）</h3>
+  <div class="flow-steps">
+    <div class="fs-title">▶ for (int i = 0; i &lt; 5; i++) の流れ</div>
+    <div class="flow-row">
+      <div class="flow-num flow-once">①</div>
+      <span><code>int i = 0</code> &nbsp;<span class="badge-once">1回だけ</span></span>
+    </div>
+    <div class="flow-row">
+      <div class="flow-num">②</div>
+      <span><code>i &lt; 5</code> を評価 → <strong>true</strong> なら処理実行 / <strong>false</strong> なら終了 &nbsp;<span class="badge-loop">毎回</span></span>
+    </div>
+    <div class="flow-row">
+      <div class="flow-num">③</div>
+      <span><code>i++</code> でカウンタを更新 → ②に戻る &nbsp;<span class="badge-loop">毎回</span></span>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-label">基本例（0〜4を出力）</div>
+    <pre><code>for (int i = 0; i &lt; 5; i++) {
+    System.out.println(i);
+}
+// → 0  1  2  3  4</code></pre>
+  </div>
+
+  <!-- バリエーション -->
+  <h3>カウンタのバリエーション</h3>
+  <div class="code-wrap">
+    <div class="code-label">カウントアップ・ダウン・ステップ</div>
+    <pre><code>// 1〜10 カウントアップ
+for (int i = 1; i &lt;= 10; i++) {
+    System.out.print(i + " ");
+}
+// → 1 2 3 4 5 6 7 8 9 10
+
+// 10〜1 カウントダウン
+for (int i = 10; i >= 1; i--) {
+    System.out.print(i + " ");
+}
+// → 10 9 8 7 6 5 4 3 2 1
+
+// 2ずつ増加（偶数）
+for (int i = 0; i &lt;= 10; i += 2) {
+    System.out.print(i + " ");
+}
+// → 0 2 4 6 8 10</code></pre>
+  </div>
+
+  <!-- 拡張for文 -->
+  <h3>拡張for文（for-each文）</h3>
+  <p>配列やコレクションの全要素を順に処理するときに使う簡潔な書き方です。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">拡張for文の例</div>
+    <pre><code>int[] numbers = {10, 20, 30, 40, 50};
+
+for (int n : numbers) {
+    System.out.println(n);
+}
+// → 10  20  30  40  50</code></pre>
+  </div>
+
+  <div class="hint">
+    <strong>💡 通常の for と拡張 for の使い分け</strong><br>
+    インデックスが不要 → <strong>拡張 for</strong> がシンプルで便利<br>
+    インデックスを使う（逆順・特定位置の参照など）→ <strong>通常の for</strong> を使う
+  </div>
+
+  <!-- ネスト -->
+  <h3>ネストしたfor文</h3>
+  <p><code>for</code> 文の中にさらに <code>for</code> 文を書けます。九九表のような2次元的な処理に使います。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">ネストの例（3×3の掛け算）</div>
+    <pre><code>for (int i = 1; i &lt;= 3; i++) {
+    for (int j = 1; j &lt;= 3; j++) {
+        System.out.print(i * j + " ");
+    }
+    System.out.println();
+}</code></pre>
+  </div>
+  <div class="output-box">
+    <div class="output-label">▶ 出力結果</div>
+    <pre><code>1 2 3
+2 4 6
+3 6 9</code></pre>
+  </div>
+
+  <!-- コード例 -->
+  <h3>コード例：合計と平均</h3>
+  <div class="code-wrap">
+    <div class="code-label">ForExample.java</div>
+    <pre><code>public class ForExample {
+    public static void main(String[] args) {
+        int sum = 0;
+
+        for (int i = 1; i &lt;= 10; i++) {
+            sum += i;
+        }
+
+        System.out.println("合計: " + sum);            // 合計: 55
+        System.out.println("平均: " + (sum / 10.0));   // 平均: 5.5
+    }
+}</code></pre>
+  </div>
+  <div class="output-box">
+    <div class="output-label">▶ 出力結果</div>
+    <pre><code>合計: 55
+平均: 5.5</code></pre>
+  </div>
+
+  <!-- ===== 問題 ===== -->
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 4-1-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐☆☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>public class Q1 {
+    public static void main(String[] args) {
+        for (int i = 1; i &lt;= 5; i++) {
+            System.out.println(i * i);
+        }
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>1
+4
+9
+16
+25</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>i</code> が 1〜5 まで1ずつ増え、それぞれの二乗が出力されます。</li>
+            <li><code>1×1=1</code>、<code>2×2=4</code>、<code>3×3=9</code>、<code>4×4=16</code>、<code>5×5=25</code></li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 4-1-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>public class Q2 {
+    public static void main(String[] args) {
+        int sum = 0;
+
+        for (int i = 1; i &lt;= 10; i++) {
+            if (i % 2 == 0) {
+                sum += i;
+            }
+        }
+
+        System.out.println("偶数の合計: " + sum);
+
+        for (int i = 3; i >= 1; i--) {
+            for (int j = 1; j &lt;= i; j++) {
+                System.out.print("* ");
+            }
+            System.out.println();
+        }
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>偶数の合計: 30
+* * *
+* *
+*</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li>1〜10 の偶数（2・4・6・8・10）の合計は <code>2+4+6+8+10 = 30</code>。</li>
+            <li>外側のループ <code>i</code> が 3→2→1 と減り、内側のループ <code>j</code> が <code>1〜i</code> まで <code>*</code> を出力します。</li>
+            <li>i=3のとき <code>* * *</code>、i=2のとき <code>* *</code>、i=1のとき <code>*</code> となります。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 4-1-3</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q3.java</div>
+        <pre><code>public class Q3 {
+    public static void main(String[] args) {
+        int[] scores = {85, 62, 90, 71, 55};
+        int total = 0;
+        int count = 0;
+
+        for (int score : scores) {
+            total += score;
+            if (score >= 60) {
+                count++;
+            }
+        }
+
+        System.out.println("合計: "     + total);
+        System.out.println("合格人数: " + count);
+        System.out.println("平均: "     + (double) total / scores.length);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>合計: 363
+合格人数: 4
+平均: 72.6</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>scores</code> の合計は <code>85+62+90+71+55 = 363</code>。</li>
+            <li>60以上は <code>85・62・90・71</code> の4つ（55は不合格）。</li>
+            <li>平均は <code>363 ÷ 5 = 72.6</code>。<code>scores.length</code> は配列の要素数 <code>5</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 4 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 4-1-4</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次の条件を満たす <code>MultiplicationTable</code> クラスを作成してください。</p>
+      <ul>
+        <li>ネストした <code>for</code> 文を使って、3の段・4の段・5の段の九九を出力する</li>
+        <li>各段は <code>"3 × 1 = 3"</code> の形式で出力する</li>
+        <li>各段の後に空行を入れる</li>
+      </ul>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力（抜粋）</div>
+        <pre><code>3 × 1 = 3
+3 × 2 = 6
+3 × 3 = 9
+  〜省略〜
+3 × 9 = 27
+
+4 × 1 = 4
+  〜省略〜
+4 × 9 = 36
+
+5 × 1 = 5
+  〜省略〜
+5 × 9 = 45
+</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">MultiplicationTable.java</div>
+            <pre><code>public class MultiplicationTable {
+    public static void main(String[] args) {
+        for (int i = 3; i &lt;= 5; i++) {
+            for (int j = 1; j &lt;= 9; j++) {
+                System.out.println(i + " × " + j + " = " + (i * j));
+            }
+            System.out.println();  // 段の後に空行
+        }
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li>外側のループ <code>i</code> が 3→4→5 と増えます（段の選択）。</li>
+            <li>内側のループ <code>j</code> が 1〜9 まで繰り返し、各段の掛け算を出力します。</li>
+            <li><code>System.out.println()</code> を内側ループの外に置くことで段ごとに空行が入ります。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

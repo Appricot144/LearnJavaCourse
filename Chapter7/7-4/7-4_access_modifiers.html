@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7-4. アクセス修飾子</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* Header */
+    .page-header {
+      background: linear-gradient(135deg, #1a365d, #2b6cb0);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    /* Section title */
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #1a365d;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    /* Code */
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    /* Callout / hint */
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #276749; }
+
+    /* Access table */
+    .access-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .access-table thead { background: #2b6cb0; color: white; }
+    .access-table thead th { padding: 10px 14px; text-align: center; }
+    .access-table thead th:first-child { text-align: left; }
+    .access-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .access-table tbody tr:last-child { border-bottom: none; }
+    .access-table tbody td { padding: 10px 14px; text-align: center; }
+    .access-table tbody td:first-child { text-align: left; font-weight: 700; font-family: monospace; }
+    .ok  { color: #22543d; font-size: 1.1rem; }
+    .ng  { color: #c53030; font-size: 1.1rem; }
+    .row-private   { background: #fff5f5; }
+    .row-pkg       { background: #fffaf0; }
+    .row-protected { background: #f0fff4; }
+    .row-public    { background: #ebf8ff; }
+
+    /* Scope visual */
+    .scope-visual {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px 24px; margin: 14px 0;
+    }
+    .sv-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 14px; }
+    .sv-rings { display: flex; flex-direction: column; gap: 8px; }
+    .sv-ring {
+      border-radius: 8px; padding: 10px 16px;
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .sv-public    { background: #ebf8ff; border: 2px solid #90cdf4; color: #2b6cb0; }
+    .sv-protected { background: #f0fff4; border: 2px solid #9ae6b4; color: #22543d; }
+    .sv-pkg       { background: #fefcbf; border: 2px solid #f6e05e; color: #744210; }
+    .sv-private   { background: #fff5f5; border: 2px solid #feb2b2; color: #742a2a; }
+    .sv-ring .sv-label { font-size: 0.72rem; opacity: 0.75; margin-left: 8px; font-weight: 400; }
+
+    /* Capsule flow */
+    .capsule-flow {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 18px 20px; margin: 14px 0;
+    }
+    .cf-steps { display: flex; flex-direction: column; gap: 6px; }
+    .cf-step {
+      display: flex; align-items: center; gap: 10px; font-size: 0.88rem;
+    }
+    .cf-arrow-down { color: #2b6cb0; font-size: 1.2rem; margin-left: 10px; }
+    .cf-box {
+      padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 0.85rem;
+    }
+    .cf-b1 { background: #fed7d7; color: #742a2a; }
+    .cf-b2 { background: #fefcbf; color: #744210; }
+    .cf-b3 { background: #c6f6d5; color: #22543d; }
+    .cf-b4 { background: #ebf8ff; color: #2b6cb0; }
+
+    /* Data table */
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #2b6cb0; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #ebf8ff; }
+
+    /* Output box */
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    /* Problem cards */
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    /* Answer toggle */
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #2b6cb0; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="chapter-label">第7章 ▶ クラスとオブジェクト（補足）</div>
+    <h1>7-4. アクセス修飾子</h1>
+    <div class="meta">難易度：⭐⭐⭐⭐☆　|　問題数：2問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <!-- ===== 解説 ===== -->
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <h3>アクセス修飾子とは？</h3>
+  <p><strong>クラス・フィールド・メソッドへのアクセス範囲を制御するキーワード</strong>です。<br>
+  「どこから使えるか」を明示することで、意図しない操作を防ぎます。</p>
+
+  <!-- スコープ図 -->
+  <div class="scope-visual">
+    <div class="sv-title">▶ アクセス範囲（外側ほど広い）</div>
+    <div class="sv-rings">
+      <div class="sv-ring sv-public">
+        <strong>public</strong> <span class="sv-label">— どこからでもアクセス可能</span>
+      </div>
+      <div class="sv-ring sv-protected" style="margin: 0 20px;">
+        <strong>protected</strong> <span class="sv-label">— 同じパッケージ + サブクラス</span>
+      </div>
+      <div class="sv-ring sv-pkg" style="margin: 0 40px;">
+        <strong>（なし）package-private</strong> <span class="sv-label">— 同じパッケージ内のみ</span>
+      </div>
+      <div class="sv-ring sv-private" style="margin: 0 60px;">
+        <strong>private</strong> <span class="sv-label">— そのクラス内のみ</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 比較表 -->
+  <h3>4種類のアクセス修飾子</h3>
+  <table class="access-table">
+    <thead>
+      <tr>
+        <th>修飾子</th>
+        <th>同じクラス</th>
+        <th>同じパッケージ</th>
+        <th>サブクラス</th>
+        <th>どこでも</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="row-private">
+        <td><code>private</code></td>
+        <td class="ok">✅</td><td class="ng">❌</td><td class="ng">❌</td><td class="ng">❌</td>
+      </tr>
+      <tr class="row-pkg">
+        <td>（なし）</td>
+        <td class="ok">✅</td><td class="ok">✅</td><td class="ng">❌</td><td class="ng">❌</td>
+      </tr>
+      <tr class="row-protected">
+        <td><code>protected</code></td>
+        <td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅</td><td class="ng">❌</td>
+      </tr>
+      <tr class="row-public">
+        <td><code>public</code></td>
+        <td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅</td><td class="ok">✅</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="hint">
+    <strong>💡 まずはこの2つをしっかり押さえよう</strong><br>
+    <code>private</code>（クラス内だけ）と <code>public</code>（どこからでも）の使い分けが基本です。<br>
+    <code>protected</code> は継承（第9章）を学んでから理解が深まります。
+  </div>
+
+  <!-- private の使い方 -->
+  <h3>private：クラスの外から隠す</h3>
+  <div class="code-wrap">
+    <div class="code-label">private フィールドへの直接アクセスはエラー</div>
+    <pre><code>public class Person {
+    private String name;  // 外から直接アクセス不可
+    private int    age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age  = age;
+    }
+}
+
+Person p = new Person("田中", 25);
+System.out.println(p.name);  // ❌ コンパイルエラー！
+p.age = -5;                  // ❌ コンパイルエラー！</code></pre>
+  </div>
+
+  <!-- getter / setter -->
+  <h3>public getter / setter でアクセスを制御する</h3>
+  <p><code>private</code> フィールドには <code>public</code> なメソッドを通してアクセスします。<br>
+  setter に検証ロジックを入れることで、不正な値の設定を防げます。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">Person クラスの getter / setter</div>
+    <pre><code>public class Person {
+    private String name;
+    private int    age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        setAge(age);          // setter 経由で検証
+    }
+
+    // getter（値を返すだけ）
+    public String getName() { return name; }
+    public int    getAge()  { return age;  }
+
+    // setter（検証あり）
+    public void setName(String name) {
+        if (name == null || name.isEmpty())
+            throw new IllegalArgumentException("名前は空にできません");
+        this.name = name;
+    }
+
+    public void setAge(int age) {
+        if (age &lt; 0 || age > 150)
+            throw new IllegalArgumentException("無効な年齢: " + age);
+        this.age = age;
+    }
+
+    public void show() {
+        System.out.println(name + "（" + age + "歳）");
+    }
+}
+
+// 使い方
+Person p = new Person("田中", 25);
+p.show();              // 田中（25歳）
+p.setName("鈴木");
+p.show();              // 鈴木（25歳）
+// p.age = -5;         // ❌ コンパイルエラー
+// p.setAge(-5);       // ❌ 例外が投げられる</code></pre>
+  </div>
+
+  <!-- カプセル化のメリット -->
+  <h3>カプセル化のメリット</h3>
+  <div class="capsule-flow">
+    <div class="cf-steps">
+      <div class="cf-step"><div class="cf-box cf-b1">フィールドを private にする</div></div>
+      <div class="cf-arrow-down">↓</div>
+      <div class="cf-step"><div class="cf-box cf-b2">外から直接変更できなくなる</div></div>
+      <div class="cf-arrow-down">↓</div>
+      <div class="cf-step"><div class="cf-box cf-b3">setter で値の検証ができる</div></div>
+      <div class="cf-arrow-down">↓</div>
+      <div class="cf-step"><div class="cf-box cf-b4">不正な状態を防げる（例：age = -1 を弾く）</div></div>
+    </div>
+  </div>
+
+  <!-- コード例 -->
+  <h3>コード例：BankAccount（private フィールド＋public メソッド）</h3>
+  <div class="code-wrap">
+    <div class="code-label">BankAccount.java</div>
+    <pre><code>public class BankAccount {
+    private String owner;
+    private int    balance;
+
+    public BankAccount(String owner, int initialBalance) {
+        this.owner = owner;
+        setBalance(initialBalance);
+    }
+
+    public String getOwner()   { return owner;   }
+    public int    getBalance() { return balance; }
+
+    private void setBalance(int balance) {  // private：外から呼ばせない
+        if (balance &lt; 0)
+            throw new IllegalArgumentException("残高は0以上にしてください");
+        this.balance = balance;
+    }
+
+    public void deposit(int amount) {
+        if (amount &lt;= 0) throw new IllegalArgumentException("入金額は1以上");
+        balance += amount;
+        System.out.println("入金: " + amount + "円 → 残高: " + balance + "円");
+    }
+
+    public void withdraw(int amount) {
+        if (amount &lt;= 0)        throw new IllegalArgumentException("出金額は1以上");
+        if (amount > balance) { System.out.println("残高不足"); return; }
+        balance -= amount;
+        System.out.println("出金: " + amount + "円 → 残高: " + balance + "円");
+    }
+}</code></pre>
+  </div>
+
+  <!-- ===== 問題 ===== -->
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 7-4-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>class Score {
+    private int value;
+
+    public Score(int value) {
+        setValue(value);
+    }
+
+    public int getValue() { return value; }
+
+    public void setValue(int value) {
+        if (value &lt; 0)   value = 0;
+        if (value > 100) value = 100;
+        this.value = value;
+    }
+
+    public String getRank() {
+        if (value >= 90) return "S";
+        if (value >= 70) return "A";
+        if (value >= 50) return "B";
+        return "C";
+    }
+}
+
+public class Q1 {
+    public static void main(String[] args) {
+        Score s1 = new Score(85);
+        Score s2 = new Score(120);  // 上限を超える
+        Score s3 = new Score(-10);  // 下限を下回る
+
+        System.out.println(s1.getValue() + " → " + s1.getRank());
+        System.out.println(s2.getValue() + " → " + s2.getRank());
+        System.out.println(s3.getValue() + " → " + s3.getRank());
+
+        s1.setValue(45);
+        System.out.println(s1.getValue() + " → " + s1.getRank());
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>85 → A
+100 → S
+0 → C
+45 → B</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>Score(85)</code> → <code>setValue(85)</code> → 範囲内なので <code>value = 85</code> → <code>"A"</code>。</li>
+            <li><code>Score(120)</code> → <code>setValue(120)</code> → 100超のため <code>value = 100</code> → <code>"S"</code>。</li>
+            <li><code>Score(-10)</code> → <code>setValue(-10)</code> → 0未満のため <code>value = 0</code> → <code>"C"</code>。</li>
+            <li><code>s1.setValue(45)</code> → <code>value = 45</code> → <code>"B"</code>。</li>
+            <li><code>value</code> は <code>private</code> なので <code>s1.value = ...</code> と直接変更はできません。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 7-4-2</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text"><code>Temperature</code>（温度）クラスを作成してください。</p>
+      <table class="data-table" style="margin-top:10px;">
+        <thead><tr><th>要素</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td><code>private double celsius</code></td><td>摂氏温度（フィールド）</td></tr>
+          <tr><td><code>Temperature(double celsius)</code></td><td><code>setCelsius</code> 経由で初期化</td></tr>
+          <tr><td><code>getCelsius()</code></td><td>摂氏を返す</td></tr>
+          <tr><td><code>getFahrenheit()</code></td><td>華氏（celsius × 9/5 + 32）を返す</td></tr>
+          <tr><td><code>setCelsius(double)</code></td><td>絶対零度（-273.15）未満なら <code>IllegalArgumentException</code> を投げる</td></tr>
+          <tr><td><code>show()</code></td><td><code>"X.X℃ / Y.Y℉"</code> の形式で出力（小数第1位）</td></tr>
+        </tbody>
+      </table>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>100.0℃ / 212.0℉
+-40.0℃ / -40.0℉
+36.5℃ / 97.7℉
+例外: 絶対零度より低い温度は設定できません</code></pre>
+      </div>
+      <div class="hint" style="margin-top:10px;">
+        <strong>💡 ヒント</strong>：<code>-300.0</code> を渡すケースは <code>try-catch</code> で捕捉して最後の行を出力します。<br>
+        <code>-40℃</code> は華氏でも <code>-40℉</code> になる特別な温度です（<code>-40×9/5+32=-40</code>）。
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">Temperature.java + Main.java</div>
+            <pre><code>public class Temperature {
+    private double celsius;
+
+    public Temperature(double celsius) {
+        setCelsius(celsius);
+    }
+
+    public double getCelsius()     { return celsius; }
+    public double getFahrenheit()  { return celsius * 9.0 / 5.0 + 32.0; }
+
+    public void setCelsius(double celsius) {
+        if (celsius &lt; -273.15)
+            throw new IllegalArgumentException(
+                "絶対零度より低い温度は設定できません");
+        this.celsius = celsius;
+    }
+
+    public void show() {
+        System.out.printf("%.1f℃ / %.1f℉%n", celsius, getFahrenheit());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Temperature t1 = new Temperature(100.0);
+        Temperature t2 = new Temperature(-40.0);
+        Temperature t3 = new Temperature(36.5);
+
+        t1.show();
+        t2.show();
+        t3.show();
+
+        try {
+            new Temperature(-300.0);
+        } catch (IllegalArgumentException e) {
+            System.out.println("例外: " + e.getMessage());
+        }
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>celsius</code> は <code>private</code> なので外部から直接変更できません。必ず <code>setCelsius</code> を通します。</li>
+            <li><code>setCelsius</code> に検証ロジックを入れることで、絶対零度（-273.15℃）より低い値を弾けます。</li>
+            <li><code>-40℃</code> は華氏でも <code>-40℉</code> で一致する特別な温度です。</li>
+            <li><code>try-catch</code> で <code>IllegalArgumentException</code> を捕捉して例外メッセージを出力します。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

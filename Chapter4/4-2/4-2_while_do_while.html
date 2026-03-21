@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4-2. while / do-while文</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* Header */
+    .page-header {
+      background: linear-gradient(135deg, #1a365d, #2b6cb0);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    /* Section title */
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #1a365d;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    /* Code */
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    /* Callout / hint */
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #276749; }
+
+    /* Tables */
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #2b6cb0; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #ebf8ff; }
+
+    /* While vs do-while comparison */
+    .loop-compare {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0;
+    }
+    .loop-card {
+      background: #fff; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .loop-card .lc-header {
+      padding: 10px 16px; font-weight: 700; font-size: 0.9rem;
+    }
+    .lc-header.while-style    { background: #ebf8ff; color: #1a365d; }
+    .lc-header.dowhile-style  { background: #fefcbf; color: #744210; }
+
+    /* Flow diagrams */
+    .flow-diagram {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 18px 20px; margin: 14px 0;
+    }
+    .fd-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 12px; }
+    .fd-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 0.86rem; }
+    .fd-box {
+      padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 0.84rem;
+    }
+    .fd-start  { background: #2b6cb0; color: white; }
+    .fd-cond   { background: #c6f6d5; color: #22543d; }
+    .fd-action { background: #ebf8ff; color: #2b6cb0; }
+    .fd-end    { background: #edf2f7; color: #4a5568; }
+    .fd-arrow  { color: #a0aec0; font-size: 1rem; flex-shrink: 0; }
+    .fd-badge-t { background: #c6f6d5; color: #22543d; font-size: 0.72rem; padding: 1px 8px; border-radius: 10px; font-weight: 700; }
+    .fd-badge-f { background: #fed7d7; color: #742a2a; font-size: 0.72rem; padding: 1px 8px; border-radius: 10px; font-weight: 700; }
+
+    /* Output box */
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    /* Problem cards */
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    /* Answer toggle */
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #2b6cb0; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="chapter-label">第4章 ▶ 繰り返し処理</div>
+    <h1>4-2. while / do-while文</h1>
+    <div class="meta">難易度：⭐⭐⭐☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <!-- ===== 解説 ===== -->
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <!-- while文 -->
+  <h3>while文とは？</h3>
+  <p><strong>条件が <code>true</code> の間、処理を繰り返す</strong>構文です。<br>
+  繰り返し回数が事前に決まっていないときに適しています。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">while文の構文と例</div>
+    <pre><code>// 構文
+while (条件式) {
+    // 条件が true の間繰り返す処理
+}
+
+// 例
+int i = 0;
+while (i &lt; 5) {
+    System.out.println(i);
+    i++;
+}
+// → 0  1  2  3  4</code></pre>
+  </div>
+
+  <!-- 実行フロー比較 -->
+  <h3>while と do-while の実行フロー比較</h3>
+
+  <div class="loop-compare">
+    <div class="loop-card">
+      <div class="lc-header while-style">while文（先に条件チェック）</div>
+      <div style="padding:14px 16px;">
+        <div class="fd-row"><div class="fd-box fd-start">開始</div></div>
+        <div class="fd-row"><div class="fd-arrow">↓</div></div>
+        <div class="fd-row">
+          <div class="fd-box fd-cond">条件チェック</div>
+          <span class="fd-badge-f">false → 終了</span>
+        </div>
+        <div class="fd-row"><div class="fd-arrow">↓ <span class="fd-badge-t">true</span></div></div>
+        <div class="fd-row"><div class="fd-box fd-action">処理実行</div></div>
+        <div class="fd-row"><div class="fd-arrow">↑ 戻る</div></div>
+      </div>
+    </div>
+    <div class="loop-card">
+      <div class="lc-header dowhile-style">do-while文（先に処理を実行）</div>
+      <div style="padding:14px 16px;">
+        <div class="fd-row"><div class="fd-box fd-start">開始</div></div>
+        <div class="fd-row"><div class="fd-arrow">↓</div></div>
+        <div class="fd-row"><div class="fd-box fd-action">処理実行（必ず1回）</div></div>
+        <div class="fd-row"><div class="fd-arrow">↓</div></div>
+        <div class="fd-row">
+          <div class="fd-box fd-cond">条件チェック</div>
+          <span class="fd-badge-f">false → 終了</span>
+        </div>
+        <div class="fd-row"><div class="fd-arrow">↑ <span class="fd-badge-t">true → 戻る</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 使い分け表 -->
+  <h3>for / while / do-while の使い分け</h3>
+  <table class="data-table">
+    <thead><tr><th>使い分け</th><th>推奨</th></tr></thead>
+    <tbody>
+      <tr><td>繰り返し回数が決まっている</td><td><code>for</code> 文</td></tr>
+      <tr><td>条件が満たされるまで繰り返す</td><td><code>while</code> 文</td></tr>
+      <tr><td>最低1回は必ず実行したい</td><td><code>do-while</code> 文</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 無限ループ注意 -->
+  <div class="callout">
+    <strong>⚠️ 無限ループに注意！</strong><br>
+    ループ変数の更新を忘れると条件が常に <code>true</code> になり、プログラムが終了しなくなります。<br>
+    <code>while</code> 文では <strong>必ずループ内でカウンタや状態を更新</strong>する習慣をつけましょう。
+    <div class="code-wrap" style="margin-top:8px;">
+      <pre style="padding:10px 14px;font-size:0.82rem;"><code>int i = 0;
+while (i &lt; 5) {
+    System.out.println(i);
+    // i++ を忘れると無限ループ！ → 必ず更新する
+    i++;
+}</code></pre>
+    </div>
+  </div>
+
+  <!-- do-while -->
+  <h3>do-while文</h3>
+  <p><strong>処理を先に実行してから条件を評価</strong>します。<br>
+  最初から条件が <code>false</code> でも <strong>必ず1回は処理が実行</strong>されます。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">do-while文の構文と例</div>
+    <pre><code>// 構文
+do {
+    // 最低1回は必ず実行される処理
+} while (条件式);
+
+// 例
+int i = 0;
+do {
+    System.out.println(i);
+    i++;
+} while (i &lt; 5);
+// → 0  1  2  3  4</code></pre>
+  </div>
+
+  <!-- 違いを示す例 -->
+  <h3>最初から条件が false の場合の違い</h3>
+  <div class="code-wrap">
+    <div class="code-label">while vs do-while（x = 10 で条件は false）</div>
+    <pre><code>int x = 10;
+
+// while：最初から false → 1回も実行されない
+while (x &lt; 5) {
+    System.out.println("while: " + x);  // 実行されない
+}
+
+// do-while：1回は必ず実行される
+do {
+    System.out.println("do-while: " + x);  // "do-while: 10" が出力される
+} while (x &lt; 5);</code></pre>
+  </div>
+  <div class="output-box">
+    <div class="output-label">▶ 出力結果</div>
+    <pre><code>do-while: 10</code></pre>
+  </div>
+
+  <!-- コード例 -->
+  <h3>コード例：数当てゲームのシミュレーション</h3>
+  <div class="code-wrap">
+    <div class="code-label">WhileExample.java</div>
+    <pre><code>public class WhileExample {
+    public static void main(String[] args) {
+        int secret = 7;
+        int guess  = 1;
+        int tries  = 0;
+
+        while (guess != secret) {
+            tries++;
+            System.out.println("試行 " + tries + ": " + guess + " → はずれ");
+            guess++;
+        }
+
+        tries++;
+        System.out.println("試行 " + tries + ": " + guess + " → 正解！");
+    }
+}</code></pre>
+  </div>
+  <div class="output-box">
+    <div class="output-label">▶ 出力結果</div>
+    <pre><code>試行 1: 1 → はずれ
+試行 2: 2 → はずれ
+試行 3: 3 → はずれ
+試行 4: 4 → はずれ
+試行 5: 5 → はずれ
+試行 6: 6 → はずれ
+試行 7: 7 → 正解！</code></pre>
+  </div>
+
+  <!-- ===== 問題 ===== -->
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 4-2-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐☆☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>public class Q1 {
+    public static void main(String[] args) {
+        int n = 1;
+
+        while (n &lt;= 16) {
+            System.out.println(n);
+            n *= 2;
+        }
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>1
+2
+4
+8
+16</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>n</code> が <code>1</code> から始まり、ループのたびに <code>2</code> 倍になります（1→2→4→8→16）。</li>
+            <li><code>n = 32</code> になると <code>n &lt;= 16</code> が <code>false</code> になりループ終了。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 4-2-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>public class Q2 {
+    public static void main(String[] args) {
+        int i = 5;
+
+        // while
+        while (i &lt; 3) {
+            System.out.println("while: " + i);
+            i++;
+        }
+        System.out.println("while後: " + i);
+
+        // do-while
+        do {
+            System.out.println("do-while: " + i);
+            i++;
+        } while (i &lt; 3);
+        System.out.println("do-while後: " + i);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>while後: 5
+do-while: 5
+do-while後: 6</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>while (i &lt; 3)</code> は最初から <code>5 &lt; 3</code> が <code>false</code> なので1回も実行されません。<code>i</code> はそのまま <code>5</code>。</li>
+            <li><code>do-while</code> は条件に関わらず先に処理が実行されるため、<code>"do-while: 5"</code> が出力されます。</li>
+            <li>処理後に <code>i++</code> で <code>i = 6</code> になり、<code>6 &lt; 3</code> は <code>false</code> なのでループ終了。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 4-2-3</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次の条件を満たす <code>DigitCounter</code> クラスを作成してください。</p>
+      <ul>
+        <li><code>int</code> 型の変数 <code>number</code> に <code>123456</code> を代入する</li>
+        <li><code>while</code> 文を使って <code>number</code> を10で割り続け、桁数を数える</li>
+        <li>各ステップで現在の <code>number</code> の値を出力する</li>
+        <li>最後に合計の桁数を出力する</li>
+      </ul>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>123456
+12345
+1234
+123
+12
+1
+桁数: 6</code></pre>
+      </div>
+      <div class="hint" style="margin-top:10px;">
+        <strong>💡 ヒント</strong>：<code>number &gt; 0</code> の間ループを続け、<br>
+        ループ内で <code>number /= 10</code> で桁を削り、<code>digits</code> をカウントアップします。
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">DigitCounter.java</div>
+            <pre><code>public class DigitCounter {
+    public static void main(String[] args) {
+        int number = 123456;
+        int digits = 0;
+
+        while (number > 0) {
+            System.out.println(number);
+            number /= 10;
+            digits++;
+        }
+
+        System.out.println("桁数: " + digits);
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>number &gt; 0</code> の間ループが続きます。</li>
+            <li><code>number /= 10</code> で桁を1つずつ削り（整数除算）、<code>digits</code> をカウントアップします。</li>
+            <li><code>123456 → 12345 → 1234 → 123 → 12 → 1 → 0</code> で6回繰り返されるため桁数は <code>6</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

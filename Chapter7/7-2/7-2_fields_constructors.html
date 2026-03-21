@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7-2. フィールドとコンストラクタ</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* Header */
+    .page-header {
+      background: linear-gradient(135deg, #1a365d, #2b6cb0);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    /* Section title */
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #1a365d;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    /* Code */
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    /* Callout / hint */
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #276749; }
+
+    /* Tables */
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #2b6cb0; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #ebf8ff; }
+
+    /* Constructor anatomy */
+    .ctor-anatomy {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px 24px; margin: 14px 0;
+    }
+    .ca-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 14px; }
+    .ca-row {
+      display: flex; align-items: stretch; gap: 4px;
+      font-family: monospace; font-size: 0.9rem; font-weight: 700;
+      flex-wrap: wrap; gap: 4px; margin-bottom: 10px;
+    }
+    .ca-part { padding: 8px 12px; border-radius: 6px; text-align: center; }
+    .ca-access  { background: #e9d8fd; color: #44337a; }
+    .ca-name    { background: #2b6cb0; color: white; }
+    .ca-params  { background: #ebf8ff; color: #2b6cb0; }
+    .ca-body    { background: #edf2f7; color: #4a5568; }
+    .ca-labels { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+    .ca-label  { font-size: 0.72rem; color: #718096; padding: 0 12px; text-align: center; }
+
+    /* Before/after comparison */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+    .compare-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+    .cc-header { padding: 9px 14px; font-weight: 700; font-size: 0.85rem; }
+    .cc-before { background: #fed7d7; color: #742a2a; }
+    .cc-after  { background: #c6f6d5; color: #22543d; }
+
+    /* Static vs instance field diagram */
+    .field-diagram {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 18px 20px; margin: 14px 0;
+    }
+    .fd-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 12px; }
+    .fd-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .fd-class-box {
+      background: #1a365d; color: white; border-radius: 10px;
+      padding: 12px 16px; text-align: center; min-width: 140px;
+    }
+    .fd-class-box .fdb-label { font-size: 0.72rem; opacity: 0.75; margin-bottom: 4px; }
+    .fd-class-box .fdb-field { font-family: monospace; font-size: 0.85rem; background: #9f7aea; border-radius: 4px; padding: 3px 8px; margin-top: 4px; }
+    .fd-instances { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-start; }
+    .fd-inst {
+      background: #ebf8ff; border: 2px solid #bee3f8; border-radius: 8px;
+      padding: 10px 14px; min-width: 110px; font-size: 0.83rem;
+    }
+    .fd-inst .fi-name { font-weight: 700; color: #2b6cb0; margin-bottom: 4px; font-size: 0.85rem; }
+    .fd-inst .fi-field { font-family: monospace; color: #2d3748; }
+    .fd-arrow { display: flex; align-items: center; color: #a0aec0; font-size: 1.2rem; }
+
+    /* Output box */
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    /* Problem cards */
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    /* Answer toggle */
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #2b6cb0; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="chapter-label">第7章 ▶ クラスとオブジェクト</div>
+    <h1>7-2. フィールドとコンストラクタ</h1>
+    <div class="meta">難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <!-- ===== 解説 ===== -->
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <h3>コンストラクタとは？</h3>
+  <p><strong>インスタンス生成時に自動的に呼ばれる特別なメソッド</strong>です。<br>
+  主にフィールドの初期値を設定するために使います。</p>
+
+  <!-- コンストラクタ構造図 -->
+  <div class="ctor-anatomy">
+    <div class="ca-title">▶ コンストラクタの構造（戻り値の型がない点が通常メソッドと異なる）</div>
+    <div class="ca-row">
+      <div class="ca-part ca-access">public</div>
+      <div class="ca-part ca-name">Dog</div>
+      <div class="ca-part ca-params">(String name, int age, String breed)</div>
+      <div class="ca-part ca-body">{ ... }</div>
+    </div>
+    <div class="ca-labels">
+      <span class="ca-label" style="min-width:60px;">アクセス<br>修飾子</span>
+      <span class="ca-label" style="min-width:80px;">クラス名と<br>同じ名前</span>
+      <span class="ca-label" style="min-width:200px;">引数（フィールドの初期値）</span>
+      <span class="ca-label" style="min-width:60px;">処理内容</span>
+    </div>
+  </div>
+
+  <!-- コンストラクタなし vs あり -->
+  <h3>コンストラクタなし vs あり</h3>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="cc-header cc-before">❌ コンストラクタなし（毎回設定が必要）</div>
+      <div class="code-wrap" style="margin:0;border-radius:0;">
+        <pre style="font-size:0.82rem;"><code>Dog pochi = new Dog();
+pochi.name  = "ポチ";
+pochi.age   = 3;
+pochi.breed = "柴犬";</code></pre>
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="cc-header cc-after">✅ コンストラクタあり（1行で完結）</div>
+      <div class="code-wrap" style="margin:0;border-radius:0;">
+        <pre style="font-size:0.82rem;"><code>Dog pochi = new Dog(
+    "ポチ", 3, "柴犬"
+);</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- コンストラクタの定義 -->
+  <h3>コンストラクタの定義と this キーワード</h3>
+  <div class="code-wrap">
+    <div class="code-label">Dog クラスのコンストラクタ</div>
+    <pre><code>public class Dog {
+    String name;
+    int    age;
+    String breed;
+
+    public Dog(String name, int age, String breed) {
+        this.name  = name;   // this.name → フィールド
+        this.age   = age;    //      name → 引数
+        this.breed = breed;
+    }
+
+    public void bark() {
+        System.out.println(name + ": ワン！");
+    }
+}
+
+// 呼び出し
+Dog pochi = new Dog("ポチ", 3, "柴犬");
+pochi.bark();  // ポチ: ワン！</code></pre>
+  </div>
+
+  <div class="callout">
+    <strong>⚠️ this を忘れると？</strong><br>
+    引数名とフィールド名が同じ場合、<code>this</code> をつけないと引数が自分自身に代入されるだけで<br>
+    フィールドに値が入りません。必ず <code>this.フィールド名 = 引数名;</code> と書きましょう。
+  </div>
+
+  <!-- デフォルトコンストラクタ -->
+  <h3>デフォルトコンストラクタ</h3>
+  <div class="code-wrap">
+    <div class="code-label">コンストラクタ定義の有無による違い</div>
+    <pre><code>// コンストラクタを定義しない場合 → Java が自動生成
+Dog dog = new Dog();     // OK（引数なしで生成できる）
+
+// 引数ありコンストラクタだけを定義した場合
+public Dog(String name) { ... }
+
+Dog dog = new Dog();          // ❌ コンパイルエラー！
+Dog dog = new Dog("ポチ");   // ✅ OK</code></pre>
+  </div>
+
+  <div class="hint">
+    <strong>💡 引数ありと引数なしの両方を使いたい場合</strong><br>
+    コンストラクタをオーバーロードして両方定義します。<br>
+    <code>public Dog() { ... }</code> と <code>public Dog(String name) { ... }</code> を両方書けばOKです。
+  </div>
+
+  <!-- コンストラクタのオーバーロード -->
+  <h3>コンストラクタのオーバーロード</h3>
+  <div class="code-wrap">
+    <div class="code-label">複数のコンストラクタ＋this() による委譲</div>
+    <pre><code>public class Person {
+    String name;
+    int    age;
+    String email;
+
+    // コンストラクタ1：全フィールド
+    public Person(String name, int age, String email) {
+        this.name  = name;
+        this.age   = age;
+        this.email = email;
+    }
+
+    // コンストラクタ2：名前と年齢（email は空文字）
+    public Person(String name, int age) {
+        this(name, age, "");   // コンストラクタ1に委譲
+    }
+
+    // コンストラクタ3：名前のみ
+    public Person(String name) {
+        this(name, 0, "");     // コンストラクタ1に委譲
+    }
+}</code></pre>
+  </div>
+
+  <!-- static フィールド -->
+  <h3>static フィールド（クラス変数）</h3>
+  <p><code>static</code> を付けたフィールドは<strong>クラス全体で共有</strong>されます。</p>
+
+  <div class="field-diagram">
+    <div class="fd-title">▶ static フィールドは全インスタンスで共有される</div>
+    <div class="fd-row">
+      <div class="fd-class-box">
+        <div class="fdb-label">Counter クラス</div>
+        <div class="fdb-field">static total = 3</div>
+      </div>
+      <div class="fd-arrow">→</div>
+      <div class="fd-instances">
+        <div class="fd-inst"><div class="fi-name">c1</div><div class="fi-field">id = 1</div></div>
+        <div class="fd-inst"><div class="fi-name">c2</div><div class="fi-field">id = 2</div></div>
+        <div class="fd-inst"><div class="fi-name">c3</div><div class="fi-field">id = 3</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-label">static フィールドの例</div>
+    <pre><code>public class Counter {
+    static int total = 0;  // クラス変数（共有）
+    int id;                // インスタンス変数（各自が持つ）
+
+    public Counter() {
+        total++;
+        id = total;
+    }
+}
+
+Counter c1 = new Counter();
+Counter c2 = new Counter();
+Counter c3 = new Counter();
+
+System.out.println(Counter.total);  // 3（クラス名でアクセス）
+System.out.println(c1.id);          // 1
+System.out.println(c3.id);          // 3</code></pre>
+  </div>
+
+  <!-- コード例 -->
+  <h3>コード例：Student クラス</h3>
+  <div class="code-wrap">
+    <div class="code-label">Student.java + Main.java</div>
+    <pre><code>public class Student {
+    String name;
+    int    grade;
+    double gpa;
+
+    public Student(String name, int grade, double gpa) {
+        this.name  = name;
+        this.grade = grade;
+        this.gpa   = gpa;
+    }
+
+    public Student(String name) {
+        this(name, 1, 0.0);  // 上のコンストラクタに委譲
+    }
+
+    public void showProfile() {
+        System.out.println(name + "（" + grade + "年・GPA:" + gpa + "）");
+    }
+}
+
+// Main
+Student s1 = new Student("田中", 3, 3.8);
+Student s2 = new Student("山田");   // grade=1, gpa=0.0
+
+s1.showProfile();  // 田中（3年・GPA:3.8）
+s2.showProfile();  // 山田（1年・GPA:0.0）</code></pre>
+  </div>
+  <div class="output-box">
+    <div class="output-label">▶ 出力結果</div>
+    <pre><code>田中（3年・GPA:3.8）
+山田（1年・GPA:0.0）</code></pre>
+  </div>
+
+  <!-- ===== 問題 ===== -->
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 7-2-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐☆☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>class Book {
+    String title;
+    String author;
+    int    price;
+
+    public Book(String title, String author, int price) {
+        this.title  = title;
+        this.author = author;
+        this.price  = price;
+    }
+
+    public void show() {
+        System.out.println("「" + title + "」"
+            + author + " (" + price + "円)");
+    }
+}
+
+public class Q1 {
+    public static void main(String[] args) {
+        Book b1 = new Book("Javaの基本", "山田太郎", 2800);
+        Book b2 = new Book("デザインパターン", "鈴木花子", 3500);
+
+        b1.show();
+        b2.show();
+        System.out.println(b1.title.equals(b2.title));
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>「Javaの基本」山田太郎 (2800円)
+「デザインパターン」鈴木花子 (3500円)
+false</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li>コンストラクタで各フィールドが初期化されます。</li>
+            <li><code>b1.title.equals(b2.title)</code> は <code>"Javaの基本".equals("デザインパターン")</code> → <code>false</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 7-2-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>class Temperature {
+    double celsius;
+
+    public Temperature(double celsius) {
+        this.celsius = celsius;
+    }
+
+    public Temperature() {
+        this(0.0);  // 引数ありコンストラクタに委譲
+    }
+
+    public double toFahrenheit() {
+        return celsius * 9 / 5 + 32;
+    }
+
+    public void show() {
+        System.out.printf("%.1f℃ = %.1f℉%n",
+            celsius, toFahrenheit());
+    }
+}
+
+public class Q2 {
+    public static void main(String[] args) {
+        Temperature t1 = new Temperature(100.0);
+        Temperature t2 = new Temperature(0.0);
+        Temperature t3 = new Temperature();
+
+        t1.show();
+        t2.show();
+        t3.show();
+        System.out.println(t1.celsius > t2.celsius);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>100.0℃ = 212.0℉
+0.0℃ = 32.0℉
+0.0℃ = 32.0℉
+true</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>t1</code>：100℃ → 100 × 9/5 + 32 = <code>212.0</code>℉。</li>
+            <li><code>t2</code>：0℃ → 0 × 9/5 + 32 = <code>32.0</code>℉。</li>
+            <li><code>t3</code>：引数なしコンストラクタが <code>this(0.0)</code> で <code>celsius = 0.0</code> に設定されるため <code>t2</code> と同じ出力。</li>
+            <li><code>t1.celsius &gt; t2.celsius</code> は <code>100.0 &gt; 0.0</code> → <code>true</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 7-2-3</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text"><code>Product</code>（商品）クラスと <code>Main</code> クラスを作成してください。</p>
+      <table class="data-table" style="margin-top:10px;">
+        <thead><tr><th>要素</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>フィールド</td><td><code>String name</code>、<code>int price</code>、<code>int stock</code></td></tr>
+          <tr><td><code>static int totalProducts</code></td><td>生成したインスタンスの総数（クラス変数）</td></tr>
+          <tr><td>コンストラクタ1</td><td><code>(String, int, int)</code> で全フィールドを初期化し <code>totalProducts</code> をインクリメント</td></tr>
+          <tr><td>コンストラクタ2</td><td><code>(String, int)</code> で <code>stock=0</code> としてコンストラクタ1に委譲</td></tr>
+          <tr><td><code>sell(int amount)</code></td><td>在庫が足りれば減らして <code>"X個販売"</code> を出力、足りなければ <code>"在庫不足"</code> を出力</td></tr>
+          <tr><td><code>show()</code></td><td><code>"[name] 価格:X円 在庫:Y個"</code> を出力</td></tr>
+        </tbody>
+      </table>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>商品数: 3
+[りんご] 価格:150円 在庫:100個
+[バナナ] 価格:200円 在庫:50個
+[メロン] 価格:800円 在庫:0個
+5個販売
+在庫不足
+[りんご] 価格:150円 在庫:95個</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">Product.java + Main.java</div>
+            <pre><code>class Product {
+    String name;
+    int    price;
+    int    stock;
+    static int totalProducts = 0;
+
+    public Product(String name, int price, int stock) {
+        this.name  = name;
+        this.price = price;
+        this.stock = stock;
+        totalProducts++;
+    }
+
+    public Product(String name, int price) {
+        this(name, price, 0);  // コンストラクタ1に委譲
+    }
+
+    public void sell(int amount) {
+        if (amount > stock) {
+            System.out.println("在庫不足");
+        } else {
+            stock -= amount;
+            System.out.println(amount + "個販売");
+        }
+    }
+
+    public void show() {
+        System.out.println("[" + name + "] 価格:"
+            + price + "円 在庫:" + stock + "個");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Product p1 = new Product("りんご", 150, 100);
+        Product p2 = new Product("バナナ", 200, 50);
+        Product p3 = new Product("メロン", 800);     // stock=0
+
+        System.out.println("商品数: " + Product.totalProducts);
+        p1.show();
+        p2.show();
+        p3.show();
+
+        p1.sell(5);
+        p1.sell(200);   // 在庫不足
+        p1.show();
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>totalProducts</code> は <code>static</code> フィールドなので全インスタンスで共有され、コンストラクタが呼ばれるたびに増加します。</li>
+            <li>コンストラクタ2は <code>this(name, price, 0)</code> でコンストラクタ1に委譲し、処理を再利用します。</li>
+            <li><code>sell()</code> は在庫チェック後に <code>stock</code> を更新します。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4-3. break / continue</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* Header */
+    .page-header {
+      background: linear-gradient(135deg, #1a365d, #2b6cb0);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    /* Section title */
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #1a365d;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    /* Code */
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    /* Callout / hint */
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #276749; }
+
+    /* Tables */
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #2b6cb0; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #ebf8ff; }
+
+    /* Loop trace visualizer */
+    .loop-trace {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 18px 20px; margin: 14px 0; overflow-x: auto;
+    }
+    .loop-trace .lt-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 12px; }
+    .lt-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; flex-wrap: nowrap; }
+    .lt-cell {
+      min-width: 44px; height: 36px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.82rem; font-weight: 700; flex-shrink: 0;
+    }
+    .lt-label { font-size: 0.78rem; color: #718096; min-width: 60px; flex-shrink: 0; }
+    .lt-normal  { background: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8; }
+    .lt-break   { background: #fed7d7; color: #742a2a; border: 1px solid #feb2b2; }
+    .lt-cont    { background: #fefcbf; color: #744210; border: 1px solid #f6e05e; }
+    .lt-end     { background: #edf2f7; color: #718096; border: 1px dashed #cbd5e0; font-size: 0.72rem; }
+    .lt-legend  { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+    .lt-leg-item { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #718096; }
+    .lt-leg-box { width: 14px; height: 14px; border-radius: 3px; }
+
+    /* Compare cards */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0; }
+    .compare-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+    .cc-header { padding: 10px 16px; font-weight: 700; font-size: 0.9rem; }
+    .cc-break    { background: #fed7d7; color: #742a2a; }
+    .cc-continue { background: #fefcbf; color: #744210; }
+
+    /* Output box */
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    /* Problem cards */
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    /* Answer toggle */
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #2b6cb0; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="chapter-label">第4章 ▶ 繰り返し処理</div>
+    <h1>4-3. break / continue</h1>
+    <div class="meta">難易度：⭐⭐⭐☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <!-- ===== 解説 ===== -->
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <!-- break -->
+  <h3>break文とは？</h3>
+  <p>ループを<strong>即座に終了</strong>させる命令です。<code>switch</code> 文でも使いましたが、<code>for</code> や <code>while</code> でも同様に機能します。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">break の例（i == 5 でループ終了）</div>
+    <pre><code>for (int i = 0; i &lt; 10; i++) {
+    if (i == 5) {
+        break;  // i が 5 になったらループを終了
+    }
+    System.out.println(i);
+}
+// → 0  1  2  3  4</code></pre>
+  </div>
+
+  <!-- continue -->
+  <h3>continue文とは？</h3>
+  <p><strong>その回の処理だけをスキップ</strong>して次の繰り返しに進む命令です。ループ自体は終了しません。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">continue の例（偶数をスキップ）</div>
+    <pre><code>for (int i = 0; i &lt; 10; i++) {
+    if (i % 2 == 0) {
+        continue;  // 偶数のときはスキップ
+    }
+    System.out.println(i);
+}
+// → 1  3  5  7  9</code></pre>
+  </div>
+
+  <!-- ループトレース図 -->
+  <h3>break と continue の動作の違い</h3>
+
+  <div class="loop-trace">
+    <div class="lt-title">▶ for (int i = 0; i &lt; 8; i++) で break は i==5、continue は i==3 の場合</div>
+    <div class="lt-row">
+      <span class="lt-label">break：</span>
+      <div class="lt-cell lt-normal">0</div>
+      <div class="lt-cell lt-normal">1</div>
+      <div class="lt-cell lt-normal">2</div>
+      <div class="lt-cell lt-normal">3</div>
+      <div class="lt-cell lt-normal">4</div>
+      <div class="lt-cell lt-break">5💥</div>
+      <div class="lt-cell lt-end">6 ×</div>
+      <div class="lt-cell lt-end">7 ×</div>
+    </div>
+    <div class="lt-row">
+      <span class="lt-label">continue：</span>
+      <div class="lt-cell lt-normal">0</div>
+      <div class="lt-cell lt-normal">1</div>
+      <div class="lt-cell lt-normal">2</div>
+      <div class="lt-cell lt-cont">3⏭</div>
+      <div class="lt-cell lt-normal">4</div>
+      <div class="lt-cell lt-normal">5</div>
+      <div class="lt-cell lt-normal">6</div>
+      <div class="lt-cell lt-normal">7</div>
+    </div>
+    <div class="lt-legend">
+      <div class="lt-leg-item"><div class="lt-leg-box" style="background:#ebf8ff;border:1px solid #bee3f8;"></div>通常実行</div>
+      <div class="lt-leg-item"><div class="lt-leg-box" style="background:#fed7d7;border:1px solid #feb2b2;"></div>break（ループ終了）</div>
+      <div class="lt-leg-item"><div class="lt-leg-box" style="background:#fefcbf;border:1px solid #f6e05e;"></div>continue（スキップ）</div>
+      <div class="lt-leg-item"><div class="lt-leg-box" style="background:#edf2f7;border:1px dashed #cbd5e0;"></div>実行されない</div>
+    </div>
+  </div>
+
+  <!-- 比較表 -->
+  <table class="data-table">
+    <thead><tr><th>命令</th><th>動作</th><th>ループへの影響</th></tr></thead>
+    <tbody>
+      <tr><td><code>break</code></td><td>その時点でループを完全に終了</td><td>ループを抜ける</td></tr>
+      <tr><td><code>continue</code></td><td>その回の処理だけスキップ</td><td>次の繰り返しに進む</td></tr>
+    </tbody>
+  </table>
+
+  <!-- while(true) と break -->
+  <h3>while(true) と break の組み合わせ</h3>
+  <p><code>while (true)</code> で意図的に無限ループを作り、条件を満たしたときに <code>break</code> で抜けるパターンがよく使われます。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">while(true) + break の例</div>
+    <pre><code>int i = 0;
+
+while (true) {      // 無限ループ
+    if (i >= 5) {
+        break;      // 条件を満たしたら脱出
+    }
+    System.out.println(i);
+    i++;
+}
+System.out.println("終了");
+// → 0  1  2  3  4  終了</code></pre>
+  </div>
+
+  <!-- ネストと break -->
+  <h3>ネストしたループでの break</h3>
+  <p><code>break</code> や <code>continue</code> は<strong>自分が属する最も内側のループ</strong>にのみ作用します。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">ネストの break（内側のループのみ終了）</div>
+    <pre><code>for (int i = 0; i &lt; 3; i++) {
+    for (int j = 0; j &lt; 3; j++) {
+        if (j == 1) {
+            break;  // 内側のループだけ終了
+        }
+        System.out.println(i + "-" + j);
+    }
+}
+// → 0-0  1-0  2-0</code></pre>
+  </div>
+
+  <div class="hint">
+    <strong>💡 外側のループを終了させたい場合</strong><br>
+    ラベル付き break（<code>outer: for(...)</code> → <code>break outer;</code>）で外側のループを終了できますが、読みにくくなります。<br>
+    代わりに <strong>フラグ変数</strong> を使うか、<strong>別メソッドに切り出す</strong>方がすっきりします。
+  </div>
+
+  <!-- コード例 -->
+  <h3>コード例：素数判定</h3>
+  <div class="code-wrap">
+    <div class="code-label">PrimeChecker.java</div>
+    <pre><code>public class PrimeChecker {
+    public static void main(String[] args) {
+        int num = 17;
+        boolean isPrime = true;
+
+        if (num &lt; 2) {
+            isPrime = false;
+        } else {
+            for (int i = 2; i &lt; num; i++) {
+                if (num % i == 0) {
+                    isPrime = false;
+                    break;  // 割り切れた時点で終了（以降は調べる必要なし）
+                }
+            }
+        }
+
+        System.out.println(num + " は素数: " + isPrime);  // 17 は素数: true
+    }
+}</code></pre>
+  </div>
+
+  <!-- ===== 問題 ===== -->
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 4-3-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐☆☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>public class Q1 {
+    public static void main(String[] args) {
+        for (int i = 1; i &lt;= 10; i++) {
+            if (i % 3 == 0) {
+                continue;
+            }
+            if (i == 8) {
+                break;
+            }
+            System.out.println(i);
+        }
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>1
+2
+4
+5
+7</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>i = 3</code>・<code>i = 6</code>：<code>i % 3 == 0</code> → <code>continue</code>（スキップ）</li>
+            <li><code>i = 8</code>：<code>break</code> → ループ終了（8以降は実行されない）</li>
+            <li>結果として <code>1・2・4・5・7</code> が出力されます。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 4-3-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>public class Q2 {
+    public static void main(String[] args) {
+        int count = 0;
+
+        for (int i = 1; i &lt;= 20; i++) {
+            if (i % 2 == 0) continue;
+            if (i % 5 == 0) break;
+            count++;
+            System.out.print(i + " ");
+        }
+
+        System.out.println();
+        System.out.println("count: " + count);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>1 3 
+count: 2</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>i = 1</code>：奇数・5の倍数でない → 出力。count = 1</li>
+            <li><code>i = 2</code>：偶数 → <code>continue</code>（スキップ）</li>
+            <li><code>i = 3</code>：奇数・5の倍数でない → 出力。count = 2</li>
+            <li><code>i = 4</code>：偶数 → <code>continue</code>（スキップ）</li>
+            <li><code>i = 5</code>：奇数 → 偶数チェックはパス、<code>i % 5 == 0</code> → <code>break</code>（終了）</li>
+            <li><code>5</code> は <code>break</code> で終了するため出力されず、<code>count</code> もカウントされません。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 4-3-3</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次の条件を満たす <code>NumberFilter</code> クラスを作成してください。</p>
+      <ul>
+        <li><code>for</code> 文で <code>1</code> から <code>30</code> まで繰り返す</li>
+        <li><strong>4の倍数</strong>のときは <code>continue</code>（スキップ）する</li>
+        <li><strong>出力した数の合計が 100 を超えたら</strong> <code>break</code>（ループ終了）する</li>
+        <li>スキップ・終了した数以外を出力し、最後に合計を出力する</li>
+      </ul>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>1 2 3 5 6 7 9 10 11 13 14 15 17 18 19 21 
+合計: 171</code></pre>
+      </div>
+      <div class="hint" style="margin-top:10px;">
+        <strong>💡 ヒント</strong>：<code>continue</code> の<strong>前</strong>に合計を加算しないように注意しましょう。<br>
+        合計チェック（<code>sum &gt; 100</code>）は加算・出力の<strong>後</strong>に行います。
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">NumberFilter.java</div>
+            <pre><code>public class NumberFilter {
+    public static void main(String[] args) {
+        int sum = 0;
+
+        for (int i = 1; i &lt;= 30; i++) {
+            if (i % 4 == 0) {
+                continue;  // 4の倍数はスキップ
+            }
+            sum += i;
+            System.out.print(i + " ");
+            if (sum > 100) {
+                break;  // 合計が100を超えたら終了
+            }
+        }
+
+        System.out.println();
+        System.out.println("合計: " + sum);
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li>4の倍数（4・8・12・16・20・24・28）はスキップされます。</li>
+            <li>それ以外の数を順に加算し、<code>sum &gt; 100</code> になった時点で <code>break</code>。</li>
+            <li><code>21</code> を加算した時点で合計が <code>171</code> となり100を超えるため終了。</li>
+            <li><code>break</code> は加算・出力の後に評価されるため、<code>21</code> は出力されます。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2-2. 比較演算子・論理演算子</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* Header */
+    .page-header {
+      background: linear-gradient(135deg, #1a365d, #2b6cb0);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    /* Section title */
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #1a365d;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    /* Code */
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    /* Callout */
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #276749; }
+
+    /* Tables */
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #2b6cb0; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; text-align: center; }
+    .data-table tbody td:first-child { text-align: left; }
+    .data-table tbody tr:hover { background: #ebf8ff; }
+    .t-true  { color: #276749; font-weight: 700; }
+    .t-false { color: #9b2c2c; font-weight: 700; }
+
+    /* Truth table grid */
+    .truth-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0;
+    }
+    .truth-card {
+      background: #fff; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .truth-card .truth-title {
+      padding: 10px 16px; font-weight: 700; font-size: 0.9rem;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .truth-title.and { background: #ebf8ff; color: #1a365d; }
+    .truth-title.or  { background: #f0fff4; color: #1c4532; }
+    .truth-card table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    .truth-card thead { background: #edf2f7; }
+    .truth-card thead th { padding: 6px 12px; text-align: center; color: #4a5568; font-weight: 600; }
+    .truth-card tbody tr { border-top: 1px solid #e2e8f0; }
+    .truth-card tbody td { padding: 6px 12px; text-align: center; }
+
+    /* NOT box */
+    .not-box {
+      display: flex; gap: 12px; align-items: center; justify-content: center;
+      background: #fff; border-radius: 10px; padding: 16px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0; flex-wrap: wrap;
+    }
+    .not-cell {
+      text-align: center; background: #edf2f7; border-radius: 8px; padding: 10px 20px;
+    }
+    .not-cell .not-label { font-size: 0.72rem; color: #718096; margin-bottom: 4px; }
+    .not-cell .not-val   { font-size: 1rem; font-weight: 700; }
+    .not-arrow { font-size: 1.4rem; color: #4a5568; }
+
+    /* Output */
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    /* Problem cards */
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    /* Answer toggle */
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #2b6cb0; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="chapter-label">第2章 ▶ 演算子</div>
+    <h1>2-2. 比較演算子・論理演算子</h1>
+    <div class="meta">難易度：⭐⭐☆☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <!-- ===== 解説 ===== -->
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <!-- 比較演算子 -->
+  <h3>比較演算子</h3>
+  <p>2つの値を比較し、結果を <strong><code>true</code> または <code>false</code>（boolean型）</strong> で返す演算子です。</p>
+
+  <table class="data-table">
+    <thead><tr><th>演算子</th><th>意味</th><th>例</th><th>結果</th></tr></thead>
+    <tbody>
+      <tr><td><code>==</code></td><td>等しい</td><td><code>5 == 5</code></td><td class="t-true">true</td></tr>
+      <tr><td><code>!=</code></td><td>等しくない</td><td><code>5 != 3</code></td><td class="t-true">true</td></tr>
+      <tr><td><code>&gt;</code></td><td>より大きい</td><td><code>5 &gt; 3</code></td><td class="t-true">true</td></tr>
+      <tr><td><code>&lt;</code></td><td>より小さい</td><td><code>5 &lt; 3</code></td><td class="t-false">false</td></tr>
+      <tr><td><code>&gt;=</code></td><td>以上</td><td><code>5 &gt;= 5</code></td><td class="t-true">true</td></tr>
+      <tr><td><code>&lt;=</code></td><td>以下</td><td><code>5 &lt;= 4</code></td><td class="t-false">false</td></tr>
+    </tbody>
+  </table>
+
+  <div class="code-wrap">
+    <div class="code-label">比較演算子の例</div>
+    <pre><code>int a = 10;
+int b = 20;
+
+System.out.println(a == b);   // false
+System.out.println(a != b);   // true
+System.out.println(a &lt; b);    // true
+System.out.println(a &gt;= 10);  // true</code></pre>
+  </div>
+
+  <!-- 論理演算子 -->
+  <h3>論理演算子</h3>
+  <p>複数の条件を組み合わせるときに使います。結果は <code>boolean</code> 型になります。</p>
+
+  <table class="data-table">
+    <thead><tr><th>演算子</th><th>意味</th><th>説明</th></tr></thead>
+    <tbody>
+      <tr><td><code>&amp;&amp;</code></td><td>AND（かつ）</td><td>両方が <code>true</code> のときだけ <code>true</code></td></tr>
+      <tr><td><code>||</code></td><td>OR（または）</td><td>どちらか一方が <code>true</code> なら <code>true</code></td></tr>
+      <tr><td><code>!</code></td><td>NOT（否定）</td><td><code>true</code> → <code>false</code>、<code>false</code> → <code>true</code></td></tr>
+    </tbody>
+  </table>
+
+  <!-- 真理値表 -->
+  <h3>AND / OR の真理値表</h3>
+
+  <div class="truth-grid">
+    <div class="truth-card">
+      <div class="truth-title and">&&（AND）</div>
+      <table>
+        <thead><tr><th>A</th><th>B</th><th>A &amp;&amp; B</th></tr></thead>
+        <tbody>
+          <tr><td class="t-true">true</td><td class="t-true">true</td><td class="t-true">true</td></tr>
+          <tr><td class="t-true">true</td><td class="t-false">false</td><td class="t-false">false</td></tr>
+          <tr><td class="t-false">false</td><td class="t-true">true</td><td class="t-false">false</td></tr>
+          <tr><td class="t-false">false</td><td class="t-false">false</td><td class="t-false">false</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="truth-card">
+      <div class="truth-title or">||（OR）</div>
+      <table>
+        <thead><tr><th>A</th><th>B</th><th>A || B</th></tr></thead>
+        <tbody>
+          <tr><td class="t-true">true</td><td class="t-true">true</td><td class="t-true">true</td></tr>
+          <tr><td class="t-true">true</td><td class="t-false">false</td><td class="t-true">true</td></tr>
+          <tr><td class="t-false">false</td><td class="t-true">true</td><td class="t-true">true</td></tr>
+          <tr><td class="t-false">false</td><td class="t-false">false</td><td class="t-false">false</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- NOT -->
+  <h3>NOT（!）</h3>
+  <p>条件の真偽を反転させます。</p>
+
+  <div class="not-box">
+    <div class="not-cell">
+      <div class="not-label">元の値</div>
+      <div class="not-val t-true">true</div>
+    </div>
+    <div class="not-arrow">→ <code>!</code> →</div>
+    <div class="not-cell">
+      <div class="not-label">反転後</div>
+      <div class="not-val t-false">false</div>
+    </div>
+    <div style="width:40px;"></div>
+    <div class="not-cell">
+      <div class="not-label">元の値</div>
+      <div class="not-val t-false">false</div>
+    </div>
+    <div class="not-arrow">→ <code>!</code> →</div>
+    <div class="not-cell">
+      <div class="not-label">反転後</div>
+      <div class="not-val t-true">true</div>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-label">AND / OR / NOT の例</div>
+    <pre><code>int age = 20;
+boolean hasTicket = true;
+
+System.out.println(age &gt;= 18 &amp;&amp; hasTicket);   // true  （両方満たす）
+System.out.println(age &gt;= 18 &amp;&amp; !hasTicket);  // false （チケットなし）
+System.out.println(age &gt;= 18 || hasTicket);   // true  （どちらか満たす）
+
+boolean isRaining = false;
+System.out.println(!isRaining);               // true  （雨でない）</code></pre>
+  </div>
+
+  <!-- 短絡評価 -->
+  <h3>短絡評価（ショートサーキット）</h3>
+  <p><code>&amp;&amp;</code> と <code>||</code> は結果が確定した時点で右辺の評価をスキップします。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">短絡評価の例</div>
+    <pre><code>int x = 0;
+
+// x != 0 が false → 右辺（10/x）は評価されない → ゼロ除算が起きない！
+System.out.println(x != 0 &amp;&amp; 10 / x > 1);  // false（安全）</code></pre>
+  </div>
+
+  <div class="callout">
+    <strong>⚠️ ポイント</strong>：<code>&amp;&amp;</code> は左辺が <code>false</code> なら右辺を評価しません。<br>
+    <code>||</code> は左辺が <code>true</code> なら右辺を評価しません。
+  </div>
+
+  <!-- コード例 -->
+  <h3>コード例</h3>
+  <div class="code-wrap">
+    <div class="code-label">LogicExample.java</div>
+    <pre><code>public class LogicExample {
+    public static void main(String[] args) {
+        int score = 75;
+        boolean isPassed     = score &gt;= 60;
+        boolean isHighScore  = score &gt;= 90;
+
+        System.out.println("合格: "           + isPassed);
+        System.out.println("高得点: "         + isHighScore);
+        System.out.println("合格かつ高得点: " + (isPassed &amp;&amp; isHighScore));
+        System.out.println("合格または高得点: "+ (isPassed || isHighScore));
+        System.out.println("不合格: "         + !isPassed);
+    }
+}</code></pre>
+  </div>
+  <div class="output-box">
+    <div class="output-label">▶ 出力結果</div>
+    <pre><code>合格: true
+高得点: false
+合格かつ高得点: false
+合格または高得点: true
+不合格: false</code></pre>
+  </div>
+
+  <!-- ===== 問題 ===== -->
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 2-2-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐☆☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>public class Q1 {
+    public static void main(String[] args) {
+        int x = 15;
+        int y = 15;
+        int z = 20;
+
+        System.out.println(x == y);
+        System.out.println(x == z);
+        System.out.println(x != z);
+        System.out.println(z &gt; x);
+        System.out.println(x &gt;= y);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>true
+false
+true
+true
+true</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>x == y</code> は <code>15 == 15</code> なので <code>true</code>。</li>
+            <li><code>x == z</code> は <code>15 == 20</code> なので <code>false</code>。</li>
+            <li><code>x != z</code> は <code>15 != 20</code> なので <code>true</code>。</li>
+            <li><code>z &gt; x</code> は <code>20 &gt; 15</code> なので <code>true</code>。</li>
+            <li><code>x &gt;= y</code> は <code>15 &gt;= 15</code>（同値もOK）なので <code>true</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 2-2-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>public class Q2 {
+    public static void main(String[] args) {
+        int age = 22;
+        boolean hasMembership = false;
+        int score = 85;
+
+        System.out.println(age &gt;= 20 &amp;&amp; hasMembership);
+        System.out.println(age &gt;= 20 || hasMembership);
+        System.out.println(!hasMembership);
+        System.out.println(score &gt;= 80 &amp;&amp; score &lt; 90);
+        System.out.println(score &lt; 60 || score &gt;= 80);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>false
+true
+true
+true
+true</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>age &gt;= 20 &amp;&amp; hasMembership</code> → <code>true &amp;&amp; false</code> → <code>false</code>。</li>
+            <li><code>age &gt;= 20 || hasMembership</code> → <code>true || false</code> → <code>true</code>。</li>
+            <li><code>!hasMembership</code> → <code>!false</code> → <code>true</code>。</li>
+            <li><code>score &gt;= 80 &amp;&amp; score &lt; 90</code> → <code>true &amp;&amp; true</code> → <code>true</code>（80点台）。</li>
+            <li><code>score &lt; 60 || score &gt;= 80</code> → <code>false || true</code> → <code>true</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 2-2-3</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次の条件を満たす <code>EntryChecker</code> クラスを作成してください。</p>
+      <ul>
+        <li><code>int</code> 型の変数 <code>age</code> に <code>17</code>、<code>height</code> に <code>160</code> を代入する</li>
+        <li><code>boolean</code> 型の変数 <code>hasGuardian</code> に <code>true</code> を代入する</li>
+        <li>下表の5つの判定を出力する</li>
+      </ul>
+      <table class="data-table" style="margin-top:12px;">
+        <thead><tr><th>判定内容</th><th>条件</th></tr></thead>
+        <tbody>
+          <tr><td>成人かどうか</td><td>age が 18 以上</td></tr>
+          <tr><td>身長制限クリア</td><td>height が 150 以上</td></tr>
+          <tr><td>単独入場可</td><td>age が 18 以上 かつ height が 150 以上</td></tr>
+          <tr><td>保護者同伴で入場可</td><td>（age が 13 以上 かつ height が 150 以上）または hasGuardian が true</td></tr>
+          <tr><td>入場不可</td><td>単独入場可 でも 保護者同伴で入場可 でもない</td></tr>
+        </tbody>
+      </table>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>成人: false
+身長制限クリア: true
+単独入場可: false
+保護者同伴で入場可: true
+入場不可: false</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">EntryChecker.java</div>
+            <pre><code>public class EntryChecker {
+    public static void main(String[] args) {
+        int age = 17;
+        int height = 160;
+        boolean hasGuardian = true;
+
+        boolean isAdult       = age &gt;= 18;
+        boolean heightOk      = height &gt;= 150;
+        boolean canEnterAlone = isAdult &amp;&amp; heightOk;
+        boolean canEnterGuard = (age &gt;= 13 &amp;&amp; heightOk) || hasGuardian;
+        boolean cannotEnter   = !canEnterAlone &amp;&amp; !canEnterGuard;
+
+        System.out.println("成人: "             + isAdult);
+        System.out.println("身長制限クリア: "    + heightOk);
+        System.out.println("単独入場可: "        + canEnterAlone);
+        System.out.println("保護者同伴で入場可: " + canEnterGuard);
+        System.out.println("入場不可: "          + cannotEnter);
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>age = 17</code> なので <code>isAdult</code> は <code>false</code>。</li>
+            <li><code>height = 160</code> なので <code>heightOk</code> は <code>true</code>。</li>
+            <li><code>canEnterAlone</code> は <code>false &amp;&amp; true</code> → <code>false</code>。</li>
+            <li><code>canEnterGuard</code> は <code>(true &amp;&amp; true) || true</code> → <code>true</code>。</li>
+            <li><code>cannotEnter</code> は <code>!false &amp;&amp; !true</code> → <code>true &amp;&amp; false</code> → <code>false</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

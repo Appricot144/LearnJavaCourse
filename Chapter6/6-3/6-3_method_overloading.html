@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>6-3. メソッドのオーバーロード</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* Header */
+    .page-header {
+      background: linear-gradient(135deg, #1a365d, #2b6cb0);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    /* Section title */
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #1a365d;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    /* Code */
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    /* Callout / hint */
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #276749; }
+
+    /* Overload dispatch diagram */
+    .dispatch-diagram {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px 24px; margin: 14px 0;
+    }
+    .dd-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 14px; }
+    .dd-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+    .dd-call {
+      background: #1e2a3a; color: #e2e8f0; font-family: monospace;
+      padding: 6px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: 600;
+    }
+    .dd-arrow { color: #2b6cb0; font-size: 1.2rem; font-weight: 700; }
+    .dd-method {
+      padding: 6px 14px; border-radius: 6px; font-family: monospace; font-size: 0.82rem; font-weight: 600;
+    }
+    .dd-m1 { background: #ebf8ff; color: #2b6cb0; }
+    .dd-m2 { background: #c6f6d5; color: #22543d; }
+    .dd-m3 { background: #fefcbf; color: #744210; }
+    .dd-m4 { background: #e9d8fd; color: #44337a; }
+    .dd-result { color: #718096; font-size: 0.82rem; margin-left: 4px; }
+
+    /* Tables */
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #2b6cb0; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #ebf8ff; }
+    .ok  { color: #22543d; font-weight: 700; }
+    .ng  { color: #742a2a; font-weight: 700; }
+
+    /* Before/after comparison */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+    .compare-card { background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+    .cc-header { padding: 9px 14px; font-weight: 700; font-size: 0.85rem; }
+    .cc-before { background: #fed7d7; color: #742a2a; }
+    .cc-after  { background: #c6f6d5; color: #22543d; }
+
+    /* Output box */
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    /* Problem cards */
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    /* Answer toggle */
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #2b6cb0; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="chapter-label">第6章 ▶ メソッド</div>
+    <h1>6-3. メソッドのオーバーロード</h1>
+    <div class="meta">難易度：⭐⭐⭐☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <!-- ===== 解説 ===== -->
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <h3>オーバーロードとは？</h3>
+  <p><strong>同じ名前で、引数の型・個数・順番が異なる複数のメソッドを定義すること</strong>をオーバーロード（多重定義）といいます。<br>
+  呼び出し時の引数に応じて、Javaが自動的に適切なメソッドを選択します。</p>
+
+  <!-- ディスパッチ図 -->
+  <div class="dispatch-diagram">
+    <div class="dd-title">▶ 引数の型によって呼ばれるメソッドが変わる</div>
+    <div class="dd-row">
+      <div class="dd-call">print(42)</div>
+      <div class="dd-arrow">→</div>
+      <div class="dd-method dd-m1">print(int n)</div>
+      <div class="dd-result">→ "int: 42"</div>
+    </div>
+    <div class="dd-row">
+      <div class="dd-call">print(3.14)</div>
+      <div class="dd-arrow">→</div>
+      <div class="dd-method dd-m2">print(double d)</div>
+      <div class="dd-result">→ "double: 3.14"</div>
+    </div>
+    <div class="dd-row">
+      <div class="dd-call">print("Hello")</div>
+      <div class="dd-arrow">→</div>
+      <div class="dd-method dd-m3">print(String s)</div>
+      <div class="dd-result">→ "String: Hello"</div>
+    </div>
+    <div class="dd-row">
+      <div class="dd-call">print(1, 2)</div>
+      <div class="dd-arrow">→</div>
+      <div class="dd-method dd-m4">print(int a, int b)</div>
+      <div class="dd-result">→ "2つの整数: 1 と 2"</div>
+    </div>
+  </div>
+
+  <!-- 条件 -->
+  <h3>オーバーロードの条件</h3>
+  <table class="data-table">
+    <thead><tr><th>条件</th><th>説明</th><th>成否</th></tr></thead>
+    <tbody>
+      <tr><td>引数の<strong>型</strong>が異なる</td><td><code>add(int, int)</code> と <code>add(double, double)</code></td><td class="ok">✅ 成立</td></tr>
+      <tr><td>引数の<strong>個数</strong>が異なる</td><td><code>add(int)</code> と <code>add(int, int)</code></td><td class="ok">✅ 成立</td></tr>
+      <tr><td>引数の<strong>順番</strong>が異なる</td><td><code>add(int, double)</code> と <code>add(double, int)</code></td><td class="ok">✅ 成立</td></tr>
+      <tr><td><strong>戻り値の型だけ</strong>が異なる</td><td><code>int get()</code> と <code>double get()</code></td><td class="ng">❌ エラー</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 個数によるオーバーロード -->
+  <h3>個数によるオーバーロード</h3>
+  <div class="code-wrap">
+    <div class="code-label">引数の個数が異なる例</div>
+    <pre><code>public static int add(int a, int b) {
+    return a + b;
+}
+
+public static int add(int a, int b, int c) {
+    return a + b + c;
+}
+
+System.out.println(add(1, 2));     // 3
+System.out.println(add(1, 2, 3));  // 6</code></pre>
+  </div>
+
+  <!-- 型によるオーバーロード -->
+  <h3>型によるオーバーロード</h3>
+  <div class="code-wrap">
+    <div class="code-label">引数の型・個数が異なる例（面積計算）</div>
+    <pre><code>public static double area(double radius) {
+    return Math.PI * radius * radius;  // 円の面積
+}
+
+public static double area(double width, double height) {
+    return width * height;             // 長方形の面積
+}
+
+System.out.println(area(5.0));        // 78.53...（円）
+System.out.println(area(4.0, 6.0));   // 24.0  （長方形）</code></pre>
+  </div>
+
+  <!-- 型の自動昇格 -->
+  <h3>型の自動昇格とオーバーロード</h3>
+  <p>完全一致するメソッドがない場合、Javaは<strong>自動で型を昇格</strong>させてマッチするメソッドを探します。</p>
+  <div class="code-wrap">
+    <div class="code-label">int → double への自動昇格</div>
+    <pre><code>public static void show(double d) {
+    System.out.println("double: " + d);
+}
+
+show(10);      // int → double に昇格 → "double: 10.0"
+show(3.14f);   // float → double に昇格 → "double: 3.140000104904175"</code></pre>
+  </div>
+
+  <div class="callout">
+    <strong>⚠️ あいまいな一致はコンパイルエラー</strong><br>
+    例えば <code>show(int)</code> と <code>show(long)</code> が両方ある状態で <code>show(10)</code> を呼ぶと、<br>
+    どちらも一致してしまいあいまいになるためコンパイルエラーになります。
+  </div>
+
+  <!-- メリット -->
+  <h3>オーバーロードのメリット：API がシンプルになる</h3>
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="cc-header cc-before">❌ オーバーロードなし（名前が煩雑）</div>
+      <div class="code-wrap" style="margin:0;border-radius:0;">
+        <pre style="font-size:0.82rem;"><code>printInt(42);
+printDouble(3.14);
+printString("hello");
+printIntAndInt(1, 2);</code></pre>
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="cc-header cc-after">✅ オーバーロードあり（名前が統一）</div>
+      <div class="code-wrap" style="margin:0;border-radius:0;">
+        <pre style="font-size:0.82rem;"><code>print(42);
+print(3.14);
+print("hello");
+print(1, 2);</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- コード例 -->
+  <h3>コード例：format メソッドのオーバーロード</h3>
+  <div class="code-wrap">
+    <div class="code-label">Formatter.java</div>
+    <pre><code>public class Formatter {
+
+    // 整数を指定桁数で右寄せ
+    public static String format(int n, int width) {
+        String s = String.valueOf(n);
+        while (s.length() &lt; width) s = " " + s;
+        return s;
+    }
+
+    // 文字列を指定桁数で右寄せ
+    public static String format(String s, int width) {
+        while (s.length() &lt; width) s = " " + s;
+        return s;
+    }
+
+    // 小数を指定の小数点以下桁数で整形
+    public static String format(double d, int decimals) {
+        return String.format("%." + decimals + "f", d);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("|" + format(42,      6) + "|");
+        System.out.println("|" + format("Hi",    6) + "|");
+        System.out.println("|" + format(3.14159, 3) + "|");
+    }
+}</code></pre>
+  </div>
+  <div class="output-box">
+    <div class="output-label">▶ 出力結果</div>
+    <pre><code>|    42|
+|    Hi|
+|3.142|</code></pre>
+  </div>
+
+  <!-- ===== 問題 ===== -->
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 6-3-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐☆☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>public class Q1 {
+
+    public static String describe(int n) {
+        return "整数: " + n;
+    }
+
+    public static String describe(double d) {
+        return "小数: " + d;
+    }
+
+    public static String describe(String s) {
+        return "文字列: " + s;
+    }
+
+    public static String describe(int a, int b) {
+        return "2つの整数: " + a + " と " + b;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(describe(10));
+        System.out.println(describe(3.14));
+        System.out.println(describe("Java"));
+        System.out.println(describe(3, 7));
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>整数: 10
+小数: 3.14
+文字列: Java
+2つの整数: 3 と 7</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>describe(10)</code> → <code>int</code> 型に一致 → <code>"整数: 10"</code>。</li>
+            <li><code>describe(3.14)</code> → <code>double</code> 型に一致 → <code>"小数: 3.14"</code>。</li>
+            <li><code>describe("Java")</code> → <code>String</code> 型に一致 → <code>"文字列: Java"</code>。</li>
+            <li><code>describe(3, 7)</code> → <code>(int, int)</code> の2引数に一致 → <code>"2つの整数: 3 と 7"</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 6-3-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>public class Q2 {
+
+    public static int max(int a, int b) {
+        return a > b ? a : b;
+    }
+
+    public static int max(int a, int b, int c) {
+        return max(max(a, b), c);
+    }
+
+    public static double max(double a, double b) {
+        return a > b ? a : b;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(max(3, 7));
+        System.out.println(max(3, 7, 5));
+        System.out.println(max(1, 9, 4));
+        System.out.println(max(2.5, 1.8));
+        System.out.println(max(10, 3));
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>7
+7
+9
+2.5
+10</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>max(3, 7)</code> → <code>int</code> 2引数 → <code>7</code>。</li>
+            <li><code>max(3, 7, 5)</code> → <code>int</code> 3引数 → <code>max(max(3,7), 5)</code> = <code>max(7, 5)</code> = <code>7</code>。</li>
+            <li><code>max(1, 9, 4)</code> → <code>max(max(1,9), 4)</code> = <code>max(9, 4)</code> = <code>9</code>。</li>
+            <li><code>max(2.5, 1.8)</code> → <code>double</code> 2引数 → <code>2.5</code>。</li>
+            <li><code>max(10, 3)</code> → <code>int</code> 2引数 → <code>10</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 6-3-3</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次の条件を満たす <code>Calculator</code> クラスを作成してください。</p>
+      <p><code>sum</code> メソッドを以下の4パターンでオーバーロードします。</p>
+      <table class="data-table" style="margin-top:10px;">
+        <thead><tr><th>シグネチャ</th><th>処理内容</th></tr></thead>
+        <tbody>
+          <tr><td><code>sum(int a, int b)</code></td><td><code>a + b</code> を返す</td></tr>
+          <tr><td><code>sum(int a, int b, int c)</code></td><td><code>a + b + c</code> を返す</td></tr>
+          <tr><td><code>sum(double a, double b)</code></td><td><code>a + b</code> を返す</td></tr>
+          <tr><td><code>sum(int[] arr)</code></td><td>配列の全要素の合計を返す</td></tr>
+        </tbody>
+      </table>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>sum(3, 4): 7
+sum(3, 4, 5): 12
+sum(1.5, 2.3): 3.8
+sum({1,2,3,4,5}): 15
+sum(3, 4) + sum(1.5, 2.3): 10.8</code></pre>
+      </div>
+      <div class="hint" style="margin-top:10px;">
+        <strong>💡 ヒント</strong>：最後の行は <code>sum(int, int)</code> の戻り値（<code>int</code>）と <code>sum(double, double)</code> の戻り値（<code>double</code>）を加算します。<br>
+        <code>int + double</code> の演算結果は <code>double</code> になります。
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">Calculator.java</div>
+            <pre><code>public class Calculator {
+
+    public static int sum(int a, int b) {
+        return a + b;
+    }
+
+    public static int sum(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    public static double sum(double a, double b) {
+        return a + b;
+    }
+
+    public static int sum(int[] arr) {
+        int total = 0;
+        for (int n : arr) {
+            total += n;
+        }
+        return total;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("sum(3, 4): "        + sum(3, 4));
+        System.out.println("sum(3, 4, 5): "     + sum(3, 4, 5));
+        System.out.println("sum(1.5, 2.3): "    + sum(1.5, 2.3));
+        System.out.println("sum({1,2,3,4,5}): " + sum(new int[]{1,2,3,4,5}));
+        System.out.println("sum(3, 4) + sum(1.5, 2.3): "
+            + (sum(3, 4) + sum(1.5, 2.3)));
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>sum(int, int)</code> と <code>sum(double, double)</code> は引数の型が違うためオーバーロード成立。</li>
+            <li><code>sum(int, int, int)</code> は引数の個数が違うためオーバーロード成立。</li>
+            <li><code>sum(int[])</code> は引数の型が配列のためオーバーロード成立。</li>
+            <li>最後の行：<code>sum(3,4)</code> = <code>7</code>（int）、<code>sum(1.5, 2.3)</code> = <code>3.8</code>（double）、合計は <code>7 + 3.8 = 10.8</code>（double）。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

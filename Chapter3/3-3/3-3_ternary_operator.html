@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3-3. 三項演算子</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* Header */
+    .page-header {
+      background: linear-gradient(135deg, #1a365d, #2b6cb0);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    /* Section title */
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #1a365d;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    /* Code */
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    /* Callout / hint */
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #276749; }
+
+    /* Syntax diagram */
+    .syntax-diagram {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px 24px; margin: 14px 0;
+    }
+    .syntax-row {
+      display: flex; align-items: stretch; gap: 0;
+      font-family: monospace; font-size: 1rem; font-weight: 700;
+      justify-content: center; flex-wrap: wrap; gap: 6px;
+    }
+    .syn-part {
+      padding: 10px 16px; border-radius: 8px; text-align: center;
+    }
+    .syn-cond   { background: #ebf8ff; color: #2b6cb0; }
+    .syn-q      { background: #edf2f7; color: #4a5568; font-size: 1.4rem; padding: 10px 12px; }
+    .syn-true   { background: #c6f6d5; color: #22543d; }
+    .syn-colon  { background: #edf2f7; color: #4a5568; font-size: 1.4rem; padding: 10px 12px; }
+    .syn-false  { background: #fed7d7; color: #742a2a; }
+    .syn-labels {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 6px;
+      margin-top: 8px;
+    }
+    .syn-label {
+      font-size: 0.72rem; color: #718096; text-align: center;
+    }
+
+    /* Compare card */
+    .compare-wrap {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0;
+    }
+    .compare-card {
+      background: #fff; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .compare-card .cc-title {
+      padding: 9px 14px; font-weight: 700; font-size: 0.85rem;
+    }
+    .cc-title.if-style   { background: #ebf8ff; color: #1a365d; }
+    .cc-title.tern-style { background: #c6f6d5; color: #1c4532; }
+
+    /* Usage table */
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #2b6cb0; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #ebf8ff; }
+
+    /* Output box */
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    /* Problem cards */
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    /* Answer toggle */
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #2b6cb0; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="chapter-label">第3章 ▶ 条件分岐</div>
+    <h1>3-3. 三項演算子</h1>
+    <div class="meta">難易度：⭐⭐☆☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <!-- ===== 解説 ===== -->
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <h3>三項演算子とは？</h3>
+  <p><strong><code>if / else</code> を1行で書ける演算子</strong>です。<br>
+  条件式・真の値・偽の値の <strong>3つの要素</strong>を使うため「三項」と呼ばれます。</p>
+
+  <!-- 構文図 -->
+  <div class="syntax-diagram">
+    <div class="syn-labels" style="margin-bottom:6px;">
+      <span class="syn-label" style="min-width:120px;">条件式</span>
+      <span class="syn-label" style="min-width:40px;"></span>
+      <span class="syn-label" style="min-width:120px;">true のときの値</span>
+      <span class="syn-label" style="min-width:40px;"></span>
+      <span class="syn-label" style="min-width:120px;">false のときの値</span>
+    </div>
+    <div class="syntax-row">
+      <div class="syn-part syn-cond">条件式</div>
+      <div class="syn-part syn-q">?</div>
+      <div class="syn-part syn-true">真のときの値</div>
+      <div class="syn-part syn-colon">:</div>
+      <div class="syn-part syn-false">偽のときの値</div>
+    </div>
+  </div>
+
+  <!-- if vs 三項演算子の比較 -->
+  <h3>if / else との比較</h3>
+  <div class="compare-wrap">
+    <div class="compare-card">
+      <div class="cc-title if-style">if / else で書いた場合</div>
+      <div class="code-wrap" style="margin:0; border-radius:0;">
+        <pre style="font-size:0.82rem;"><code>int score = 75;
+String result;
+if (score >= 60) {
+    result = "合格";
+} else {
+    result = "不合格";
+}</code></pre>
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="cc-title tern-style">三項演算子で書いた場合</div>
+      <div class="code-wrap" style="margin:0; border-radius:0;">
+        <pre style="font-size:0.82rem;"><code>int score = 75;
+String result =
+  score >= 60
+  ? "合格"
+  : "不合格";</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- 基本的な使い方 -->
+  <h3>基本的な使い方</h3>
+  <div class="code-wrap">
+    <div class="code-label">三項演算子の例</div>
+    <pre><code>int a = 10;
+int b = 20;
+
+int    max   = a > b      ? a      : b;
+String label = a % 2 == 0 ? "偶数" : "奇数";
+
+System.out.println("大きい方: " + max);    // 大きい方: 20
+System.out.println(a + "は" + label);      // 10は偶数</code></pre>
+  </div>
+
+  <!-- ネスト -->
+  <h3>三項演算子のネスト</h3>
+  <p>三項演算子の中にさらに三項演算子を入れることができます。<br>
+  ただし <strong>2段階まで</strong>が読みやすさの目安です。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">ネストの例（score = 75）</div>
+    <pre><code>int score = 75;
+
+String grade = score >= 80 ? "A" :
+               score >= 60 ? "B" : "C";
+
+System.out.println(grade);  // B</code></pre>
+  </div>
+
+  <div class="callout">
+    <strong>⚠️ ネストが深くなる場合は if / else if を使いましょう</strong><br>
+    三項演算子のネストが3段以上になると可読性が大きく落ちます。<br>
+    迷ったら <code>if / else if</code> で書く方が安全です。
+  </div>
+
+  <!-- 使いどころ -->
+  <h3>三項演算子の使いどころ</h3>
+  <table class="data-table">
+    <thead><tr><th>✅ 向いているケース</th><th>❌ 向いていないケース</th></tr></thead>
+    <tbody>
+      <tr><td>1行で完結するシンプルな分岐</td><td>処理が複数行にわたる場合</td></tr>
+      <tr><td>変数への代入</td><td>副作用のある処理（メソッド呼び出し）</td></tr>
+      <tr><td>出力の中に埋め込む</td><td>条件が複雑で読みにくくなる場合</td></tr>
+    </tbody>
+  </table>
+
+  <div class="code-wrap">
+    <div class="code-label">良い例 vs 避けるべき例</div>
+    <pre><code>int age = 20;
+
+// ✅ 向いている：変数代入・出力埋め込み
+String type = age >= 18 ? "成人" : "未成年";
+System.out.println("区分: " + (age >= 18 ? "成人" : "未成年"));
+
+// ❌ 避けるべき：ネストが深く読みにくい
+String r = age >= 18 ? (age >= 65 ? "高齢者" : "成人") : (age >= 13 ? "中高生" : "子ども");</code></pre>
+  </div>
+
+  <!-- コード例 -->
+  <h3>コード例</h3>
+  <div class="code-wrap">
+    <div class="code-label">TernaryExample.java</div>
+    <pre><code>public class TernaryExample {
+    public static void main(String[] args) {
+        int temperature = 32;
+        int stock = 0;
+        boolean isMember = true;
+
+        String weather     = temperature >= 30 ? "暑い" : "涼しい";
+        String stockStatus = stock > 0         ? "在庫あり" : "在庫切れ";
+        int price      = 1000;
+        int finalPrice = isMember ? price * 9 / 10 : price;
+
+        System.out.println("今日は" + weather);               // 今日は暑い
+        System.out.println("商品: " + stockStatus);           // 商品: 在庫切れ
+        System.out.println("価格: " + finalPrice + "円");     // 価格: 900円
+    }
+}</code></pre>
+  </div>
+  <div class="output-box">
+    <div class="output-label">▶ 出力結果</div>
+    <pre><code>今日は暑い
+商品: 在庫切れ
+価格: 900円</code></pre>
+  </div>
+
+  <!-- ===== 問題 ===== -->
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 3-3-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐☆☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>public class Q1 {
+    public static void main(String[] args) {
+        int x = 8;
+        int y = 3;
+
+        String result1 = x > y ? "xの方が大きい" : "yの方が大きい";
+        int    result2 = x % 2 == 0 ? x * 2 : x + 1;
+        String result3 = y > 5 ? "5より大きい" : "5以下";
+
+        System.out.println(result1);
+        System.out.println(result2);
+        System.out.println(result3);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>xの方が大きい
+16
+5以下</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>x &gt; y</code> は <code>8 &gt; 3</code> → <code>true</code> なので <code>"xの方が大きい"</code>。</li>
+            <li><code>x % 2 == 0</code> は <code>8 % 2 == 0</code> → <code>true</code> なので <code>x * 2 = 16</code>。</li>
+            <li><code>y &gt; 5</code> は <code>3 &gt; 5</code> → <code>false</code> なので <code>"5以下"</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 3-3-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>public class Q2 {
+    public static void main(String[] args) {
+        int score = 70;
+
+        String grade = score >= 80 ? "A" :
+                       score >= 60 ? "B" : "C";
+
+        System.out.println("評価: " + grade);
+
+        int n = 15;
+        String fizzbuzz = n % 15 == 0 ? "FizzBuzz" :
+                          n % 3  == 0 ? "Fizz"     :
+                          n % 5  == 0 ? "Buzz"     : String.valueOf(n);
+
+        System.out.println(n + " → " + fizzbuzz);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>評価: B
+15 → FizzBuzz</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>score = 70</code> は <code>&gt;= 80</code> を満たさず、<code>&gt;= 60</code> を満たすので <code>"B"</code>。</li>
+            <li><code>n = 15</code> は <code>15 % 15 == 0</code> → <code>true</code> なので最初の条件で <code>"FizzBuzz"</code> が返されます。それ以降の条件は評価されません。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 3-3-3</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次の条件を満たす <code>TicketPricing</code> クラスを作成してください。</p>
+      <ul>
+        <li><code>int</code> 型の変数 <code>age</code> に <code>14</code>、<code>boolean</code> 型の変数 <code>isWeekend</code> に <code>true</code> を代入する</li>
+        <li>下表のルールを<strong>三項演算子のみ</strong>を使って実装する</li>
+      </ul>
+      <table class="data-table" style="margin-top:10px;">
+        <thead><tr><th>条件</th><th>料金</th></tr></thead>
+        <tbody>
+          <tr><td>age が 12 未満</td><td>500円</td></tr>
+          <tr><td>age が 12 以上 18 未満</td><td>1000円</td></tr>
+          <tr><td>age が 18 以上</td><td>1800円</td></tr>
+        </tbody>
+      </table>
+      <ul style="margin-top:10px;">
+        <li>上記の料金を <code>basePrice</code> に代入する（ネストした三項演算子を使う）</li>
+        <li><code>isWeekend</code> が <code>true</code> のとき <code>basePrice + 200</code>、<code>false</code> のとき <code>basePrice</code> をそのまま <code>finalPrice</code> にする</li>
+      </ul>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>年齢: 14歳
+基本料金: 1000円
+週末料金加算: あり
+最終料金: 1200円</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">TicketPricing.java</div>
+            <pre><code>public class TicketPricing {
+    public static void main(String[] args) {
+        int age = 14;
+        boolean isWeekend = true;
+
+        int basePrice  = age &lt; 12 ? 500 :
+                         age &lt; 18 ? 1000 : 1800;
+
+        int finalPrice = isWeekend ? basePrice + 200 : basePrice;
+
+        System.out.println("年齢: "         + age + "歳");
+        System.out.println("基本料金: "     + basePrice  + "円");
+        System.out.println("週末料金加算: " + (isWeekend ? "あり" : "なし"));
+        System.out.println("最終料金: "     + finalPrice + "円");
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>age = 14</code> は <code>&lt; 12</code> を満たさず、<code>&lt; 18</code> を満たすので <code>basePrice = 1000</code>。</li>
+            <li><code>isWeekend = true</code> なので <code>finalPrice = 1000 + 200 = 1200</code>。</li>
+            <li>出力行でも三項演算子を使い <code>"あり" / "なし"</code> を切り替えています。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

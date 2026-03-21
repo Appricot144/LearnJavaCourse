@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>9-2. インターフェース（implements）</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    .page-header {
+      background: linear-gradient(135deg, #44337a, #6b46c1);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #44337a;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #d6bcfa;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #6b46c1; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #faf5ff; color: #6b46c1; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+    .hint { border-left: 4px solid #9f7aea; background: #faf5ff; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #6b46c1; }
+
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #6b46c1; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #faf5ff; }
+
+    /* Interface diagram */
+    .iface-diagram {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px 24px; margin: 14px 0;
+    }
+    .id-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 14px; }
+    .id-ifaces { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+    .id-iface {
+      border: 2px dashed #9f7aea; border-radius: 8px; padding: 10px 16px;
+      font-family: monospace; font-size: 0.85rem; background: #faf5ff;
+    }
+    .id-iface .ii-label { font-size: 0.72rem; color: #9f7aea; font-weight: 700; margin-bottom: 4px; }
+    .id-iface .ii-name  { font-weight: 700; color: #44337a; }
+    .id-iface .ii-method { font-size: 0.78rem; color: #718096; }
+    .id-arrow-down { color: #a0aec0; font-size: 1.2rem; margin: 4px 0 4px 12px; }
+    .id-class {
+      border: 2px solid #6b46c1; border-radius: 8px; padding: 10px 16px;
+      font-family: monospace; font-size: 0.85rem; background: #f3f0ff;
+      display: inline-block;
+    }
+    .id-class .ic-name { font-weight: 700; color: #44337a; }
+    .id-class .ic-impl { font-size: 0.75rem; color: #6b46c1; }
+
+    /* Multiple implements */
+    .multi-impl {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 18px 20px; margin: 14px 0;
+    }
+    .mi-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+    .mi-iface { background: #faf5ff; border: 2px dashed #9f7aea; border-radius: 6px; padding: 6px 14px; font-family: monospace; font-size: 0.85rem; color: #44337a; font-weight: 600; }
+    .mi-class { background: #f3f0ff; border: 2px solid #6b46c1; border-radius: 6px; padding: 6px 14px; font-family: monospace; font-size: 0.85rem; color: #44337a; font-weight: 600; }
+    .mi-arrow { color: #6b46c1; font-size: 1.2rem; font-weight: 700; }
+
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #faf5ff; border-bottom: 1px solid #d6bcfa; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #44337a; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #6b46c1; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #44337a; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #6b46c1; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="page-header">
+    <div class="chapter-label">第9章 ▶ 継承・インターフェース・Enum</div>
+    <h1>9-2. インターフェース（implements）</h1>
+    <div class="meta">難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <h3>インターフェースとは？</h3>
+  <p><strong>メソッドのシグネチャだけを定義した「契約」</strong>です。<br>
+  クラスが <code>implements</code> することで、そのメソッドの実装を保証します。</p>
+
+  <!-- インターフェース図 -->
+  <div class="iface-diagram">
+    <div class="id-title">▶ Flyable インターフェースを Bird と Airplane が実装する</div>
+    <div class="id-ifaces">
+      <div class="id-iface">
+        <div class="ii-label">《interface》</div>
+        <div class="ii-name">Flyable</div>
+        <div class="ii-method">void fly()</div>
+        <div class="ii-method">int getMaxAltitude()</div>
+      </div>
+    </div>
+    <div class="id-arrow-down">↓ implements</div>
+    <div style="display:flex;gap:12px;margin-left:24px;flex-wrap:wrap;">
+      <div class="id-class">
+        <div class="ic-name">Bird</div>
+        <div class="ic-impl">fly() → "羽ばたいて飛ぶ"<br>getMaxAltitude() → 500</div>
+      </div>
+      <div class="id-class">
+        <div class="ic-name">Airplane</div>
+        <div class="ic-impl">fly() → "エンジンで飛ぶ"<br>getMaxAltitude() → 12000</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 定義 -->
+  <h3>インターフェースの定義</h3>
+  <div class="code-wrap">
+    <div class="code-label">Flyable インターフェース</div>
+    <pre><code>public interface Flyable {
+    void fly();                  // 抽象メソッド（abstract は省略可）
+    int  getMaxAltitude();
+
+    // Java 8以降：default メソッド（実装あり）
+    default String status() { return "飛行中"; }
+}</code></pre>
+  </div>
+
+  <!-- implements -->
+  <h3>implements による実装</h3>
+  <div class="code-wrap">
+    <div class="code-label">Bird と Airplane の実装</div>
+    <pre><code>public class Bird implements Flyable {
+    String name;
+    public Bird(String name) { this.name = name; }
+
+    @Override public void fly() { System.out.println(name+" が羽ばたいて飛ぶ"); }
+    @Override public int  getMaxAltitude() { return 500; }
+}
+
+public class Airplane implements Flyable {
+    String model;
+    public Airplane(String model) { this.model = model; }
+
+    @Override public void fly() { System.out.println(model+" がエンジンで飛ぶ"); }
+    @Override public int  getMaxAltitude() { return 12000; }
+}</code></pre>
+  </div>
+
+  <!-- 複数実装 -->
+  <h3>継承との最大の違い：複数実装</h3>
+
+  <div class="multi-impl">
+    <div class="id-title">▶ Duck は Flyable と Swimmable を両方実装できる</div>
+    <div class="mi-row">
+      <div class="mi-iface">Flyable</div>
+      <div class="mi-arrow">+</div>
+      <div class="mi-iface">Swimmable</div>
+      <div class="mi-arrow">→</div>
+      <div class="mi-class">Duck implements Flyable, Swimmable</div>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-label">複数インターフェースの実装</div>
+    <pre><code>public interface Swimmable { void swim(); }
+public interface Flyable   { void fly(); }
+
+public class Duck implements Flyable, Swimmable {
+    @Override public void fly()  { System.out.println("カモが飛ぶ"); }
+    @Override public void swim() { System.out.println("カモが泳ぐ"); }
+}</code></pre>
+  </div>
+
+  <!-- インターフェース型参照 -->
+  <h3>インターフェース型による参照</h3>
+  <div class="code-wrap">
+    <div class="code-label">Flyable 型で統一的に扱う</div>
+    <pre><code>Flyable[] flyers = { new Bird("ハト"), new Airplane("A380") };
+
+for (Flyable f : flyers) {
+    f.fly();
+    System.out.println("最高高度: " + f.getMaxAltitude() + "m");
+}
+// → ハト が羽ばたいて飛ぶ
+// → 最高高度: 500m
+// → A380 がエンジンで飛ぶ
+// → 最高高度: 12000m</code></pre>
+  </div>
+
+  <!-- 比較表 -->
+  <h3>抽象クラス vs インターフェース</h3>
+  <table class="data-table">
+    <thead><tr><th>比較</th><th>抽象クラス</th><th>インターフェース</th></tr></thead>
+    <tbody>
+      <tr><td>目的</td><td>共通の「骨格」</td><td>「〜できる」能力の保証</td></tr>
+      <tr><td>フィールド</td><td>自由に定義可</td><td><code>public static final</code> のみ</td></tr>
+      <tr><td>コンストラクタ</td><td>持てる</td><td>持てない</td></tr>
+      <tr><td>多重継承</td><td>1つだけ</td><td>複数実装可能</td></tr>
+      <tr><td>向いているケース</td><td>is-a 関係（犬は動物）</td><td>can-do 関係（鳥は飛べる）</td></tr>
+    </tbody>
+  </table>
+
+  <!-- コード例 -->
+  <h3>コード例：Printable と Saveable</h3>
+  <div class="code-wrap">
+    <div class="code-label">Report クラスが2つのインターフェースを実装</div>
+    <pre><code>interface Printable { void print(); }
+interface Saveable  { void save(String filename); }
+
+class Report implements Printable, Saveable {
+    String content;
+    public Report(String content) { this.content = content; }
+
+    @Override public void print() {
+        System.out.println("=== 印刷 ===\n" + content);
+    }
+    @Override public void save(String filename) {
+        System.out.println(filename + " に保存しました：" + content);
+    }
+}
+
+// Main
+Report r = new Report("売上レポート");
+r.print();
+r.save("report.txt");</code></pre>
+  </div>
+  <div class="output-box">
+    <div class="output-label">▶ 出力結果</div>
+    <pre><code>=== 印刷 ===
+売上レポート
+report.txt に保存しました：売上レポート</code></pre>
+  </div>
+
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 9-2-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>interface Greetable {
+    void greet();
+    default String farewell() { return "さようなら"; }
+}
+
+interface Introducible {
+    String introduce();
+}
+
+class EnglishSpeaker implements Greetable, Introducible {
+    String name;
+    public EnglishSpeaker(String name) { this.name = name; }
+
+    @Override public void greet()       { System.out.println("Hello! I'm " + name); }
+    @Override public String introduce() { return "My name is " + name + "."; }
+}
+
+class JapaneseSpeaker implements Greetable {
+    String name;
+    public JapaneseSpeaker(String name) { this.name = name; }
+    @Override public void greet() { System.out.println("こんにちは、" + name + "です"); }
+}
+
+public class Q1 {
+    public static void main(String[] args) {
+        EnglishSpeaker  e = new EnglishSpeaker("Alice");
+        JapaneseSpeaker j = new JapaneseSpeaker("田中");
+
+        e.greet();
+        System.out.println(e.introduce());
+        System.out.println(e.farewell());
+
+        j.greet();
+        System.out.println(j.farewell());
+
+        Greetable[] speakers = { e, j };
+        for (Greetable g : speakers) g.greet();
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>Hello! I'm Alice
+My name is Alice.
+さようなら
+こんにちは、田中です
+さようなら
+Hello! I'm Alice
+こんにちは、田中です</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>farewell()</code> は <code>Greetable</code> の <code>default</code> メソッドなので、実装クラスで上書きしなければそのまま使われます。</li>
+            <li><code>Greetable[]</code> に2クラスを混在させ、<code>greet()</code> を統一的に呼び出しています。</li>
+            <li><code>introduce()</code> は <code>Greetable</code> にはないため、<code>Greetable</code> 型では呼べません。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 9-2-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>interface Comparable2 {
+    int compareTo(int other);
+    default boolean isGreaterThan(int other) { return compareTo(other) > 0; }
+    default boolean isLessThan(int other)    { return compareTo(other) &lt; 0; }
+}
+
+class Score implements Comparable2 {
+    int value;
+    public Score(int value) { this.value = value; }
+
+    @Override public int compareTo(int other) { return this.value - other; }
+    @Override public String toString() { return "Score(" + value + ")"; }
+}
+
+public class Q2 {
+    public static void main(String[] args) {
+        Score s1 = new Score(85);
+        Score s2 = new Score(60);
+
+        System.out.println(s1.compareTo(60));
+        System.out.println(s1.isGreaterThan(60));
+        System.out.println(s2.isLessThan(70));
+        System.out.println(s1.isGreaterThan(90));
+
+        Comparable2 c = s1;
+        System.out.println(c.isGreaterThan(80));
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>25
+true
+true
+false
+true</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>s1.compareTo(60)</code> → <code>85 - 60 = 25</code>。</li>
+            <li><code>s1.isGreaterThan(60)</code> → <code>25 &gt; 0</code> → <code>true</code>。</li>
+            <li><code>s2.isLessThan(70)</code> → <code>60 - 70 = -10 &lt; 0</code> → <code>true</code>。</li>
+            <li><code>s1.isGreaterThan(90)</code> → <code>85 - 90 = -5 &gt; 0</code> → <code>false</code>。</li>
+            <li><code>Comparable2 c = s1</code> でも動的ディスパッチで <code>Score.compareTo()</code> が呼ばれます。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 9-2-3</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text"><code>Taxable</code>・<code>Discountable</code> インターフェースと <code>SaleItem</code> クラスを作成してください。</p>
+      <table class="data-table" style="margin-top:10px;">
+        <thead><tr><th>要素</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td><code>Taxable</code></td><td><code>getTaxRate()</code> 抽象メソッド。<code>default getTax(price)</code>・<code>default getTotalPrice(price)</code></td></tr>
+          <tr><td><code>Discountable</code></td><td><code>getDiscountRate()</code> 抽象メソッド。<code>default getDiscountedPrice(price)</code></td></tr>
+          <tr><td><code>SaleItem</code></td><td>両インターフェースを実装。<code>getTaxRate()=0.10</code>・<code>getDiscountRate()=0.20</code>。<code>showPrice()</code> で価格詳細を出力</td></tr>
+        </tbody>
+      </table>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>商品: りんご
+税抜元値: 1000.0円
+割引後: 800.0円
+税込合計: 880.0円</code></pre>
+      </div>
+      <div class="hint" style="margin-top:10px;">
+        <strong>💡 ヒント</strong>：<code>showPrice()</code> では <code>getDiscountedPrice(basePrice)</code> を先に計算し、<br>
+        その結果に <code>getTotalPrice(discounted)</code> を適用します。
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">Taxable / Discountable / SaleItem + Main</div>
+            <pre><code>interface Taxable {
+    double getTaxRate();
+    default double getTax(double price)        { return price * getTaxRate(); }
+    default double getTotalPrice(double price) { return price + getTax(price); }
+}
+
+interface Discountable {
+    double getDiscountRate();
+    default double getDiscountedPrice(double price) {
+        return price * (1 - getDiscountRate());
+    }
+}
+
+class SaleItem implements Taxable, Discountable {
+    String name;
+    double basePrice;
+
+    public SaleItem(String name, double basePrice) {
+        this.name = name; this.basePrice = basePrice;
+    }
+
+    @Override public double getTaxRate()      { return 0.10; }
+    @Override public double getDiscountRate() { return 0.20; }
+
+    public void showPrice() {
+        double discounted = getDiscountedPrice(basePrice);
+        double total      = getTotalPrice(discounted);
+        System.out.println("商品: "     + name);
+        System.out.println("税抜元値: " + basePrice + "円");
+        System.out.println("割引後: "   + discounted + "円");
+        System.out.println("税込合計: " + total + "円");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        new SaleItem("りんご", 1000.0).showPrice();
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>getDiscountedPrice(1000.0)</code> → <code>1000.0 × 0.8 = 800.0</code>。</li>
+            <li><code>getTotalPrice(800.0)</code> → <code>800.0 + 80.0 = 880.0</code>。</li>
+            <li><code>SaleItem</code> は <code>Taxable</code> と <code>Discountable</code> 両方の <code>default</code> メソッドを利用します。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

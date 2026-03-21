@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7-1. クラスの定義・インスタンス生成</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9; color: #2d3748; padding: 40px 20px; line-height: 1.8;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* Header */
+    .page-header {
+      background: linear-gradient(135deg, #1a365d, #2b6cb0);
+      color: white; border-radius: 12px; padding: 28px 32px; margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    /* Section title */
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #1a365d;
+      margin: 36px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #bee3f8;
+    }
+    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
+    p  { margin-bottom: 12px; }
+    ul, ol { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    /* Code */
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #ebf8ff; color: #2b6cb0; padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    /* Callout / hint */
+    .callout { border-left: 4px solid #f6ad55; background: #fffaf0; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .callout strong { color: #c05621; }
+    .hint { border-left: 4px solid #68d391; background: #f0fff4; border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem; }
+    .hint strong { color: #276749; }
+
+    /* Class vs instance diagram */
+    .class-diagram {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      padding: 20px 24px; margin: 14px 0;
+    }
+    .cd-title { font-size: 0.8rem; font-weight: 700; color: #718096; margin-bottom: 14px; }
+    .cd-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .cd-class {
+      background: #1a365d; color: white; border-radius: 10px;
+      padding: 16px 20px; text-align: center; min-width: 120px;
+    }
+    .cd-class .cc-icon { font-size: 1.6rem; margin-bottom: 4px; }
+    .cd-class .cc-name { font-weight: 700; font-size: 0.9rem; }
+    .cd-class .cc-desc { font-size: 0.72rem; opacity: 0.75; }
+    .cd-arrow { color: #2b6cb0; font-size: 1.1rem; font-weight: 700; text-align: center; }
+    .cd-arrow .ca-new { font-size: 0.72rem; color: #9f7aea; font-family: monospace; display: block; }
+    .cd-instances { display: flex; flex-direction: column; gap: 8px; }
+    .cd-instance {
+      background: #ebf8ff; border: 2px solid #bee3f8; border-radius: 8px;
+      padding: 8px 14px; font-size: 0.85rem; font-weight: 600; color: #2b6cb0;
+    }
+
+    /* Class anatomy */
+    .class-anatomy {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      overflow: hidden; margin: 14px 0;
+    }
+    .ca-header { background: #2b6cb0; color: white; padding: 10px 16px; font-weight: 700; font-size: 0.9rem; }
+    .ca-section { padding: 10px 16px; border-bottom: 1px solid #e2e8f0; }
+    .ca-section:last-child { border-bottom: none; }
+    .ca-section-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .ca-field-label  { color: #744210; background: #fefcbf; padding: 1px 8px; border-radius: 10px; display: inline-block; }
+    .ca-method-label { color: #22543d; background: #c6f6d5; padding: 1px 8px; border-radius: 10px; display: inline-block; }
+    .ca-item { font-family: monospace; font-size: 0.85rem; color: #2d3748; margin-bottom: 4px; }
+
+    /* Tables */
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #2b6cb0; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #ebf8ff; }
+
+    /* Output box */
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    /* Problem cards */
+    .problem-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 28px; overflow: hidden; }
+    .problem-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8; }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    /* Answer toggle */
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #2b6cb0; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover, .answer-toggle[open] summary { background: #2c5282; }
+    .answer-body { margin-top: 12px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem; }
+    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="chapter-label">第7章 ▶ クラスとオブジェクト</div>
+    <h1>7-1. クラスの定義・インスタンス生成</h1>
+    <div class="meta">難易度：⭐⭐⭐⭐☆　|　問題数：4問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <!-- ===== 解説 ===== -->
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <h3>クラスとオブジェクトとは？</h3>
+
+  <div class="class-diagram">
+    <div class="cd-title">▶ クラスは設計図、インスタンスは実体</div>
+    <div class="cd-row">
+      <div class="cd-class">
+        <div class="cc-icon">📐</div>
+        <div class="cc-name">Dog クラス</div>
+        <div class="cc-desc">設計図（テンプレート）</div>
+      </div>
+      <div class="cd-arrow">
+        <span class="ca-new">new Dog()</span>
+        ──→
+      </div>
+      <div class="cd-instances">
+        <div class="cd-instance">🐕 pochi（Dog インスタンス）</div>
+        <div class="cd-instance">🐕 hana（Dog インスタンス）</div>
+        <div class="cd-instance">🐕 kuro（Dog インスタンス）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- クラスの構造 -->
+  <h3>クラスの基本構造</h3>
+
+  <div class="class-anatomy">
+    <div class="ca-header">Dog クラス</div>
+    <div class="ca-section">
+      <div class="ca-section-label"><span class="ca-field-label">フィールド（属性）</span></div>
+      <div class="ca-item">String name;</div>
+      <div class="ca-item">int    age;</div>
+      <div class="ca-item">String breed;</div>
+    </div>
+    <div class="ca-section">
+      <div class="ca-section-label"><span class="ca-method-label">メソッド（振る舞い）</span></div>
+      <div class="ca-item">void bark()  → 名前 + "ワン！" を出力</div>
+      <div class="ca-item">void info()  → 名前・年齢・犬種を出力</div>
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead><tr><th>要素</th><th>説明</th></tr></thead>
+    <tbody>
+      <tr><td><strong>フィールド</strong></td><td>オブジェクトが持つデータ（属性・状態）</td></tr>
+      <tr><td><strong>メソッド</strong></td><td>オブジェクトの動作（振る舞い）</td></tr>
+    </tbody>
+  </table>
+
+  <!-- インスタンス生成 -->
+  <h3>インスタンスの生成とアクセス</h3>
+  <div class="code-wrap">
+    <div class="code-label">生成・フィールド設定・メソッド呼び出し</div>
+    <pre><code>// インスタンスの生成
+Dog pochi = new Dog();
+
+// フィールドに値を設定（ドット演算子）
+pochi.name  = "ポチ";
+pochi.age   = 3;
+pochi.breed = "柴犬";
+
+// フィールドの参照
+System.out.println(pochi.name);  // ポチ
+
+// メソッドの呼び出し
+pochi.bark();  // → ポチ: ワン！
+pochi.info();  // → ポチ（3歳・柴犬）</code></pre>
+  </div>
+
+  <!-- 独立性 -->
+  <h3>複数のインスタンスは独立している</h3>
+  <div class="code-wrap">
+    <div class="code-label">各インスタンスは独自のフィールドを持つ</div>
+    <pre><code>Dog pochi = new Dog();
+pochi.name = "ポチ";
+pochi.age  = 3;
+
+Dog hana = new Dog();
+hana.name = "ハナ";
+hana.age  = 5;
+
+pochi.bark();  // ポチ: ワン！
+hana.bark();   // ハナ: ワン！
+
+System.out.println(pochi.age);  // 3
+System.out.println(hana.age);   // 5 ← pochi の変更は影響しない</code></pre>
+  </div>
+
+  <!-- null -->
+  <div class="callout">
+    <strong>⚠️ null と NullPointerException に注意</strong><br>
+    <code>new</code> でインスタンスを生成する前の変数は <code>null</code> です。<br>
+    <code>null</code> に対してメソッドやフィールドにアクセスすると <code>NullPointerException</code> が発生します。
+    <div class="code-wrap" style="margin-top:8px;">
+      <pre style="padding:10px 14px;font-size:0.82rem;"><code>Dog dog = null;
+dog.bark();   // ❌ NullPointerException！
+
+Dog dog2 = new Dog();
+dog2.bark();  // ✅ OK</code></pre>
+    </div>
+  </div>
+
+  <!-- コード例 -->
+  <h3>コード例：Car クラス</h3>
+  <div class="code-wrap">
+    <div class="code-label">Car.java + Main.java</div>
+    <pre><code>public class Car {
+    String maker;
+    String model;
+    int    year;
+    int    speed;
+
+    public void accelerate(int amount) {
+        speed += amount;
+        System.out.println(model + " が加速: " + speed + "km/h");
+    }
+
+    public void brake(int amount) {
+        speed = Math.max(0, speed - amount);
+        System.out.println(model + " がブレーキ: " + speed + "km/h");
+    }
+
+    public void showInfo() {
+        System.out.println(year + "年式 " + maker + " " + model);
+    }
+}
+
+// Main クラス
+Car car1 = new Car();
+car1.maker = "Toyota";
+car1.model = "Prius";
+car1.year  = 2022;
+car1.speed = 0;
+
+car1.showInfo();
+car1.accelerate(60);
+car1.accelerate(40);
+car1.brake(30);</code></pre>
+  </div>
+  <div class="output-box">
+    <div class="output-label">▶ 出力結果</div>
+    <pre><code>2022年式 Toyota Prius
+Prius が加速: 60km/h
+Prius が加速: 100km/h
+Prius がブレーキ: 70km/h</code></pre>
+  </div>
+
+  <!-- ===== 問題 ===== -->
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 7-1-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐☆☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>class Point {
+    int x;
+    int y;
+
+    public void show() {
+        System.out.println("(" + x + ", " + y + ")");
+    }
+
+    public void move(int dx, int dy) {
+        x += dx;
+        y += dy;
+    }
+}
+
+public class Q1 {
+    public static void main(String[] args) {
+        Point p = new Point();
+        p.x = 3;
+        p.y = 5;
+        p.show();
+
+        p.move(2, -1);
+        p.show();
+
+        Point q = new Point();
+        q.show();  // デフォルト値
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>(3, 5)
+(5, 4)
+(0, 0)</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>p</code> は <code>(3, 5)</code> に設定後、<code>move(2, -1)</code> で <code>x=5</code>、<code>y=4</code> になります。</li>
+            <li><code>q</code> はフィールドに値を設定していないため、<code>int</code> のデフォルト値 <code>0</code> が使われます。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 7-1-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>class Counter {
+    int count;
+
+    public void increment() { count++; }
+    public void decrement() { count--; }
+    public void reset()     { count = 0; }
+    public void show()      { System.out.println("count: " + count); }
+}
+
+public class Q2 {
+    public static void main(String[] args) {
+        Counter c1 = new Counter();
+        Counter c2 = new Counter();
+
+        c1.increment();
+        c1.increment();
+        c1.increment();
+        c2.increment();
+
+        c1.show();
+        c2.show();
+
+        c1.decrement();
+        c1.show();
+
+        c1.reset();
+        c1.show();
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>count: 3
+count: 1
+count: 2
+count: 0</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>c1</code> は <code>increment()</code> を3回 → <code>count = 3</code>。</li>
+            <li><code>c2</code> は <code>increment()</code> を1回 → <code>count = 1</code>（<code>c1</code> とは独立）。</li>
+            <li><code>c1.decrement()</code> → <code>count = 2</code>、<code>c1.reset()</code> → <code>count = 0</code>。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 7-1-3</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text"><code>Rectangle</code>（長方形）クラスと <code>Main</code> クラスを作成してください。</p>
+      <table class="data-table" style="margin-top:10px;">
+        <thead><tr><th>要素</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>フィールド</td><td><code>double width</code>（幅）、<code>double height</code>（高さ）</td></tr>
+          <tr><td><code>area()</code></td><td>面積（width × height）を返す</td></tr>
+          <tr><td><code>perimeter()</code></td><td>周囲の長さ（(width + height) × 2）を返す</td></tr>
+          <tr><td><code>isSquare()</code></td><td>正方形かどうかを返す</td></tr>
+          <tr><td><code>show()</code></td><td><code>"幅: X, 高さ: Y"</code> の形式で出力</td></tr>
+        </tbody>
+      </table>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>幅: 4.0, 高さ: 6.0
+面積: 24.0
+周囲: 20.0
+正方形: false
+---
+幅: 5.0, 高さ: 5.0
+面積: 25.0
+周囲: 20.0
+正方形: true</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">Rectangle.java + Main.java</div>
+            <pre><code>class Rectangle {
+    double width;
+    double height;
+
+    public double area()      { return width * height; }
+    public double perimeter() { return (width + height) * 2; }
+    public boolean isSquare() { return width == height; }
+
+    public void show() {
+        System.out.println("幅: " + width + ", 高さ: " + height);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Rectangle r1 = new Rectangle();
+        r1.width = 4.0; r1.height = 6.0;
+        r1.show();
+        System.out.println("面積: "   + r1.area());
+        System.out.println("周囲: "   + r1.perimeter());
+        System.out.println("正方形: " + r1.isSquare());
+        System.out.println("---");
+
+        Rectangle r2 = new Rectangle();
+        r2.width = 5.0; r2.height = 5.0;
+        r2.show();
+        System.out.println("面積: "   + r2.area());
+        System.out.println("周囲: "   + r2.perimeter());
+        System.out.println("正方形: " + r2.isSquare());
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>r1</code> と <code>r2</code> はそれぞれ独立したインスタンスです。</li>
+            <li><code>isSquare()</code> は <code>width == height</code> で正方形を判定します。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 4 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 7-1-4</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text"><code>BankAccount</code>（銀行口座）クラスを作成してください。</p>
+      <table class="data-table" style="margin-top:10px;">
+        <thead><tr><th>要素</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>フィールド</td><td><code>String owner</code>（名義人）、<code>int balance</code>（残高）</td></tr>
+          <tr><td><code>deposit(int amount)</code></td><td>残高に加算し <code>"入金: X円 残高: Y円"</code> を出力</td></tr>
+          <tr><td><code>withdraw(int amount)</code></td><td>残高が足りれば減算して出力、足りなければ <code>"残高不足"</code> を出力</td></tr>
+          <tr><td><code>showBalance()</code></td><td><code>"[名義人] 残高: X円"</code> を出力</td></tr>
+        </tbody>
+      </table>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>[田中太郎] 残高: 0円
+入金: 50000円 残高: 50000円
+入金: 30000円 残高: 80000円
+出金: 20000円 残高: 60000円
+残高不足
+[田中太郎] 残高: 60000円</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">BankAccount.java + Main.java</div>
+            <pre><code>class BankAccount {
+    String owner;
+    int    balance;
+
+    public void deposit(int amount) {
+        balance += amount;
+        System.out.println("入金: " + amount + "円 残高: " + balance + "円");
+    }
+
+    public void withdraw(int amount) {
+        if (amount > balance) {
+            System.out.println("残高不足");
+        } else {
+            balance -= amount;
+            System.out.println("出金: " + amount + "円 残高: " + balance + "円");
+        }
+    }
+
+    public void showBalance() {
+        System.out.println("[" + owner + "] 残高: " + balance + "円");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount();
+        account.owner   = "田中太郎";
+        account.balance = 0;
+
+        account.showBalance();
+        account.deposit(50000);
+        account.deposit(30000);
+        account.withdraw(20000);
+        account.withdraw(100000);  // 残高不足
+        account.showBalance();
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>deposit</code> は無条件で残高を増やします。</li>
+            <li><code>withdraw</code> は <code>amount &gt; balance</code> のとき <code>"残高不足"</code> を出力して処理をスキップします。</li>
+            <li><code>balance</code> フィールドはオブジェクト内で状態を保持し続けます。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

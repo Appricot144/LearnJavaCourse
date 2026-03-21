@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1-2. 型変換（キャスト）</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+      background: #f4f6f9;
+      color: #2d3748;
+      padding: 40px 20px;
+      line-height: 1.8;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* ---- Header ---- */
+    .page-header {
+      background: linear-gradient(135deg, #1a365d, #2b6cb0);
+      color: white;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 36px;
+    }
+    .page-header .chapter-label { font-size: 0.8rem; opacity: 0.75; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .page-header h1 { font-size: 1.6rem; font-weight: 700; }
+    .page-header .meta { margin-top: 10px; font-size: 0.85rem; opacity: 0.8; }
+
+    /* ---- Section titles ---- */
+    .section-title {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.2rem; font-weight: 700; color: #1a365d;
+      margin: 36px 0 16px; padding-bottom: 8px;
+      border-bottom: 2px solid #bee3f8;
+    }
+
+    h3 { font-size: 1rem; font-weight: 700; color: #2b6cb0; margin: 24px 0 10px; }
+    p { margin-bottom: 12px; }
+    ul { padding-left: 20px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; font-size: 0.9rem; }
+
+    /* ---- Code blocks ---- */
+    .code-wrap { background: #1e2a3a; border-radius: 8px; overflow: hidden; margin: 14px 0; }
+    .code-wrap .code-label { background: #2d3f55; color: #a0aec0; font-size: 0.75rem; padding: 5px 14px; letter-spacing: 0.05em; }
+    pre { padding: 16px 18px; overflow-x: auto; font-size: 0.88rem; line-height: 1.6; }
+    code { font-family: 'Fira Code', 'Consolas', 'Monaco', monospace; color: #e2e8f0; }
+    p code, li code, td code {
+      background: #ebf8ff; color: #2b6cb0;
+      padding: 1px 6px; border-radius: 4px; font-size: 0.88em;
+    }
+
+    /* ---- Callout ---- */
+    .callout {
+      border-left: 4px solid #f6ad55; background: #fffaf0;
+      border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem;
+    }
+    .callout strong { color: #c05621; }
+
+    .hint {
+      border-left: 4px solid #68d391; background: #f0fff4;
+      border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; font-size: 0.88rem;
+    }
+    .hint strong { color: #276749; }
+
+    /* ---- Cast flow diagram ---- */
+    .cast-flow {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0; flex-wrap: wrap; margin: 20px 0;
+    }
+    .cast-box {
+      background: #fff; border: 2px solid #bee3f8; border-radius: 8px;
+      padding: 8px 14px; font-size: 0.82rem; font-weight: 700;
+      color: #2b6cb0; text-align: center; min-width: 62px;
+    }
+    .cast-arrow {
+      color: #2b6cb0; font-size: 1.1rem; padding: 0 4px; font-weight: 700;
+    }
+    .cast-label {
+      text-align: center; font-size: 0.75rem; color: #718096; margin-top: 6px; width: 100%;
+    }
+    .flow-section { margin-bottom: 16px; }
+    .flow-title {
+      font-size: 0.8rem; font-weight: 700; padding: 4px 12px;
+      border-radius: 20px; display: inline-block; margin-bottom: 8px;
+    }
+    .flow-title.auto { background: #c6f6d5; color: #276749; }
+    .flow-title.manual { background: #fed7d7; color: #742a2a; }
+
+    /* ---- Table ---- */
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin: 14px 0 20px; font-size: 0.88rem;
+    }
+    .data-table thead { background: #2b6cb0; color: white; }
+    .data-table thead th { padding: 10px 14px; text-align: left; }
+    .data-table tbody tr { border-bottom: 1px solid #e2e8f0; }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody td { padding: 9px 14px; }
+    .data-table tbody tr:hover { background: #ebf8ff; }
+
+    /* ---- Output box ---- */
+    .output-box { background: #1e2a3a; border-radius: 8px; padding: 14px 16px; margin: 10px 0; }
+    .output-box .output-label { color: #68d391; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .output-box pre { padding: 0; }
+
+    /* ---- Problem cards ---- */
+    .problem-card {
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      margin-bottom: 28px; overflow: hidden;
+    }
+    .problem-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; background: #ebf8ff; border-bottom: 1px solid #bee3f8;
+    }
+    .problem-header .problem-num { font-weight: 700; font-size: 1rem; color: #1a365d; }
+    .problem-header .badges { display: flex; gap: 8px; align-items: center; }
+    .badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+    .badge-type-output { background: #c6f6d5; color: #22543d; }
+    .badge-type-code   { background: #fefcbf; color: #744210; }
+    .badge-level       { background: #e9d8fd; color: #44337a; }
+
+    .problem-body { padding: 18px 20px; }
+    .problem-body .question-text { font-size: 0.95rem; margin-bottom: 14px; }
+
+    /* ---- Answer toggle ---- */
+    .answer-toggle { margin-top: 16px; }
+    .answer-toggle summary {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      background: #2b6cb0; color: white; border: none;
+      padding: 8px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; user-select: none;
+    }
+    .answer-toggle summary:hover { background: #2c5282; }
+    .answer-toggle[open] summary { background: #2c5282; }
+    .answer-body {
+      margin-top: 12px; background: #f7fafc;
+      border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; font-size: 0.88rem;
+    }
+    .answer-body .explain-title { font-weight: 700; color: #2b6cb0; margin: 12px 0 6px; font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="chapter-label">第1章 ▶ 変数とデータ型</div>
+    <h1>1-2. 型変換（キャスト）</h1>
+    <div class="meta">難易度：⭐☆☆☆☆　|　問題数：3問　|　形式：出力を答える・コード記述</div>
+  </div>
+
+  <!-- ===== 解説 ===== -->
+  <div class="section-title"><span>📖</span> 解説</div>
+
+  <h3>型変換とは？</h3>
+  <p>異なるデータ型の値を別の型に変換することを <strong>型変換（キャスト）</strong> といいます。<br>
+  Javaには <strong>自動型変換</strong> と <strong>強制型変換</strong> の2種類があります。</p>
+
+  <!-- 型変換フロー図 -->
+  <div style="background:#fff; border-radius:10px; padding:20px 24px; box-shadow:0 2px 8px rgba(0,0,0,0.07); margin:16px 0;">
+    <div class="flow-section">
+      <div class="flow-title auto">▲ 自動型変換（小 → 大・データ損失なし）</div>
+      <div class="cast-flow">
+        <div class="cast-box">byte</div><div class="cast-arrow">→</div>
+        <div class="cast-box">short</div><div class="cast-arrow">→</div>
+        <div class="cast-box">int</div><div class="cast-arrow">→</div>
+        <div class="cast-box">long</div><div class="cast-arrow">→</div>
+        <div class="cast-box">float</div><div class="cast-arrow">→</div>
+        <div class="cast-box">double</div>
+      </div>
+    </div>
+    <div class="flow-section" style="margin-bottom:0;">
+      <div class="flow-title manual">▼ 強制型変換（大 → 小・データ損失の可能性あり）</div>
+      <div class="cast-flow">
+        <div class="cast-box">double</div><div class="cast-arrow">→</div>
+        <div class="cast-box">float</div><div class="cast-arrow">→</div>
+        <div class="cast-box">long</div><div class="cast-arrow">→</div>
+        <div class="cast-box">int</div><div class="cast-arrow">→</div>
+        <div class="cast-box">short</div><div class="cast-arrow">→</div>
+        <div class="cast-box">byte</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 自動型変換 -->
+  <h3>自動型変換（暗黙的キャスト）</h3>
+  <p>データの範囲が小さい型から大きい型への変換は、Javaが<strong>自動で</strong>行います。<br>
+  キャスト演算子は不要です。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">自動型変換の例</div>
+    <pre><code>int i = 100;
+long l = i;       // int → long（自動）
+double d = i;     // int → double（自動）
+
+System.out.println(l);  // 100
+System.out.println(d);  // 100.0  ← .0 が付く</code></pre>
+  </div>
+
+  <!-- 強制型変換 -->
+  <h3>強制型変換（明示的キャスト）</h3>
+  <p>大きい型から小さい型への変換には <code>(型名)</code> を使って明示的に指定します。</p>
+
+  <div class="code-wrap">
+    <div class="code-label">強制型変換の例</div>
+    <pre><code>double d = 3.99;
+int i = (int) d;    // double → int（強制キャスト）
+
+System.out.println(i);  // 3 ← 小数点以下が切り捨てられる</code></pre>
+  </div>
+
+  <div class="callout">
+    <strong>⚠️ 切り捨てであって四捨五入ではない</strong><br>
+    <code>3.99</code> を <code>int</code> にキャストすると <code>4</code> ではなく <code>3</code> になります。<br>
+    負の数も同様で <code>(int) -3.9</code> は <code>-4</code> ではなく <code>-3</code> になります。
+  </div>
+
+  <!-- 文字列変換 -->
+  <h3>数値と文字列の変換</h3>
+
+  <div class="code-wrap">
+    <div class="code-label">数値 → 文字列</div>
+    <pre><code>int n = 42;
+
+String s1 = String.valueOf(n);    // "42"  ← 推奨
+String s2 = n + "";               // "42"  ← 空文字と結合
+String s3 = Integer.toString(n);  // "42"  ← Integer クラスのメソッド</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-label">文字列 → 数値</div>
+    <pre><code>String s = "123";
+
+int i    = Integer.parseInt(s);       // 123
+double d = Double.parseDouble(s);     // 123.0</code></pre>
+  </div>
+
+  <!-- まとめ表 -->
+  <h3>型変換まとめ</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>変換の種類</th><th>方向</th><th>構文</th><th>データ損失</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>自動型変換</td><td>小 → 大</td><td>そのまま代入</td><td>なし</td></tr>
+      <tr><td>強制型変換</td><td>大 → 小</td><td><code>(型名) 値</code></td><td>あり（切り捨て）</td></tr>
+      <tr><td>数値 → 文字列</td><td>—</td><td><code>String.valueOf(n)</code></td><td>なし</td></tr>
+      <tr><td>文字列 → 数値</td><td>—</td><td><code>Integer.parseInt(s)</code> など</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ===== 問題 ===== -->
+  <div class="section-title"><span>✏️</span> 問題</div>
+
+  <!-- 問題 1 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 1-2-1</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐☆☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q1.java</div>
+        <pre><code>public class Q1 {
+    public static void main(String[] args) {
+        int a = 50;
+        double b = a;       // 自動型変換
+        long c = a;         // 自動型変換
+
+        System.out.println(a);
+        System.out.println(b);
+        System.out.println(c);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>50
+50.0
+50</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>int → double</code> の自動変換では小数点以下に <code>.0</code> が付きます。</li>
+            <li><code>int → long</code> の自動変換では見た目は変わらず <code>50</code> のままです。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 2 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 1-2-2</span>
+      <div class="badges">
+        <span class="badge badge-type-output">出力を答える</span>
+        <span class="badge badge-level">⭐⭐☆</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">次のコードを実行したとき、出力される結果を答えてください。</p>
+      <div class="code-wrap">
+        <div class="code-label">Q2.java</div>
+        <pre><code>public class Q2 {
+    public static void main(String[] args) {
+        double x = 9.99;
+        int y = (int) x;
+
+        float f = 3.14f;
+        int z = (int) f;
+
+        System.out.println(y);
+        System.out.println(z);
+        System.out.println((int) 100.1);
+        System.out.println((int) -3.9);
+    }
+}</code></pre>
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="output-box">
+            <div class="output-label">▶ 出力結果</div>
+            <pre><code>9
+3
+100
+-3</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li>強制キャストでは小数点以下が<strong>切り捨て</strong>られます（四捨五入ではありません）。</li>
+            <li><code>9.99 → 9</code>、<code>3.14 → 3</code>、<code>100.1 → 100</code></li>
+            <li>負の数も切り捨てのため <code>-3.9 → -3</code>（<code>-4</code> にはならない）です。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- 問題 3 -->
+  <div class="problem-card">
+    <div class="problem-header">
+      <span class="problem-num">問題 1-2-3</span>
+      <div class="badges">
+        <span class="badge badge-type-code">コード記述</span>
+        <span class="badge badge-level">⭐⭐⭐</span>
+      </div>
+    </div>
+    <div class="problem-body">
+      <p class="question-text">以下の条件を満たすプログラムを作成してください。</p>
+      <ul>
+        <li><code>double</code> 型の変数 <code>price</code> に <code>1980.75</code> を代入する</li>
+        <li><code>price</code> を <code>int</code> 型にキャストして変数 <code>priceInt</code> に代入する</li>
+        <li><code>int</code> 型の変数 <code>count</code> に <code>3</code> を代入する</li>
+        <li><code>count</code> を <code>double</code> 型に自動変換して変数 <code>countDouble</code> に代入する</li>
+        <li><code>String</code> 型の変数 <code>label</code> に <code>"合計金額："</code> を代入する</li>
+        <li>下記の形式で4行出力する</li>
+      </ul>
+      <div class="output-box" style="margin-top:12px;">
+        <div class="output-label">▶ 期待される出力</div>
+        <pre><code>元の価格: 1980.75
+切り捨て後: 1980
+個数(double): 3.0
+合計金額：5942.25</code></pre>
+      </div>
+      <div class="hint" style="margin-top:12px;">
+        <strong>💡 ヒント</strong>：合計金額は <code>price * count</code> で計算できます。
+      </div>
+      <details class="answer-toggle">
+        <summary>▶ 答えを見る</summary>
+        <div class="answer-body">
+          <div class="code-wrap">
+            <div class="code-label">PriceCalc.java</div>
+            <pre><code>public class PriceCalc {
+    public static void main(String[] args) {
+        double price = 1980.75;
+        int priceInt = (int) price;
+        int count = 3;
+        double countDouble = count;
+        String label = "合計金額：";
+
+        System.out.println("元の価格: " + price);
+        System.out.println("切り捨て後: " + priceInt);
+        System.out.println("個数(double): " + countDouble);
+        System.out.println(label + (price * count));
+    }
+}</code></pre>
+          </div>
+          <div class="explain-title">解説</div>
+          <ul>
+            <li><code>(int) price</code> で <code>1980.75</code> の小数点以下が切り捨てられ <code>1980</code> になります。</li>
+            <li><code>double countDouble = count;</code> は <code>int → double</code> の自動変換で <code>3.0</code> になります。</li>
+            <li><code>price * count</code> は <code>double × int</code> の演算で、結果は <code>double</code> 型（<code>5942.25</code>）になります。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
