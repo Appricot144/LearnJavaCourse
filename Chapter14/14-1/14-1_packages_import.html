@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>14-1. パッケージの概念とimport</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      .page-header {
+        background: linear-gradient(135deg, #2d3a1e, #4a5e2a);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2d3a1e;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #c6f6d5;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #4a5e2a;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
+
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #f0fff4;
+        color: #2d3a1e;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
+
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #4a5e2a;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #f0fff4;
+      }
+
+      /* Directory tree */
+      .dir-tree {
+        background: #1e2a3a;
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin: 14px 0;
+        font-family: monospace;
+        font-size: 0.88rem;
+      }
+      .dt-folder {
+        color: #fbd38d;
+      }
+      .dt-file {
+        color: #90cdf4;
+      }
+      .dt-pkg {
+        color: #9ae6b4;
+      }
+      .dt-line {
+        color: #718096;
+      }
+
+      /* Package concept diagram */
+      .pkg-diagram {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+      }
+      .pd-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 14px;
+      }
+      .pd-pkg {
+        border: 2px dashed #4a5e2a;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 10px;
+        background: #f0fff4;
+      }
+      .pd-pkg-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #2d3a1e;
+        font-family: monospace;
+        margin-bottom: 8px;
+      }
+      .pd-classes {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .pd-class {
+        background: #4a5e2a;
+        color: white;
+        border-radius: 6px;
+        padding: 5px 12px;
+        font-family: monospace;
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      /* Import comparison */
+      .import-compare {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 14px 0;
+      }
+      .ic-card {
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        border-left: 4px solid #4a5e2a;
+      }
+      .ic-card .cc-label {
+        background: #f0fff4;
+        padding: 6px 14px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #4a5e2a;
+      }
+
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
+
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #f0fff4;
+        border-bottom: 1px solid #c6f6d5;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #2d3a1e;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-type-select {
+        background: #bee3f8;
+        color: #1a365d;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
+
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #4a5e2a;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #2d3a1e;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #4a5e2a;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
+      .choice {
+        margin-bottom: 6px;
+        font-size: 0.92rem;
+      }
+      .choice.correct {
+        color: #22543d;
+        font-weight: 700;
+      }
+      .choice.wrong {
+        color: #742a2a;
+      }
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #4a5e2a;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第14章 ▶ パッケージ</div>
+        <h1>14-1. パッケージの概念とimport</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐☆☆　|　問題数：3問　|　形式：選択・出力を答える・コード記述
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter13/13-3/13-3_map_stream_groupingby.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../14-2/14-2_standard_library.html">＞</a>
+        </div>
+      </div>
+
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>パッケージとは？</h3>
+      <p>
+        パッケージとは、<strong>関連するクラスを1つのフォルダにまとめる仕組み</strong>です。<br />
+        ファイルシステムのディレクトリ構造と対応しています。
+      </p>
+
+      <p>パッケージを使う主な理由は3つです。</p>
+      <ul>
+        <li>
+          <strong>名前の衝突を防ぐ</strong
+          >：異なるパッケージに同名のクラスを定義できる
+        </li>
+        <li>
+          <strong>コードを整理する</strong>：機能別にクラスをグループ化できる
+        </li>
+        <li>
+          <strong>アクセス制御</strong
+          >：package-private（修飾子なし）でパッケージ内のみ公開できる
+        </li>
+      </ul>
+
+      <!-- パッケージの構造図 -->
+      <div class="pkg-diagram">
+        <div class="pd-title">▶ パッケージとクラスの構造イメージ</div>
+        <div class="pd-pkg">
+          <div class="pd-pkg-name">📦 com.example.model</div>
+          <div class="pd-classes">
+            <div class="pd-class">User</div>
+            <div class="pd-class">Product</div>
+            <div class="pd-class">Order</div>
+          </div>
+        </div>
+        <div class="pd-pkg">
+          <div class="pd-pkg-name">📦 com.example.service</div>
+          <div class="pd-classes">
+            <div class="pd-class">UserService</div>
+            <div class="pd-class">OrderService</div>
+          </div>
+        </div>
+        <div class="pd-pkg">
+          <div class="pd-pkg-name">📦 com.example.util</div>
+          <div class="pd-classes">
+            <div class="pd-class">DateUtils</div>
+            <div class="pd-class">StringUtils</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ディレクトリ構造 -->
+      <h3>ディレクトリ構造との対応</h3>
+      <p>パッケージ名はディレクトリ（フォルダ）の構造と一致します。</p>
+      <div class="dir-tree">
+        <span class="dt-folder">src/</span><br />
+        &nbsp;&nbsp;<span class="dt-line">└─</span>
+        <span class="dt-folder">com/</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dt-line">└─</span>
+        <span class="dt-folder">example/</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dt-line">├─</span>
+        <span class="dt-folder">model/</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dt-line"
+          >│&nbsp;&nbsp;</span
+        >
+        <span class="dt-line">├─</span> <span class="dt-file">User.java</span>
+        <span style="color: #68d391">← package com.example.model;</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dt-line"
+          >│&nbsp;&nbsp;</span
+        >
+        <span class="dt-line">└─</span> <span class="dt-file">Product.java</span
+        ><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dt-line">├─</span>
+        <span class="dt-folder">service/</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dt-line"
+          >│&nbsp;&nbsp;</span
+        >
+        <span class="dt-line">└─</span>
+        <span class="dt-file">UserService.java</span>
+        <span style="color: #68d391">← package com.example.service;</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dt-line">└─</span>
+        <span class="dt-folder">util/</span><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+          class="dt-line"
+          >└─</span
+        >
+        <span class="dt-file">StringUtils.java</span>
+        <span style="color: #68d391">← package com.example.util;</span>
+      </div>
+
+      <!-- package 宣言 -->
+      <h3>package 宣言</h3>
+      <p>
+        <strong>ファイルの先頭に</strong>（コメントを除いて最初の文として）<code
+          >package</code
+        >
+        宣言を書きます。
+      </p>
+      <div class="code-wrap">
+        <div class="code-label">User.java（com.example.model パッケージ）</div>
+        <pre><code>package com.example.model;  // ← 先頭に宣言
+
+public class User {
+    private String name;
+    private String email;
+
+    public User(String name, String email) {
+        this.name  = name;
+        this.email = email;
+    }
+
+    public String getName()  { return name;  }
+    public String getEmail() { return email; }
+}</code></pre>
+      </div>
+
+      <!-- import -->
+      <h3>import 文</h3>
+      <p>別パッケージのクラスを使うには <code>import</code> 文を書きます。</p>
+
+      <div class="import-compare">
+        <div class="ic-card">
+          <div class="cc-label">方法1：クラスを個別に import（推奨）</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre style="font-size: 0.83rem"><code>import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;</code></pre>
+          </div>
+        </div>
+        <div class="ic-card">
+          <div class="cc-label">
+            方法2：パッケージ全体を import（* ワイルドカード）
+          </div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="font-size: 0.83rem"
+            ><code>import java.util.*;  // java.util 全体
+// ※サブパッケージは含まれない</code></pre>
+          </div>
+        </div>
+        <div class="ic-card">
+          <div class="cc-label">方法3：完全修飾名（import なし）</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="font-size: 0.83rem"
+            ><code>java.util.ArrayList&lt;String&gt; list = new java.util.ArrayList&lt;&gt;();
+// 毎回フルパスを書く（冗長だが import 不要）</code></pre>
+          </div>
+        </div>
+        <div class="ic-card">
+          <div class="cc-label">
+            方法4：static import（静的メンバーを直接使う）
+          </div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre
+              style="font-size: 0.83rem"
+            ><code>import static java.lang.Math.*;  // Math の全 static メンバー
+import static java.util.Collections.sort;
+
+double r = sqrt(16.0);  // Math.sqrt() を省略して使える</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- java.lang は自動 import -->
+      <div class="hint">
+        <strong>💡 java.lang パッケージは自動 import</strong><br />
+        <code>String</code>・<code>Integer</code>・<code>Math</code>・<code
+          >System</code
+        >
+        など <code>java.lang</code> パッケージのクラスは<br />
+        <code>import</code> 不要で使えます。Javaが自動的に import
+        しているためです。
+      </div>
+
+      <!-- よく使う import -->
+      <h3>よく使う import 一覧</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>import 文</th>
+            <th>使えるクラス例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>import java.util.*;</code></td>
+            <td>
+              <code>List</code
+              >、<code>Map</code>、<code>HashMap</code>、<code>ArrayList</code>、<code
+                >Optional</code
+              >
+            </td>
+          </tr>
+          <tr>
+            <td><code>import java.util.stream.*;</code></td>
+            <td>
+              <code>Stream</code>、<code>Collectors</code>、<code
+                >IntStream</code
+              >
+            </td>
+          </tr>
+          <tr>
+            <td><code>import java.time.*;</code></td>
+            <td>
+              <code>LocalDate</code>、<code>LocalDateTime</code>、<code
+                >Period</code
+              >
+            </td>
+          </tr>
+          <tr>
+            <td><code>import java.time.format.*;</code></td>
+            <td><code>DateTimeFormatter</code></td>
+          </tr>
+          <tr>
+            <td><code>import java.util.function.*;</code></td>
+            <td>
+              <code>Function</code>、<code>Predicate</code>、<code
+                >Consumer</code
+              >
+            </td>
+          </tr>
+          <tr>
+            <td><code>import java.io.*;</code></td>
+            <td>
+              <code>File</code>、<code>IOException</code>、<code
+                >BufferedReader</code
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 名前の衝突 -->
+      <h3>名前の衝突と完全修飾名</h3>
+      <p>
+        同じクラス名が異なるパッケージに存在する場合、片方を完全修飾名で書きます。
+      </p>
+      <div class="code-wrap">
+        <div class="code-label">java.util.Date と java.sql.Date の衝突例</div>
+        <pre><code>import java.util.Date;  // java.util.Date は import
+
+// java.sql.Date は完全修飾名で使う
+java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+Date utilDate = new Date();  // こちらは import 済みなので短い名前で OK</code></pre>
+      </div>
+
+      <!-- コード例 -->
+      <h3>コード例：自前パッケージの使い方</h3>
+      <div class="code-wrap">
+        <div class="code-label">com/example/model/Product.java</div>
+        <pre><code>package com.example.model;
+
+public class Product {
+    private String name;
+    private int    price;
+
+    public Product(String name, int price) {
+        this.name  = name;
+        this.price = price;
+    }
+    public String getName()  { return name;  }
+    public int    getPrice() { return price; }
+
+    @Override
+    public String toString() {
+        return name + "(" + price + "円)";
+    }
+}</code></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">com/example/Main.java</div>
+        <pre><code>package com.example;
+
+import com.example.model.Product;  // 同じプロジェクトの別パッケージ
+import java.util.List;
+import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        List&lt;Product&gt; cart = new ArrayList&lt;&gt;();
+        cart.add(new Product("りんご",  150));
+        cart.add(new Product("バナナ",  120));
+        cart.add(new Product("メロン", 1200));
+
+        int total = cart.stream()
+            .mapToInt(Product::getPrice)
+            .sum();
+
+        System.out.println("合計: " + total + "円");
+    }
+}</code></pre>
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>合計: 1470円</code></pre>
+      </div>
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1（選択） -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 14-1-1</span>
+          <div class="badges">
+            <span class="badge badge-type-select">選択問題</span>
+            <span class="badge badge-level">⭐☆☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の各文について、正しいものには ✅、誤りには ❌ を答えてください。
+          </p>
+          <ol>
+            <li><code>package</code> 宣言はファイルのどこに書いても良い。</li>
+            <li>
+              <code>import java.util.*;</code> は
+              <code>java.util.stream</code> パッケージのクラスも import する。
+            </li>
+            <li><code>java.lang.String</code> は import なしで使える。</li>
+            <li>異なるパッケージに同名のクラスを定義することができる。</li>
+            <li>
+              <code>import static java.lang.Math.sqrt;</code> と書くと
+              <code>sqrt(4.0)</code> と省略して呼べる。
+            </li>
+          </ol>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="choice wrong">
+                1. ❌：<code>package</code>
+                宣言はファイルの<strong>先頭</strong>（コメントを除く最初の文）に書かなければなりません。
+              </div>
+              <div class="choice wrong">
+                2. ❌：<code>import java.util.*;</code> は
+                <code>java.util</code> パッケージのクラスのみ対象です。<code
+                  >java.util.stream</code
+                >
+                のような<strong>サブパッケージは含まれません</strong>。別途
+                <code>import java.util.stream.*;</code> が必要です。
+              </div>
+              <div class="choice correct">
+                3. ✅：<code>java.lang</code> パッケージは Java が自動的に
+                import するため、<code>String</code>・<code>Math</code>・<code
+                  >Integer</code
+                >
+                などは import 不要です。
+              </div>
+              <div class="choice correct">
+                4.
+                ✅：パッケージが異なれば同名クラスを定義できます（完全修飾名が異なるため）。
+              </div>
+              <div class="choice correct">
+                5. ✅：static import でメソッド名のみで呼び出せます。
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 14-1-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>import java.util.ArrayList;
+import java.util.List;
+import java.util.Collections;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.abs;
+
+public class Q2 {
+    public static void main(String[] args) {
+        // static import で Math.xxx() を省略
+        System.out.println(max(10, 20));
+        System.out.println(min(10, 20));
+        System.out.println(abs(-42));
+
+        List&lt;Integer&gt; nums = new ArrayList&lt;&gt;();
+        nums.add(5); nums.add(2); nums.add(8); nums.add(1);
+
+        Collections.sort(nums);
+        System.out.println(nums);
+
+        Collections.reverse(nums);
+        System.out.println(nums);
+
+        System.out.println(Collections.max(nums));
+        System.out.println(Collections.min(nums));
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>20
+10
+42
+[1, 2, 5, 8]
+[8, 5, 2, 1]
+8
+1</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>static import</code> で
+                  <code>Math.max/min/abs</code> を短縮名で使っています。
+                </li>
+                <li>
+                  <code>Collections.sort()</code> で昇順ソート →
+                  <code>[1, 2, 5, 8]</code>。
+                </li>
+                <li>
+                  <code>Collections.reverse()</code> で逆順 →
+                  <code>[8, 5, 2, 1]</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 14-1-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たすクラス群を作成してください。
+          </p>
+          <ul>
+            <li>
+              <code>com.example.shape</code> パッケージに
+              <code>Shape</code> 抽象クラスを定義（<code>color</code>
+              フィールド・<code>abstract area()</code>・<code>show()</code>）
+            </li>
+            <li>
+              同パッケージに <code>Circle</code> と
+              <code>Rectangle</code> クラスを定義（<code>Shape</code>
+              を継承・<code>area()</code> を実装）
+            </li>
+            <li>
+              <code>com.example</code> パッケージの <code>Main</code> クラスで
+              <code>import com.example.shape.*;</code> を使って利用する
+            </li>
+          </ul>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>Circle（赤）面積: 78.54
+Rectangle（青）面積: 24.00
+Circle（緑）面積: 28.27
+合計面積: 130.81</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">com/example/shape/Shape.java</div>
+                <pre><code>package com.example.shape;
+
+public abstract class Shape {
+    protected String color;
+
+    public Shape(String color) { this.color = color; }
+
+    public abstract double area();
+
+    public void show() {
+        System.out.printf("%s（%s）面積: %.2f%n",
+            getClass().getSimpleName(), color, area());
+    }
+}</code></pre>
+              </div>
+              <div class="code-wrap">
+                <div class="code-label">com/example/shape/Circle.java</div>
+                <pre><code>package com.example.shape;
+
+public class Circle extends Shape {
+    private double radius;
+
+    public Circle(String color, double radius) {
+        super(color);
+        this.radius = radius;
+    }
+
+    @Override
+    public double area() { return Math.PI * radius * radius; }
+}</code></pre>
+              </div>
+              <div class="code-wrap">
+                <div class="code-label">com/example/shape/Rectangle.java</div>
+                <pre><code>package com.example.shape;
+
+public class Rectangle extends Shape {
+    private double width, height;
+
+    public Rectangle(String color, double width, double height) {
+        super(color);
+        this.width = width; this.height = height;
+    }
+
+    @Override
+    public double area() { return width * height; }
+}</code></pre>
+              </div>
+              <div class="code-wrap">
+                <div class="code-label">com/example/Main.java</div>
+                <pre><code>package com.example;
+
+import com.example.shape.*;  // Shape, Circle, Rectangle を一括 import
+
+public class Main {
+    public static void main(String[] args) {
+        Shape[] shapes = {
+            new Circle("赤", 5.0),
+            new Rectangle("青", 4.0, 6.0),
+            new Circle("緑", 3.0)
+        };
+
+        double total = 0;
+        for (Shape s : shapes) {
+            s.show();
+            total += s.area();
+        }
+        System.out.printf("合計面積: %.2f%n", total);
+    }
+}</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>package com.example.shape;</code>
+                  で各クラスが同パッケージに属することを宣言します。
+                </li>
+                <li>
+                  <code>import com.example.shape.*;</code>
+                  でパッケージ全体のクラスを使えるようにします。
+                </li>
+                <li>
+                  抽象クラス <code>Shape</code> を参照型として使い、<code
+                    >Circle</code
+                  >
+                  と
+                  <code>Rectangle</code>
+                  のインスタンスをポリモーフィズムで一括処理します。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter13/13-3/13-3_map_stream_groupingby.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../14-2/14-2_standard_library.html">＞</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

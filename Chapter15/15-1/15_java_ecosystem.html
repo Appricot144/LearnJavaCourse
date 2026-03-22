@@ -1,0 +1,1509 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第15章. Javaを取り巻くライブラリの世界</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      /* Header */
+      .page-header {
+        background: linear-gradient(135deg, #1a202c, #2d3748);
+        color: white;
+        border-radius: 14px;
+        padding: 36px 40px;
+        margin-bottom: 40px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.82rem;
+        opacity: 0.65;
+        letter-spacing: 0.1em;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+      }
+      .page-header h1 {
+        font-size: 1.9rem;
+        font-weight: 800;
+        line-height: 1.3;
+        margin-bottom: 10px;
+      }
+      .page-header .subtitle {
+        font-size: 1rem;
+        opacity: 0.8;
+      }
+
+      /* Section title */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin: 48px 0 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #e2e8f0;
+      }
+      .section-title .st-num {
+        background: #2d3748;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 28px 0 10px;
+      }
+      h4 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #4a5568;
+        margin: 18px 0 8px;
+      }
+      p {
+        margin-bottom: 14px;
+        font-size: 0.95rem;
+      }
+      ul,
+      ol {
+        padding-left: 22px;
+        margin-bottom: 12px;
+      }
+      li {
+        margin-bottom: 5px;
+        font-size: 0.92rem;
+      }
+
+      code {
+        background: #edf2f7;
+        color: #2d3748;
+        padding: 1px 7px;
+        border-radius: 4px;
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        font-size: 0.88em;
+      }
+
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 0.92rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .info {
+        border-left: 4px solid #63b3ed;
+        background: #ebf8ff;
+        border-radius: 0 8px 8px 0;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 0.92rem;
+      }
+      .info strong {
+        color: #2b6cb0;
+      }
+
+      /* JDK structure diagram */
+      .jdk-diagram {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        padding: 24px 28px;
+        margin: 20px 0;
+      }
+      .jdk-diagram .jd-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 18px;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .jdk-layer {
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 8px;
+        position: relative;
+      }
+      .jdk-layer .jl-label {
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+      }
+      .jdk-layer .jl-items {
+        font-size: 0.82rem;
+        opacity: 0.85;
+        font-family: monospace;
+      }
+      .jdk-layer .jl-note {
+        font-size: 0.78rem;
+        margin-top: 4px;
+        opacity: 0.7;
+      }
+      .jl-jdk {
+        background: #2d3748;
+        color: white;
+      }
+      .jl-stdlib {
+        background: #2b6cb0;
+        color: white;
+      }
+      .jl-3rdparty {
+        background: #276749;
+        color: white;
+      }
+      .jl-app {
+        background: #6b46c1;
+        color: white;
+      }
+      .jl-jvm {
+        background: #c05621;
+        color: white;
+      }
+      .jdk-arrow {
+        text-align: center;
+        color: #a0aec0;
+        font-size: 1.3rem;
+        margin: 2px 0;
+      }
+
+      /* Package map */
+      .pkg-map {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 16px 0;
+      }
+      .pm-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 14px 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+        border-top: 4px solid;
+      }
+      .pm-card .pmc-pkg {
+        font-family: monospace;
+        font-weight: 700;
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+      }
+      .pm-card .pmc-used {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 1px 8px;
+        border-radius: 10px;
+        display: inline-block;
+        margin-bottom: 6px;
+      }
+      .pm-card .pmc-desc {
+        font-size: 0.78rem;
+        color: #718096;
+      }
+      .used-yes {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .used-no {
+        background: #edf2f7;
+        color: #718096;
+      }
+      .bc-blue {
+        border-color: #2b6cb0;
+      }
+      .bc-green {
+        border-color: #276749;
+      }
+      .bc-purple {
+        border-color: #6b46c1;
+      }
+      .bc-orange {
+        border-color: #c05621;
+      }
+      .bc-gray {
+        border-color: #718096;
+      }
+      .bc-red {
+        border-color: #c53030;
+      }
+
+      /* Library category cards */
+      .lib-section {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+        margin: 24px 0;
+      }
+      .lib-section .ls-header {
+        padding: 16px 22px;
+        color: white;
+        font-size: 1.05rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .ls-header .lsh-icon {
+        font-size: 1.4rem;
+      }
+      .ls-body {
+        padding: 18px 22px;
+      }
+
+      .lh-gui {
+        background: linear-gradient(135deg, #b83280, #702459);
+      }
+      .lh-web {
+        background: linear-gradient(135deg, #2b6cb0, #1a4971);
+      }
+      .lh-db {
+        background: linear-gradient(135deg, #276749, #234e52);
+      }
+      .lh-test {
+        background: linear-gradient(135deg, #c05621, #7b341e);
+      }
+      .lh-build {
+        background: linear-gradient(135deg, #6b46c1, #44337a);
+      }
+      .lh-other {
+        background: linear-gradient(135deg, #4a5e2a, #2d3a1e);
+      }
+      .lh-kotlin {
+        background: linear-gradient(135deg, #1a4971, #234e52);
+      }
+
+      /* Library items */
+      .lib-items {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .lib-item {
+        background: #f7fafc;
+        border-radius: 10px;
+        padding: 14px 18px;
+        border-left: 4px solid #e2e8f0;
+      }
+      .lib-item .li-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #1a202c;
+        margin-bottom: 4px;
+      }
+      .lib-item .li-tags {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+      }
+      .li-tag {
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-weight: 700;
+      }
+      .tag-std {
+        background: #bee3f8;
+        color: #1a365d;
+      }
+      .tag-3rd {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .tag-popular {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .tag-enterprise {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .tag-android {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+      .lib-item .li-desc {
+        font-size: 0.88rem;
+        color: #4a5568;
+      }
+      .lib-item .li-code {
+        background: #1e2a3a;
+        color: #9ae6b4;
+        font-family: monospace;
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        border-radius: 6px;
+        margin-top: 8px;
+      }
+
+      /* Comparison table */
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2d3748;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #f7fafc;
+      }
+
+      /* Learning path */
+      .learning-path {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+        padding: 24px 28px;
+        margin: 24px 0;
+      }
+      .lp-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 18px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .lp-tracks {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+      .lp-track {
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .lp-track .lt-header {
+        padding: 10px 16px;
+        color: white;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .lt-web {
+        background: #2b6cb0;
+      }
+      .lt-gui {
+        background: #b83280;
+      }
+      .lt-data {
+        background: #276749;
+      }
+      .lt-mobile {
+        background: #c05621;
+      }
+      .lp-track .lt-steps {
+        background: #f7fafc;
+        padding: 10px 16px;
+      }
+      .lt-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+        font-size: 0.85rem;
+      }
+      .lt-step-num {
+        background: #e2e8f0;
+        color: #4a5568;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      /* Mini code example */
+      .mini-code {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 10px 0;
+      }
+      .mini-code .mc-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.72rem;
+        padding: 5px 14px;
+        letter-spacing: 0.05em;
+      }
+      .mini-code pre {
+        padding: 12px 16px;
+        font-size: 0.82rem;
+        line-height: 1.6;
+      }
+      .mini-code code {
+        background: none;
+        color: #e2e8f0;
+        padding: 0;
+      }
+
+      /* Closing message */
+      .closing {
+        background: linear-gradient(135deg, #1a202c, #2d3748);
+        color: white;
+        border-radius: 14px;
+        padding: 36px 40px;
+        margin: 48px 0 0;
+        text-align: center;
+      }
+      .closing .cl-icon {
+        font-size: 3rem;
+        margin-bottom: 14px;
+      }
+      .closing h2 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 14px;
+      }
+      .closing p {
+        opacity: 0.85;
+        font-size: 0.95rem;
+        max-width: 600px;
+        margin: 0 auto 10px;
+      }
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2d3748;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+
+      /* Summary completion card */
+      .completion-card {
+        background: linear-gradient(135deg, #2b6cb0, #2d3748);
+        color: white;
+        border-radius: 14px;
+        padding: 28px 32px;
+        margin: 36px 0;
+        text-align: center;
+      }
+      .completion-card h2 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+      }
+      .completion-card p {
+        opacity: 0.9;
+        font-size: 0.95rem;
+        margin-bottom: 0;
+      }
+      .completion-icon {
+        font-size: 3rem;
+        margin-bottom: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">第15章 ▶ 番外編</div>
+        <h1>Javaを取り巻く<br />ライブラリの世界</h1>
+        <div class="subtitle">
+          標準ライブラリの位置づけから、GUIやWeb開発まで — Java
+          エコシステム全体像
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter14/14-3/14-3_package_design_access.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Supplement/supplement_3_ecosystem_map.html">最後に</a>
+        </div>
+      </div>
+
+      <!-- ===== 1. JDK の全体像 ===== -->
+      <div class="section-title">
+        <div class="st-num">1</div>
+        JavaとJDKの全体像
+      </div>
+
+      <p>
+        これまでのコースで <code>import java.util.*</code> や
+        <code>import java.time.*</code> を当然のように使ってきました。<br />
+        これらは一体どこから来るのでしょうか？ まず Java
+        を取り巻くソフトウェアの層を整理しましょう。
+      </p>
+
+      <div class="jdk-diagram">
+        <div class="jd-title">▶ Java アプリケーションの層構造</div>
+        <div class="jdk-layer jl-app">
+          <div class="jl-label">🧑‍💻 あなたのアプリケーション</div>
+          <div class="jl-items">
+            Main.java、ProductService.java、…（本コースで書いたコード）
+          </div>
+        </div>
+        <div class="jdk-arrow">↓ 使う</div>
+        <div class="jdk-layer jl-3rdparty">
+          <div class="jl-label">📦 サードパーティライブラリ</div>
+          <div class="jl-items">
+            Spring Boot、JUnit、Log4j、Jackson、Hibernate、…
+          </div>
+          <div class="jl-note">
+            Maven / Gradle でプロジェクトに追加する外部ライブラリ
+          </div>
+        </div>
+        <div class="jdk-arrow">↓ 使う</div>
+        <div class="jdk-layer jl-stdlib">
+          <div class="jl-label">
+            📚 Java 標準ライブラリ（JCL: Java Class Library）
+          </div>
+          <div class="jl-items">
+            java.lang、java.util、java.time、java.io、java.net、java.math、…
+          </div>
+          <div class="jl-note">JDK に同梱。import するだけで使えるクラス群</div>
+        </div>
+        <div class="jdk-arrow">↓ 含む</div>
+        <div class="jdk-layer jl-jdk">
+          <div class="jl-label">🔧 JDK（Java Development Kit）</div>
+          <div class="jl-items">
+            javac（コンパイラ）、java（実行ツール）、jar、javadoc、… + JRE
+            を含む
+          </div>
+        </div>
+        <div class="jdk-arrow">↓ 動く</div>
+        <div class="jdk-layer jl-jvm">
+          <div class="jl-label">⚙️ JVM（Java Virtual Machine）</div>
+          <div class="jl-items">
+            バイトコードを実行する仮想マシン。Windows / macOS / Linux
+            の違いを吸収する
+          </div>
+          <div class="jl-note">「Write Once, Run Anywhere」を支える仕組み</div>
+        </div>
+      </div>
+
+      <div class="info">
+        <strong>💡 JDK と JRE の違い</strong><br />
+        <strong>JRE</strong>（Java Runtime
+        Environment）はアプリを実行するだけの環境。<br />
+        <strong>JDK</strong>（Java Development
+        Kit）は開発に必要なコンパイラなどを含む。開発者は JDK
+        をインストールします。<br />
+        Java 11 以降はこの区分が統合され、JDK のみが配布されています。
+      </div>
+
+      <!-- ===== 2. 標準ライブラリの全体像 ===== -->
+      <div class="section-title">
+        <div class="st-num">2</div>
+        標準ライブラリのパッケージ全体像
+      </div>
+
+      <p>
+        本コースで使ったパッケージはほんの一部です。JDK には 200
+        以上のパッケージが含まれています。<br />
+        主要なものを「本コースで使ったか」という観点でマッピングしてみましょう。
+      </p>
+
+      <div class="pkg-map">
+        <div class="pm-card bc-blue">
+          <div class="pmc-pkg">java.lang</div>
+          <span class="pmc-used used-yes">✅ 使用済み</span>
+          <div class="pmc-desc">
+            String、Math、Integer、System、StringBuilder — Java の基盤
+          </div>
+        </div>
+        <div class="pm-card bc-blue">
+          <div class="pmc-pkg">java.util</div>
+          <span class="pmc-used used-yes">✅ 使用済み</span>
+          <div class="pmc-desc">
+            List、Map、Set、Arrays、Collections、Optional
+          </div>
+        </div>
+        <div class="pm-card bc-blue">
+          <div class="pmc-pkg">java.util.stream</div>
+          <span class="pmc-used used-yes">✅ 使用済み</span>
+          <div class="pmc-desc">Stream、Collectors、IntStream</div>
+        </div>
+        <div class="pm-card bc-blue">
+          <div class="pmc-pkg">java.util.function</div>
+          <span class="pmc-used used-yes">✅ 使用済み</span>
+          <div class="pmc-desc">Function、Predicate、Consumer、Supplier</div>
+        </div>
+        <div class="pm-card bc-green">
+          <div class="pmc-pkg">java.time</div>
+          <span class="pmc-used used-yes">✅ 使用済み</span>
+          <div class="pmc-desc">LocalDate、LocalDateTime、Period、Duration</div>
+        </div>
+        <div class="pm-card bc-green">
+          <div class="pmc-pkg">java.time.format</div>
+          <span class="pmc-used used-yes">✅ 使用済み</span>
+          <div class="pmc-desc">DateTimeFormatter</div>
+        </div>
+        <div class="pm-card bc-gray">
+          <div class="pmc-pkg">java.io</div>
+          <span class="pmc-used used-no">📖 未使用</span>
+          <div class="pmc-desc">
+            ファイル入出力。File、Reader、Writer、InputStream
+          </div>
+        </div>
+        <div class="pm-card bc-gray">
+          <div class="pmc-pkg">java.nio.file</div>
+          <span class="pmc-used used-no">📖 未使用</span>
+          <div class="pmc-desc">モダンなファイル操作。Path、Files、Paths</div>
+        </div>
+        <div class="pm-card bc-gray">
+          <div class="pmc-pkg">java.net</div>
+          <span class="pmc-used used-no">📖 未使用</span>
+          <div class="pmc-desc">
+            ネットワーク通信。URL、HttpURLConnection、Socket
+          </div>
+        </div>
+        <div class="pm-card bc-orange">
+          <div class="pmc-pkg">java.math</div>
+          <span class="pmc-used used-no">📖 未使用</span>
+          <div class="pmc-desc">
+            高精度計算。BigDecimal（金額計算に必須）、BigInteger
+          </div>
+        </div>
+        <div class="pm-card bc-purple">
+          <div class="pmc-pkg">java.lang.reflect</div>
+          <span class="pmc-used used-no">📖 未使用</span>
+          <div class="pmc-desc">
+            リフレクション。クラス情報を実行時に取得・操作
+          </div>
+        </div>
+        <div class="pm-card bc-red">
+          <div class="pmc-pkg">java.util.concurrent</div>
+          <span class="pmc-used used-no">📖 未使用</span>
+          <div class="pmc-desc">
+            並行処理。ExecutorService、Future、BlockingQueue
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>⚠️ java.math.BigDecimal に注意</strong><br />
+        金融・会計システムでは
+        <code>double</code> の浮動小数点誤差が問題になります。<br />
+        例えば <code>0.1 + 0.2</code> は Java で
+        <code>0.30000000000000004</code> になります。<br />
+        金額の計算には必ず <code>BigDecimal</code> を使いましょう。
+      </div>
+
+      <!-- ===== 3. GUIライブラリ ===== -->
+      <div class="section-title">
+        <div class="st-num">3</div>
+        GUIアプリ開発のライブラリ
+      </div>
+
+      <p>
+        Java
+        でウィンドウ・ボタン・テキストボックスなどを持つデスクトップアプリを作るには<br />
+        GUI ライブラリを使います。
+      </p>
+
+      <div class="lib-section">
+        <div class="ls-header lh-gui">
+          <span class="lsh-icon">🖼️</span>
+          デスクトップ GUI ライブラリ
+        </div>
+        <div class="ls-body">
+          <div class="lib-items">
+            <div class="lib-item" style="border-left-color: #b83280">
+              <div class="li-name">JavaFX</div>
+              <div class="li-tags">
+                <span class="li-tag tag-std">標準（別途追加）</span>
+                <span class="li-tag tag-popular">現代的</span>
+              </div>
+              <div class="li-desc">
+                Java 8〜10 は JDK に同梱、Java 11
+                以降はオープンソースプロジェクト（OpenJFX）として別途追加します。
+                FXML（XMLでUI設計）、CSS
+                スタイリング、アニメーション、チャートなどモダンな機能を持つ現在の主流です。
+              </div>
+              <div class="li-code">
+                // ボタンを持つウィンドウを作る例<br />
+                Button btn = new Button("クリック");<br />
+                btn.setOnAction(e -> System.out.println("押された！"));<br />
+                Scene scene = new Scene(new StackPane(btn), 300, 200);<br />
+                stage.setScene(scene);<br />
+                stage.show();
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #6b46c1">
+              <div class="li-name">Swing</div>
+              <div class="li-tags">
+                <span class="li-tag tag-std">JDK 標準（javax.swing）</span>
+              </div>
+              <div class="li-desc">
+                JDK に同梱されており import するだけで使えます（<code
+                  >import javax.swing.*;</code
+                >）。 Java 1.2
+                から存在する歴史あるライブラリで、今でも多くのレガシーシステムで使われています。
+                NetBeans IDE 自体も Swing で作られています。
+              </div>
+              <div class="li-code">
+                // シンプルなウィンドウを作る（import 不要）<br />
+                JFrame frame = new JFrame("Hello Swing");<br />
+                JButton button = new JButton("クリック");<br />
+                frame.add(button);<br />
+                frame.setSize(300, 200);<br />
+                frame.setVisible(true);
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #c05621">
+              <div class="li-name">AWT（Abstract Window Toolkit）</div>
+              <div class="li-tags">
+                <span class="li-tag tag-std">JDK 標準（java.awt）</span>
+              </div>
+              <div class="li-desc">
+                Java 最初期から存在する GUI ライブラリ（<code
+                  >import java.awt.*;</code
+                >）。 Swing
+                の土台となっているクラス群で、<code>Color</code>・<code>Font</code>・<code
+                  >Graphics</code
+                >
+                などは今も Swing / JavaFX で使われます。 単体で新規 GUI
+                開発に使うことはほぼありません。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 4. Webサーバ・フレームワーク ===== -->
+      <div class="section-title">
+        <div class="st-num">4</div>
+        Web開発のライブラリ・フレームワーク
+      </div>
+
+      <p>
+        Java は企業システムの Web バックエンドとして世界中で使われています。<br />
+        HTTP
+        リクエストを受け取り、データベースと連携してレスポンスを返す仕組みを提供します。
+      </p>
+
+      <div class="lib-section">
+        <div class="ls-header lh-web">
+          <span class="lsh-icon">🌐</span>
+          Web アプリケーション開発
+        </div>
+        <div class="ls-body">
+          <div class="lib-items">
+            <div class="lib-item" style="border-left-color: #2b6cb0">
+              <div class="li-name">Spring Boot</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">サードパーティ</span>
+                <span class="li-tag tag-popular">業界標準・最人気</span>
+              </div>
+              <div class="li-desc">
+                Java の Web 開発において圧倒的なシェアを持つフレームワーク。
+                数行のコードで REST API
+                サーバが立ち上がります。依存性注入（DI）、自動設定、豊富なエコシステムが特徴。
+                Spring Framework を使いやすくラップしたものが Spring Boot です。
+              </div>
+              <div class="li-code">
+                // これだけで GET /hello に応答する Web サーバが動く！<br />
+                @RestController<br />
+                public class HelloController {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;@GetMapping("/hello")<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;public String hello() {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "Hello,
+                World!";<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br />
+                }
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #c05621">
+              <div class="li-name">Jakarta EE（旧 Java EE）</div>
+              <div class="li-tags">
+                <span class="li-tag tag-enterprise">エンタープライズ標準</span>
+              </div>
+              <div class="li-desc">
+                Java のエンタープライズ向け標準仕様。Servlet、JSP、JPA、EJB
+                などの仕様が含まれます。 WildFly や Payara
+                などのアプリケーションサーバで動作します。
+                大規模な銀行・官公庁システムでよく使われます。
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #276749">
+              <div class="li-name">Micronaut / Quarkus</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">サードパーティ</span>
+                <span class="li-tag tag-popular">クラウドネイティブ</span>
+              </div>
+              <div class="li-desc">
+                起動が高速でメモリ消費が少ないモダンなフレームワーク。 GraalVM
+                を使ったネイティブコンパイルに対応し、クラウド・マイクロサービス向けに注目されています。
+                Spring Boot の代替として採用が増えています。
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #718096">
+              <div class="li-name">Servlet / JSP（javax.servlet）</div>
+              <div class="li-tags">
+                <span class="li-tag tag-std">Jakarta EE 標準</span>
+              </div>
+              <div class="li-desc">
+                Java の Web の基礎。HTTP リクエスト・レスポンスを扱う低レベル
+                API です。 Spring Boot
+                などの上位フレームワークの土台になっています。
+                「Tomcat」というサーバでよく動かされます。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 5. データベース連携 ===== -->
+      <div class="section-title">
+        <div class="st-num">5</div>
+        データベース連携のライブラリ
+      </div>
+
+      <div class="lib-section">
+        <div class="ls-header lh-db">
+          <span class="lsh-icon">🗄️</span>
+          データベース（DB）アクセス
+        </div>
+        <div class="ls-body">
+          <div class="lib-items">
+            <div class="lib-item" style="border-left-color: #276749">
+              <div class="li-name">JDBC（Java Database Connectivity）</div>
+              <div class="li-tags">
+                <span class="li-tag tag-std">JDK 標準（java.sql）</span>
+              </div>
+              <div class="li-desc">
+                Java からデータベースに接続する標準 API（<code
+                  >import java.sql.*;</code
+                >）。 MySQL・PostgreSQL・Oracle など、ドライバを追加すれば様々な
+                DB と通信できます。 低レベルな API で、直接 SQL
+                を書く場合に使います。
+              </div>
+              <div class="li-code">
+                // SQL を直接実行する例<br />
+                Connection conn = DriverManager.getConnection(url, user,
+                pass);<br />
+                PreparedStatement ps = conn.prepareStatement(<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;"SELECT * FROM users WHERE id = ?");<br />
+                ps.setInt(1, userId);<br />
+                ResultSet rs = ps.executeQuery();
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #2b6cb0">
+              <div class="li-name">JPA / Hibernate</div>
+              <div class="li-tags">
+                <span class="li-tag tag-enterprise"
+                  >Jakarta EE 標準 / 実装</span
+                >
+                <span class="li-tag tag-popular">ORM</span>
+              </div>
+              <div class="li-desc">
+                JPA（Jakarta Persistence API）は Java
+                のオブジェクトとデータベースのテーブルをマッピングする標準仕様（ORM:
+                Object-Relational Mapping）。 Hibernate
+                はその代表的な実装です。SQL を書かずに Java オブジェクトとして
+                DB を操作できます。
+              </div>
+              <div class="li-code">
+                // アノテーションでテーブルと対応付ける<br />
+                @Entity<br />
+                @Table(name = "users")<br />
+                public class User {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;@Id @GeneratedValue<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;private String name;<br />
+                }
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #c05621">
+              <div class="li-name">MyBatis</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">サードパーティ</span>
+              </div>
+              <div class="li-desc">
+                SQL を XML やアノテーションで記述し、Java
+                オブジェクトとマッピングするライブラリ。 JPA より SQL
+                を細かく制御したい場合に向いています。日本の企業システムでも広く使われています。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 6. テスト ===== -->
+      <div class="section-title">
+        <div class="st-num">6</div>
+        テストライブラリ
+      </div>
+
+      <div class="lib-section">
+        <div class="ls-header lh-test">
+          <span class="lsh-icon">🧪</span>
+          自動テスト
+        </div>
+        <div class="ls-body">
+          <div class="lib-items">
+            <div class="lib-item" style="border-left-color: #c05621">
+              <div class="li-name">JUnit 5</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">サードパーティ</span>
+                <span class="li-tag tag-popular">デファクトスタンダード</span>
+              </div>
+              <div class="li-desc">
+                Java のユニットテストフレームワーク。<code>@Test</code>
+                アノテーションを付けたメソッドが自動実行されます。 IDE（IntelliJ
+                IDEA /
+                Eclipse）に統合されており、コードが正しく動くかを自動検証できます。
+                プロの Java 開発ではほぼ必須のライブラリです。
+              </div>
+              <div class="li-code">
+                // テストの例（assertEquals で期待値と実際値を比較）<br />
+                @Test<br />
+                void testAdd() {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;Calculator calc = new Calculator();<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;assertEquals(5, calc.add(2, 3)); //
+                2+3=5 を検証<br />
+                }
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #6b46c1">
+              <div class="li-name">Mockito</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">サードパーティ</span>
+              </div>
+              <div class="li-desc">
+                依存するクラスの「モック（偽物）」を作るライブラリ。
+                例えばデータベースに接続せずにサービス層だけをテストしたい場合に使います。
+                JUnit と組み合わせて使うのが一般的です。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 7. ビルドツール ===== -->
+      <div class="section-title">
+        <div class="st-num">7</div>
+        ビルドツールと依存管理
+      </div>
+
+      <p>
+        サードパーティライブラリを使うには、それを「依存関係」としてプロジェクトに追加する必要があります。<br />
+        ビルドツールがライブラリのダウンロード・コンパイル・テスト・パッケージングを自動化します。
+      </p>
+
+      <div class="lib-section">
+        <div class="ls-header lh-build">
+          <span class="lsh-icon">🔨</span>
+          ビルドツール
+        </div>
+        <div class="ls-body">
+          <div class="lib-items">
+            <div class="lib-item" style="border-left-color: #6b46c1">
+              <div class="li-name">Maven</div>
+              <div class="li-tags">
+                <span class="li-tag tag-popular">最もよく使われる</span>
+              </div>
+              <div class="li-desc">
+                <code>pom.xml</code>
+                ファイルでプロジェクト設定・依存関係を管理します。 「Maven
+                Central」リポジトリからライブラリを自動ダウンロードします。 Java
+                エンタープライズ開発の標準的な選択肢です。
+              </div>
+              <div class="li-code">
+                &lt;!-- pom.xml: Spring Boot を依存関係に追加する例 --&gt;<br />
+                &lt;dependency&gt;<br />
+                &nbsp;&nbsp;&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;<br />
+                &nbsp;&nbsp;&lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;<br />
+                &nbsp;&nbsp;&lt;version&gt;3.2.0&lt;/version&gt;<br />
+                &lt;/dependency&gt;
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #276749">
+              <div class="li-name">Gradle</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">Groovy / Kotlin DSL</span>
+                <span class="li-tag tag-popular">Android 標準</span>
+              </div>
+              <div class="li-desc">
+                <code>build.gradle</code>（または
+                <code>build.gradle.kts</code>）で設定を記述します。 Maven
+                より柔軟で高速。Android アプリ開発では Gradle
+                が標準的に使われます。 近年は Java/Kotlin
+                プロジェクトでも採用が増えています。
+              </div>
+              <div class="li-code">
+                // build.gradle.kts: JUnit を追加する例<br />
+                dependencies {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")<br />
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 8. その他の注目ライブラリ ===== -->
+      <div class="section-title">
+        <div class="st-num">8</div>
+        その他の注目ライブラリ
+      </div>
+
+      <div class="lib-section">
+        <div class="ls-header lh-other">
+          <span class="lsh-icon">🔭</span>
+          知っておくと役立つライブラリ
+        </div>
+        <div class="ls-body">
+          <div class="lib-items">
+            <div class="lib-item" style="border-left-color: #c05621">
+              <div class="li-name">Jackson / Gson</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">JSON 処理</span>
+                <span class="li-tag tag-popular">Web API で必須</span>
+              </div>
+              <div class="li-desc">
+                Java オブジェクトと JSON
+                を相互変換（シリアライズ/デシリアライズ）するライブラリ。 Web
+                API との通信では JSON
+                が標準フォーマットなので、実務では必ず使います。 Jackson は
+                Spring Boot に標準搭載されています。
+              </div>
+              <div class="li-code">
+                // Java オブジェクト → JSON 文字列<br />
+                ObjectMapper mapper = new ObjectMapper();<br />
+                String json = mapper.writeValueAsString(product);<br />
+                // → {"name":"りんご","price":150}
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #2b6cb0">
+              <div class="li-name">Lombok</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">コード生成</span>
+                <span class="li-tag tag-popular">ボイラープレート削減</span>
+              </div>
+              <div class="li-desc">
+                アノテーションを付けるだけで getter/setter/constructor/toString
+                などを自動生成するライブラリ。
+                大量の定型コードを省略できるため、Java
+                プロジェクトで広く使われています。 Java 16 以降の
+                <code>record</code> に置き換えられつつある部分もあります。
+              </div>
+              <div class="li-code">
+                // @Data でゲッター・セッター・toString などを全自動生成<br />
+                @Data<br />
+                @AllArgsConstructor<br />
+                public class User {<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;private String name;<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;private int age;<br />
+                }<br />
+                // → getName()、setName()、toString() などが自動生成される
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #276749">
+              <div class="li-name">Log4j / SLF4J / Logback</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">ログ出力</span>
+              </div>
+              <div class="li-desc">
+                本格的なログ出力ライブラリ。<code>System.out.println</code>
+                の代わりにログレベル（DEBUG / INFO / WARN /
+                ERROR）で分類して記録します。 SLF4J はログ API
+                の標準インターフェース、Logback はその実装です。
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #6b46c1">
+              <div class="li-name">Apache Commons</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">汎用ユーティリティ</span>
+              </div>
+              <div class="li-desc">
+                Apache
+                が提供する汎用ユーティリティ群。<code>commons-lang3</code>（文字列操作・反射）、
+                <code>commons-collections4</code
+                >（コレクション拡張）、<code>commons-io</code>（ファイル操作）など多数のサブプロジェクトがあります。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 9. Kotlin と JVM 言語 ===== -->
+      <div class="section-title">
+        <div class="st-num">9</div>
+        JVM 上で動く他の言語
+      </div>
+
+      <p>
+        Java の JVM は Java 専用ではありません。JVM
+        上で動く様々な言語があり、<br />
+        Java のライブラリをそのまま使いながら別の言語の特徴を活かせます。
+      </p>
+
+      <div class="lib-section">
+        <div class="ls-header lh-kotlin">
+          <span class="lsh-icon">🚀</span>
+          JVM 言語
+        </div>
+        <div class="ls-body">
+          <div class="lib-items">
+            <div class="lib-item" style="border-left-color: #2b6cb0">
+              <div class="li-name">Kotlin</div>
+              <div class="li-tags">
+                <span class="li-tag tag-popular">Java の後継候補</span>
+                <span class="li-tag tag-android">Android 公式言語</span>
+              </div>
+              <div class="li-desc">
+                JetBrains 社が開発した JVM 言語。Java と 100% 互換で Java
+                ライブラリがそのまま使えます。 Null
+                安全・データクラス・コルーチン（非同期処理）などが特徴で、Java
+                より簡潔に書けます。 Google が Android
+                の公式言語として採用しており、Spring Boot でも Kotlin
+                が使えます。
+              </div>
+              <div class="li-code">
+                // Kotlin で書くと Java より簡潔（同じ JVM で動く）<br />
+                data class User(val name: String, val age: Int)<br />
+                val user = User("Alice", 25)<br />
+                println(user) // User(name=Alice, age=25)
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #c05621">
+              <div class="li-name">Scala</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">関数型 + オブジェクト指向</span>
+              </div>
+              <div class="li-desc">
+                関数型プログラミングとオブジェクト指向を融合した言語。Apache
+                Spark（ビッグデータ処理）は Scala で書かれています。 Java
+                より表現力が高い一方、学習コストも高めです。
+              </div>
+            </div>
+
+            <div class="lib-item" style="border-left-color: #276749">
+              <div class="li-name">Groovy</div>
+              <div class="li-tags">
+                <span class="li-tag tag-3rd">スクリプト言語</span>
+              </div>
+              <div class="li-desc">
+                Java に動的型付けや Closure などを追加した言語。Gradle
+                のビルドスクリプトの言語として有名です。 Java
+                コードがほぼそのまま動くため、Java から Groovy
+                への移行が容易です。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 10. 学習パス ===== -->
+      <div class="section-title">
+        <div class="st-num">10</div>
+        本コース修了後の学習パス
+      </div>
+
+      <p>
+        このコースで Java
+        の基礎を習得しました。次のステップとして目指す方向別に学習パスを示します。
+      </p>
+
+      <div class="learning-path">
+        <div class="lp-title">▶ 興味のある分野に進もう</div>
+        <div class="lp-tracks">
+          <div class="lp-track">
+            <div class="lt-header lt-web">🌐 Web バックエンド開発</div>
+            <div class="lt-steps">
+              <div class="lt-step">
+                <div class="lt-step-num">1</div>
+                HTTP の基礎・REST API の概念を学ぶ
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">2</div>
+                Maven / Gradle でプロジェクト管理
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">3</div>
+                Spring Boot で REST API を作る
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">4</div>
+                JPA / Hibernate で DB 連携
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">5</div>
+                JUnit でテストを書く
+              </div>
+            </div>
+          </div>
+          <div class="lp-track">
+            <div class="lt-header lt-gui">🖼️ デスクトップアプリ開発</div>
+            <div class="lt-steps">
+              <div class="lt-step">
+                <div class="lt-step-num">1</div>
+                JavaFX の Scene Builder で UI 設計
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">2</div>
+                FXML でレイアウトを記述
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">3</div>
+                イベント処理とデータバインディング
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">4</div>
+                ファイル操作（java.nio.file）
+              </div>
+            </div>
+          </div>
+          <div class="lp-track">
+            <div class="lt-header lt-data">📊 データ処理・分析</div>
+            <div class="lt-steps">
+              <div class="lt-step">
+                <div class="lt-step-num">1</div>
+                Stream API と Optional を深く学ぶ
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">2</div>
+                CSV / JSON ファイルの読み書き
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">3</div>
+                JDBC で DB 操作
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">4</div>
+                Apache Spark（または Kotlin）も視野に
+              </div>
+            </div>
+          </div>
+          <div class="lp-track">
+            <div class="lt-header lt-mobile">📱 Android アプリ開発</div>
+            <div class="lt-steps">
+              <div class="lt-step">
+                <div class="lt-step-num">1</div>
+                Kotlin の基礎を学ぶ（Java は活きる）
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">2</div>
+                Android Studio をインストール
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">3</div>
+                Jetpack Compose で UI を作る
+              </div>
+              <div class="lt-step">
+                <div class="lt-step-num">4</div>
+                Room（SQLite）で端末 DB 操作
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Java エコシステム全体図（テキスト） -->
+      <div class="section-title">
+        <div class="st-num">📌</div>
+        Java エコシステム 早見表
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>用途</th>
+            <th>代表的なライブラリ / フレームワーク</th>
+            <th>種別</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Web バックエンド</td>
+            <td>Spring Boot、Micronaut、Quarkus</td>
+            <td>サードパーティ</td>
+          </tr>
+          <tr>
+            <td>デスクトップ GUI</td>
+            <td>JavaFX（OpenJFX）、Swing</td>
+            <td>標準 / オープンソース</td>
+          </tr>
+          <tr>
+            <td>ORM / DB アクセス</td>
+            <td>JPA、Hibernate、MyBatis、JDBC</td>
+            <td>標準 / サードパーティ</td>
+          </tr>
+          <tr>
+            <td>テスト</td>
+            <td>JUnit 5、Mockito、AssertJ</td>
+            <td>サードパーティ</td>
+          </tr>
+          <tr>
+            <td>JSON 処理</td>
+            <td>Jackson、Gson</td>
+            <td>サードパーティ</td>
+          </tr>
+          <tr>
+            <td>ビルド・依存管理</td>
+            <td>Maven、Gradle</td>
+            <td>サードパーティ</td>
+          </tr>
+          <tr>
+            <td>ログ</td>
+            <td>SLF4J、Logback、Log4j 2</td>
+            <td>サードパーティ</td>
+          </tr>
+          <tr>
+            <td>コード生成</td>
+            <td>Lombok</td>
+            <td>サードパーティ</td>
+          </tr>
+          <tr>
+            <td>セキュリティ</td>
+            <td>Spring Security</td>
+            <td>サードパーティ</td>
+          </tr>
+          <tr>
+            <td>ビッグデータ</td>
+            <td>Apache Spark、Apache Kafka</td>
+            <td>サードパーティ</td>
+          </tr>
+          <tr>
+            <td>並行処理</td>
+            <td>java.util.concurrent、Project Loom</td>
+            <td>標準</td>
+          </tr>
+          <tr>
+            <td>Android 開発</td>
+            <td>Kotlin + Jetpack Compose</td>
+            <td>Google 提供</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Closing message -->
+      <div class="closing">
+        <div class="cl-icon">🌏</div>
+        <h2>Java の世界はまだまだ広い</h2>
+        <p>
+          このコースでは Java 言語の基礎から Stream API・Lambda・Date/Time
+          API・Map・パッケージまで、 実務で必要な核心的な知識を学びました。
+        </p>
+        <p style="margin-top: 12px">
+          しかし、Java の世界はこれだけではありません。Web
+          開発・GUI・モバイル・ビッグデータ…
+          どの分野に進んでも、このコースで身につけたオブジェクト指向・Stream・ラムダ式の知識は
+          必ず役に立ちます。
+        </p>
+        <p style="margin-top: 12px">
+          <strong>Write Once, Run Anywhere.</strong><br />
+          一度学んだ Java は、あなたのキャリアを通じてずっと使える財産です。
+        </p>
+      </div>
+
+      <!-- コース完了カード -->
+      <div class="completion-card">
+        <div class="completion-icon">🎉</div>
+        <h2>Javaコース 全15章 完了！</h2>
+        <p>
+          第1章「変数とデータ型」から第15章「Javaを取り巻くエコシステム」まで、<br />
+          Java の基礎から応用まで全142問を修了しました。
+        </p>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter14/14-3/14-3_package_design_access.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Supplement/supplement_3_ecosystem_map.html">最後に</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

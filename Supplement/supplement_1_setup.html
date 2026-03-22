@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>補足1. Javaの実行環境セットアップ</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      /* Header */
+      .page-header {
+        background: linear-gradient(135deg, #1a202c, #2d3748);
+        color: white;
+        border-radius: 14px;
+        padding: 36px 40px;
+        margin-bottom: 40px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.82rem;
+        opacity: 0.65;
+        letter-spacing: 0.1em;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+      }
+      .page-header h1 {
+        font-size: 1.9rem;
+        font-weight: 800;
+        line-height: 1.3;
+        margin-bottom: 10px;
+      }
+      .page-header .subtitle {
+        font-size: 1rem;
+        opacity: 0.8;
+      }
+
+      /* Section title */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin: 48px 0 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #e2e8f0;
+      }
+      .section-title .st-icon {
+        font-size: 1.4rem;
+      }
+
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 28px 0 10px;
+      }
+      p {
+        margin-bottom: 14px;
+        font-size: 0.95rem;
+      }
+      ul,
+      ol {
+        padding-left: 22px;
+        margin-bottom: 12px;
+      }
+      li {
+        margin-bottom: 6px;
+        font-size: 0.92rem;
+      }
+
+      code {
+        background: #edf2f7;
+        color: #2d3748;
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        font-size: 0.88em;
+      }
+
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 0.92rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .info {
+        border-left: 4px solid #63b3ed;
+        background: #ebf8ff;
+        border-radius: 0 8px 8px 0;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 0.92rem;
+      }
+      .info strong {
+        color: #2b6cb0;
+      }
+      .success {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 0.92rem;
+      }
+      .success strong {
+        color: #276749;
+      }
+
+      /* OS tabs */
+      .os-tabs {
+        display: flex;
+        gap: 0;
+        margin-bottom: 0;
+        border-radius: 10px 10px 0 0;
+        overflow: hidden;
+      }
+      .os-tab {
+        flex: 1;
+        padding: 12px 16px;
+        background: #e2e8f0;
+        color: #718096;
+        font-weight: 700;
+        font-size: 0.88rem;
+        text-align: center;
+        cursor: default;
+        border-right: 2px solid #fff;
+      }
+      .os-tab:last-child {
+        border-right: none;
+      }
+      .os-tab.tab-win {
+        background: #ebf8ff;
+        color: #2b6cb0;
+      }
+      .os-tab.tab-mac {
+        background: #f0fff4;
+        color: #276749;
+      }
+      .os-tab.tab-linux {
+        background: #fefcbf;
+        color: #744210;
+      }
+
+      /* OS sections */
+      .os-section {
+        border-radius: 0 0 10px 10px;
+        padding: 24px 28px;
+        margin-bottom: 28px;
+      }
+      .os-win {
+        background: #ebf8ff;
+        border: 2px solid #bee3f8;
+        border-top: none;
+      }
+      .os-mac {
+        background: #f0fff4;
+        border: 2px solid #9ae6b4;
+        border-top: none;
+      }
+      .os-linux {
+        background: #fefcbf;
+        border: 2px solid #f6e05e;
+        border-top: none;
+      }
+
+      /* Step cards */
+      .steps {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin: 14px 0;
+      }
+      .step-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+        display: flex;
+        align-items: stretch;
+      }
+      .step-card .sc-num {
+        background: #2d3748;
+        color: white;
+        font-size: 1rem;
+        font-weight: 800;
+        padding: 0 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        min-width: 56px;
+      }
+      .sc-num.win-num {
+        background: #2b6cb0;
+      }
+      .sc-num.mac-num {
+        background: #276749;
+      }
+      .sc-num.linux-num {
+        background: #744210;
+      }
+      .step-card .sc-body {
+        padding: 14px 18px;
+        flex: 1;
+      }
+      .step-card .sc-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #1a202c;
+        margin-bottom: 6px;
+      }
+      .step-card .sc-desc {
+        font-size: 0.88rem;
+        color: #4a5568;
+      }
+
+      /* Terminal blocks */
+      .terminal {
+        background: #1a202c;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .terminal .term-header {
+        background: #2d3748;
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .term-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .td-red {
+        background: #fc8181;
+      }
+      .td-yellow {
+        background: #f6e05e;
+      }
+      .td-green {
+        background: #68d391;
+      }
+      .term-title {
+        color: #a0aec0;
+        font-size: 0.78rem;
+        margin-left: 6px;
+      }
+      .terminal pre {
+        padding: 16px 20px;
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        font-size: 0.88rem;
+        line-height: 1.7;
+        color: #e2e8f0;
+      }
+      .term-prompt {
+        color: #68d391;
+      }
+      .term-cmd {
+        color: #e2e8f0;
+      }
+      .term-out {
+        color: #a0aec0;
+      }
+      .term-ok {
+        color: #68d391;
+      }
+      .term-comment {
+        color: #718096;
+      }
+
+      /* Version comparison */
+      .version-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .version-table thead {
+        background: #2d3748;
+        color: white;
+      }
+      .version-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .version-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .version-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .version-table tbody td {
+        padding: 9px 14px;
+      }
+      .version-table tbody tr:hover {
+        background: #f7fafc;
+      }
+      .tag-lts {
+        background: #c6f6d5;
+        color: #22543d;
+        padding: 1px 8px;
+        border-radius: 10px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+      .tag-rec {
+        background: #bee3f8;
+        color: #1a365d;
+        padding: 1px 8px;
+        border-radius: 10px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      /* IDE cards */
+      .ide-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin: 16px 0;
+      }
+      .ide-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 18px 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        text-align: center;
+        border-top: 4px solid;
+      }
+      .ide-intellij {
+        border-color: #c05621;
+      }
+      .ide-vscode {
+        border-color: #2b6cb0;
+      }
+      .ide-eclipse {
+        border-color: #276749;
+      }
+      .ide-card .ic-icon {
+        font-size: 2.4rem;
+        margin-bottom: 8px;
+      }
+      .ide-card .ic-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 4px;
+      }
+      .ide-card .ic-tag {
+        font-size: 0.72rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-weight: 700;
+        display: inline-block;
+        margin-bottom: 8px;
+      }
+      .ic-paid {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+      .ic-free {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .ide-card .ic-desc {
+        font-size: 0.82rem;
+        color: #718096;
+        text-align: left;
+      }
+
+      /* Flow diagram (what happens when you run Java) */
+      .flow-diagram {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+        padding: 24px 28px;
+        margin: 16px 0;
+      }
+      .fd-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 18px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .fd-steps {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        flex-wrap: wrap;
+      }
+      .fd-step {
+        background: #edf2f7;
+        border-radius: 8px;
+        padding: 12px 16px;
+        text-align: center;
+        flex: 1;
+        min-width: 100px;
+      }
+      .fd-step .fs-icon {
+        font-size: 1.4rem;
+        margin-bottom: 4px;
+      }
+      .fd-step .fs-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #4a5568;
+      }
+      .fd-step .fs-sub {
+        font-size: 0.68rem;
+        color: #718096;
+        font-family: monospace;
+      }
+      .fd-arrow {
+        color: #a0aec0;
+        font-size: 1.6rem;
+        padding: 0 6px;
+        flex-shrink: 0;
+      }
+      .fs-write {
+        background: #ebf8ff;
+      }
+      .fs-compile {
+        background: #fefcbf;
+      }
+      .fs-run {
+        background: #c6f6d5;
+      }
+      .fs-jvm {
+        background: #e9d8fd;
+      }
+
+      /* Hello world section */
+      .hello-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+        margin: 16px 0;
+      }
+      .hello-card .hc-header {
+        background: #2d3748;
+        color: white;
+        padding: 12px 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .hello-card .hc-body {
+        padding: 18px 20px;
+      }
+
+      /* Troubleshoot cards */
+      .trouble-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .trouble-card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+      }
+      .trouble-card .tc-q {
+        background: #fff5f5;
+        padding: 10px 16px;
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #c53030;
+        border-bottom: 1px solid #fed7d7;
+      }
+      .trouble-card .tc-a {
+        padding: 10px 16px;
+        font-size: 0.88rem;
+        color: #4a5568;
+      }
+
+      /* Checklist */
+      .checklist {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 18px 22px;
+        margin: 16px 0;
+      }
+      .checklist .cl-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 12px;
+        color: #1a202c;
+      }
+      .cl-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+      }
+      .cl-box {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #4a5e2a;
+        border-radius: 4px;
+        flex-shrink: 0;
+        margin-top: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4a5e2a;
+        font-weight: 700;
+        font-size: 0.8rem;
+      }
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2d3748;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">補足 ▶ 環境構築</div>
+        <h1>Javaの実行環境<br />セットアップ</h1>
+        <div class="subtitle">
+          JDK のインストールから「Hello, World!」実行まで — Windows / macOS /
+          Linux 対応
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div style="width: 20px"></div>
+        <div class="page-button">
+          <a href="../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../Chapter1/1-1/1-1_basic_data_types.html">＞</a>
+        </div>
+      </div>
+
+      <!-- ===== まず知っておくこと ===== -->
+      <div class="section-title">
+        <span class="st-icon">📦</span>
+        セットアップの全体像
+      </div>
+
+      <p>
+        Java でプログラムを書いて動かすためには、まず
+        <strong>JDK（Java Development Kit）</strong>
+        をインストールする必要があります。JDK には Java
+        のコンパイラ（<code>javac</code>）と実行環境（JVM）が含まれています。
+      </p>
+
+      <!-- コンパイル・実行の流れ -->
+      <div class="flow-diagram">
+        <div class="fd-title">▶ Java プログラムができるまでの流れ</div>
+        <div class="fd-steps">
+          <div class="fd-step fs-write">
+            <div class="fs-icon">✍️</div>
+            <div class="fs-label">コードを書く</div>
+            <div class="fs-sub">Main.java</div>
+          </div>
+          <div class="fd-arrow">→</div>
+          <div class="fd-step fs-compile">
+            <div class="fs-icon">⚙️</div>
+            <div class="fs-label">コンパイル</div>
+            <div class="fs-sub">javac Main.java</div>
+          </div>
+          <div class="fd-arrow">→</div>
+          <div class="fd-step fs-run">
+            <div class="fs-icon">📄</div>
+            <div class="fs-label">バイトコード生成</div>
+            <div class="fs-sub">Main.class</div>
+          </div>
+          <div class="fd-arrow">→</div>
+          <div class="fd-step fs-jvm">
+            <div class="fs-icon">▶️</div>
+            <div class="fs-label">JVM で実行</div>
+            <div class="fs-sub">java Main</div>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        インストールするものは <strong>JDK のみ</strong>です。JDK
+        をインストールすれば、コンパイラ（<code>javac</code>）も
+        JVM（<code>java</code>）も一緒に手に入ります。
+      </p>
+
+      <!-- ===== どのJDKを使うか ===== -->
+      <div class="section-title">
+        <span class="st-icon">🔢</span>
+        どのバージョン・ディストリビューションを選ぶか
+      </div>
+
+      <p>
+        JDK
+        には「バージョン」と「ディストリビューション（提供元）」の2つの選択があります。
+      </p>
+
+      <h3>バージョンの選び方</h3>
+
+      <table class="version-table">
+        <thead>
+          <tr>
+            <th>バージョン</th>
+            <th>種別</th>
+            <th>おすすめ度</th>
+            <th>備考</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Java 21</strong></td>
+            <td><span class="tag-lts">LTS</span></td>
+            <td>⭐⭐⭐⭐⭐ 推奨</td>
+            <td>
+              2023年リリース。現時点の最新 LTS。本コースはこれで動作確認済み
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Java 17</strong></td>
+            <td><span class="tag-lts">LTS</span></td>
+            <td>⭐⭐⭐⭐☆</td>
+            <td>2021年リリース。企業システムで今も広く使われている安定版</td>
+          </tr>
+          <tr>
+            <td><strong>Java 11</strong></td>
+            <td><span class="tag-lts">LTS</span></td>
+            <td>⭐⭐⭐☆☆</td>
+            <td>2018年リリース。古いプロジェクトで使われることがある</td>
+          </tr>
+          <tr>
+            <td>Java 22 / 23 …</td>
+            <td>非LTS</td>
+            <td>△ 学習目的なら可</td>
+            <td>最新機能が使えるが半年でサポート終了。業務では非推奨</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="info">
+        <strong>💡 LTS（Long Term Support）とは</strong><br />
+        LTS 版は長期間のセキュリティアップデートが保証されるバージョンです。<br />
+        学習・業務ともに LTS 版（特に Java 21）を選んでおくのが安全です。
+      </div>
+
+      <h3>ディストリビューションの選び方</h3>
+      <p>
+        同じ Java
+        バージョンでも、配布元（ディストリビューション）が複数あります。どれも動作は同じなので、迷ったら
+        <strong>Temurin（Eclipse Foundation）</strong> か
+        <strong>Oracle JDK</strong> を選べばOKです。
+      </p>
+
+      <table class="version-table">
+        <thead>
+          <tr>
+            <th>ディストリビューション</th>
+            <th>提供元</th>
+            <th>ライセンス</th>
+            <th>おすすめ場面</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Eclipse Temurin</strong></td>
+            <td>Eclipse Foundation (Adoptium)</td>
+            <td>無償</td>
+            <td>✅ 最もおすすめ。学習・業務ともに</td>
+          </tr>
+          <tr>
+            <td><strong>Oracle JDK</strong></td>
+            <td>Oracle</td>
+            <td>個人・開発は無償</td>
+            <td>✅ Oracle の公式版。企業での商用利用は有償条件あり</td>
+          </tr>
+          <tr>
+            <td>Amazon Corretto</td>
+            <td>Amazon</td>
+            <td>無償</td>
+            <td>AWS を使う場合に相性が良い</td>
+          </tr>
+          <tr>
+            <td>Microsoft Build of OpenJDK</td>
+            <td>Microsoft</td>
+            <td>無償</td>
+            <td>Azure 利用時に便利</td>
+          </tr>
+          <tr>
+            <td>GraalVM</td>
+            <td>Oracle / GraalVM</td>
+            <td>無償（CE）</td>
+            <td>高速起動・ネイティブコンパイルが必要な場合</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ===== Windows ===== -->
+      <div class="section-title">
+        <span class="st-icon">🪟</span>
+        Windows へのインストール
+      </div>
+
+      <div class="os-tabs">
+        <div class="os-tab tab-win">🪟 Windows</div>
+      </div>
+      <div class="os-section os-win">
+        <div class="steps">
+          <div class="step-card">
+            <div class="sc-num win-num">1</div>
+            <div class="sc-body">
+              <div class="sc-title">Eclipse Temurin のダウンロード</div>
+              <div class="sc-desc">
+                <a
+                  href="https://adoptium.net/temurin/releases/"
+                  style="color: #2b6cb0; font-weight: 700"
+                  >https://adoptium.net/temurin/releases/</a
+                >
+                にアクセスします。<br />
+                フィルターで <strong>Version: 21</strong>、<strong
+                  >OS: Windows</strong
+                >、<strong>Architecture: x64</strong>、<strong
+                  >Package Type: JDK</strong
+                >、<strong>File Type: .msi</strong>
+                を選択してダウンロードします。
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="sc-num win-num">2</div>
+            <div class="sc-body">
+              <div class="sc-title">インストーラを実行する</div>
+              <div class="sc-desc">
+                ダウンロードした
+                <code>.msi</code>
+                ファイルをダブルクリックしてインストーラを起動します。<br />
+                <strong
+                  >「Add to PATH」と「Set
+                  JAVA_HOME」にチェックが入っていることを確認</strong
+                >してから「Next」を進めます。これにより環境変数が自動設定されます。
+              </div>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="sc-num win-num">3</div>
+            <div class="sc-body">
+              <div class="sc-title">インストールの確認</div>
+              <div class="sc-desc">
+                インストール完了後、<strong>コマンドプロンプト</strong>または
+                <strong>PowerShell</strong>
+                を新しく開き（既に開いているものは閉じて再起動）、以下のコマンドを実行します。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal">
+          <div class="term-header">
+            <div class="term-dot td-red"></div>
+            <div class="term-dot td-yellow"></div>
+            <div class="term-dot td-green"></div>
+            <span class="term-title">コマンドプロンプト / PowerShell</span>
+          </div>
+          <pre><span class="term-prompt">C:\Users\you&gt;</span> <span class="term-cmd">java -version</span>
+<span class="term-out">openjdk version "21.0.x" 2024-xx-xx LTS
+OpenJDK Runtime Environment Temurin-21.0.x+xx (build 21.0.x+xx-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.x+xx (build 21.0.x+xx-LTS, mixed mode, sharing)</span>
+
+<span class="term-prompt">C:\Users\you&gt;</span> <span class="term-cmd">javac -version</span>
+<span class="term-out">javac 21.0.x</span>
+<span class="term-ok">
+✅ 両方バージョンが表示されればインストール成功！</span></pre>
+        </div>
+
+        <div class="callout">
+          <strong>⚠️ 「'java' は認識されていない…」と表示される場合</strong
+          ><br />
+          コマンドプロンプトを<strong>一度閉じて再起動</strong>してみてください。それでも表示される場合は、環境変数
+          <code>PATH</code> に JDK の
+          <code>bin</code>
+          フォルダが追加されていない可能性があります。「システムの詳細設定」→「環境変数」→「Path」に
+          <code>C:\Program Files\Eclipse Adoptium\jdk-21\bin</code>
+          を追加してください。
+        </div>
+      </div>
+
+      <!-- ===== macOS ===== -->
+      <div class="section-title">
+        <span class="st-icon">🍎</span>
+        macOS へのインストール
+      </div>
+
+      <div class="os-tabs">
+        <div class="os-tab tab-mac">🍎 macOS</div>
+      </div>
+      <div class="os-section os-mac">
+        <p>
+          macOS では
+          <strong>Homebrew</strong
+          >（パッケージマネージャ）を使うのが最も簡単です。<br />
+          または公式サイトから
+          <code>.pkg</code> インストーラをダウンロードする方法もあります。
+        </p>
+
+        <h3>方法A：Homebrew を使う（推奨）</h3>
+
+        <div class="steps">
+          <div class="step-card">
+            <div class="sc-num mac-num">1</div>
+            <div class="sc-body">
+              <div class="sc-title">
+                Homebrew のインストール（まだ入っていない場合）
+              </div>
+              <div class="sc-desc">
+                ターミナルを開き（Spotlight
+                で「Terminal」検索）、以下を実行します。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal">
+          <div class="term-header">
+            <div class="term-dot td-red"></div>
+            <div class="term-dot td-yellow"></div>
+            <div class="term-dot td-green"></div>
+            <span class="term-title">ターミナル</span>
+          </div>
+          <pre><span class="term-comment"># Homebrew のインストール（既に入っている場合はスキップ）</span>
+<span class="term-prompt">%</span> <span class="term-cmd">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span>
+
+<span class="term-comment"># Homebrew の動作確認</span>
+<span class="term-prompt">%</span> <span class="term-cmd">brew --version</span>
+<span class="term-out">Homebrew 4.x.x</span></pre>
+        </div>
+
+        <div class="steps">
+          <div class="step-card">
+            <div class="sc-num mac-num">2</div>
+            <div class="sc-body">
+              <div class="sc-title">Eclipse Temurin JDK 21 のインストール</div>
+              <div class="sc-desc">以下のコマンドを実行します。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal">
+          <div class="term-header">
+            <div class="term-dot td-red"></div>
+            <div class="term-dot td-yellow"></div>
+            <div class="term-dot td-green"></div>
+            <span class="term-title">ターミナル</span>
+          </div>
+          <pre><span class="term-comment"># Adoptium の tap を追加（初回のみ）</span>
+<span class="term-prompt">%</span> <span class="term-cmd">brew tap homebrew/cask-versions</span>
+
+<span class="term-comment"># JDK 21 (Temurin) をインストール</span>
+<span class="term-prompt">%</span> <span class="term-cmd">brew install --cask temurin@21</span>
+
+<span class="term-comment"># インストールの確認</span>
+<span class="term-prompt">%</span> <span class="term-cmd">java -version</span>
+<span class="term-out">openjdk version "21.0.x" 2024-xx-xx LTS</span>
+
+<span class="term-prompt">%</span> <span class="term-cmd">javac -version</span>
+<span class="term-out">javac 21.0.x</span>
+<span class="term-ok">
+✅ 両方バージョンが表示されればインストール成功！</span></pre>
+        </div>
+
+        <h3>方法B：インストーラ（.pkg）を使う</h3>
+        <p>
+          <a
+            href="https://adoptium.net/temurin/releases/"
+            style="color: #276749; font-weight: 700"
+            >https://adoptium.net/temurin/releases/</a
+          >
+          から、<strong>OS: macOS</strong>・<strong
+            >Architecture: aarch64（M1/M2/M3 Mac）または x64（Intel
+            Mac）</strong
+          >・<strong>File Type: .pkg</strong>
+          を選んでダウンロードし、ダブルクリックでインストールします。
+        </p>
+
+        <div class="info">
+          <strong>💡 Apple Silicon (M1/M2/M3) の場合</strong><br />
+          Architecture は <strong>aarch64</strong> を選んでください。<code
+            >x64</code
+          >
+          版も動作しますが Rosetta 2 経由になるため、ネイティブの
+          <code>aarch64</code> 版の方が高速です。
+        </div>
+      </div>
+
+      <!-- ===== Linux ===== -->
+      <div class="section-title">
+        <span class="st-icon">🐧</span>
+        Linux へのインストール
+      </div>
+
+      <div class="os-tabs">
+        <div class="os-tab tab-linux">🐧 Linux（Ubuntu / Debian 系）</div>
+      </div>
+      <div class="os-section os-linux">
+        <div class="terminal">
+          <div class="term-header">
+            <div class="term-dot td-red"></div>
+            <div class="term-dot td-yellow"></div>
+            <div class="term-dot td-green"></div>
+            <span class="term-title">ターミナル（Ubuntu / Debian）</span>
+          </div>
+          <pre><span class="term-comment"># パッケージリストを更新</span>
+<span class="term-prompt">$</span> <span class="term-cmd">sudo apt update</span>
+
+<span class="term-comment"># OpenJDK 21 をインストール</span>
+<span class="term-prompt">$</span> <span class="term-cmd">sudo apt install -y openjdk-21-jdk</span>
+
+<span class="term-comment"># インストールの確認</span>
+<span class="term-prompt">$</span> <span class="term-cmd">java -version</span>
+<span class="term-out">openjdk version "21.0.x" 2024-xx-xx
+OpenJDK Runtime Environment (build 21.0.x+xx-Ubuntu-x)</span>
+
+<span class="term-prompt">$</span> <span class="term-cmd">javac -version</span>
+<span class="term-out">javac 21.0.x</span>
+
+<span class="term-comment"># JAVA_HOME の確認（任意）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">echo $JAVA_HOME</span>
+<span class="term-comment"># 何も表示されない場合は以下で設定</span>
+<span class="term-prompt">$</span> <span class="term-cmd">export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))</span>
+<span class="term-ok">
+✅ バージョンが表示されればインストール成功！</span></pre>
+        </div>
+
+        <p>
+          複数バージョンの JDK が入っている場合、<code
+            >sudo update-alternatives --config java</code
+          >
+          で使用するバージョンを切り替えられます。
+        </p>
+      </div>
+
+      <!-- ===== IDE ===== -->
+      <div class="section-title">
+        <span class="st-icon">💻</span>
+        IDE（統合開発環境）の選択
+      </div>
+
+      <p>
+        テキストエディタとターミナルだけで Java は書けますが、<strong
+          >IDE を使うと補完・デバッグ・リファクタリングが格段に楽</strong
+        >になります。
+      </p>
+
+      <div class="ide-cards">
+        <div class="ide-card ide-intellij">
+          <div class="ic-icon">🧠</div>
+          <div class="ic-name">IntelliJ IDEA</div>
+          <span class="ic-tag ic-free">Community（無償）</span>
+          <div class="ic-desc">
+            世界で最もよく使われる Java
+            IDE。補完・リファクタリング・デバッガが非常に優秀。<br />
+            <strong>Community 版は無償</strong
+            >で本コースの内容は全てカバーできます。<br />
+            迷ったらこれを選びましょう。
+          </div>
+        </div>
+        <div class="ide-card ide-vscode">
+          <div class="ic-icon">📝</div>
+          <div class="ic-name">VS Code</div>
+          <span class="ic-tag ic-free">無償</span>
+          <div class="ic-desc">
+            軽量なエディタ。「Extension Pack for
+            Java」プラグインをインストールすることで Java
+            開発環境になります。<br />
+            すでに VS Code を使っている方向け。
+          </div>
+        </div>
+        <div class="ide-card ide-eclipse">
+          <div class="ic-icon">🌑</div>
+          <div class="ic-name">Eclipse</div>
+          <span class="ic-tag ic-free">無償</span>
+          <div class="ic-desc">
+            長年使われてきた老舗の Java
+            IDE。企業の既存プロジェクトで指定されることがあります。<br />
+            現在は IntelliJ IDEA に移行する場合が多いです。
+          </div>
+        </div>
+      </div>
+
+      <h3>IntelliJ IDEA Community のインストール</h3>
+      <p>
+        <a
+          href="https://www.jetbrains.com/idea/download/"
+          style="color: #c05621; font-weight: 700"
+          >https://www.jetbrains.com/idea/download/</a
+        >
+        にアクセスし、<strong>Community 版</strong
+        >（無償）をダウンロードしてインストールします。起動時に JDK
+        の場所を聞かれるので、先ほどインストールした JDK のパスを指定します。
+      </p>
+
+      <div class="info">
+        <strong>💡 IntelliJ IDEA は JDK を自動検出します</strong><br />
+        JDK を正しくインストールしていれば、IntelliJ IDEA は自動的に JDK
+        を見つけてくれます。<br />
+        新規プロジェクト作成時に「JDK: 21」が表示されれば設定完了です。
+      </div>
+
+      <!-- ===== 最初のプログラム ===== -->
+      <div class="section-title">
+        <span class="st-icon">👋</span>
+        最初のプログラム「Hello, World!」を動かす
+      </div>
+
+      <p>環境が整ったら、最初のプログラムを書いて実行してみましょう。</p>
+
+      <div class="hello-card">
+        <div class="hc-header">① ファイルを作成する：Main.java</div>
+        <div class="hc-body">
+          <p>
+            任意のフォルダに
+            <code>Main.java</code>
+            という名前でファイルを作成し、以下のコードを書きます。
+          </p>
+          <div class="terminal">
+            <div class="term-header">
+              <div class="term-dot td-red"></div>
+              <div class="term-dot td-yellow"></div>
+              <div class="term-dot td-green"></div>
+              <span class="term-title">Main.java</span>
+            </div>
+            <pre><span style="color:#9ae6b4;">public class</span> <span style="color:#fbd38d;">Main</span> {
+    <span style="color:#9ae6b4;">public static void</span> <span style="color:#90cdf4;">main</span>(String[] args) {
+        System.out.println(<span style="color:#fc8181;">"Hello, World!"</span>);
+    }
+}</pre>
+          </div>
+          <div class="callout" style="margin-top: 10px">
+            <strong>⚠️ ファイル名とクラス名は一致させる</strong><br />
+            <code>public class Main</code> と書いたら、ファイル名は必ず
+            <code>Main.java</code>
+            にしてください（大文字小文字も含めて完全一致）。
+          </div>
+        </div>
+      </div>
+
+      <div class="hello-card" style="margin-top: 14px">
+        <div class="hc-header">② コマンドラインで実行する</div>
+        <div class="hc-body">
+          <p>
+            <code>Main.java</code>
+            を保存したフォルダに移動して、以下のコマンドを実行します。
+          </p>
+          <div class="terminal">
+            <div class="term-header">
+              <div class="term-dot td-red"></div>
+              <div class="term-dot td-yellow"></div>
+              <div class="term-dot td-green"></div>
+              <span class="term-title">ターミナル / コマンドプロンプト</span>
+            </div>
+            <pre><span class="term-comment"># Main.java があるフォルダに移動</span>
+<span class="term-prompt">$</span> <span class="term-cmd">cd /path/to/your/folder</span>
+
+<span class="term-comment"># コンパイル（Main.class が生成される）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">javac Main.java</span>
+
+<span class="term-comment"># 実行（.class は不要）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">java Main</span>
+<span class="term-ok">Hello, World!</span>
+
+<span class="term-comment"># Java 11 以降は直接実行も可能（単一ファイルの場合）</span>
+<span class="term-prompt">$</span> <span class="term-cmd">java Main.java</span>
+<span class="term-ok">Hello, World!</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="hello-card" style="margin-top: 14px">
+        <div class="hc-header">③ IntelliJ IDEA での実行</div>
+        <div class="hc-body">
+          <ol>
+            <li>
+              IntelliJ IDEA を起動 → <strong>「New Project」</strong> をクリック
+            </li>
+            <li>
+              <strong>「Java」</strong> を選択し、JDK に
+              <strong>「21」</strong> を指定 → 「Next」
+            </li>
+            <li>
+              プロジェクト名を入力（例：<code>HelloJava</code>）→ 「Finish」
+            </li>
+            <li>
+              <code>src</code> フォルダを右クリック → 「New」→「Java Class」→
+              <code>Main</code> と入力
+            </li>
+            <li>
+              <code>main</code> メソッドを書いて、左の ▶ ボタンを押すか
+              <kbd>Shift+F10</kbd> で実行
+            </li>
+          </ol>
+          <div class="success" style="margin-top: 10px">
+            <strong
+              >✅ 下部の「Run」ウィンドウに「Hello,
+              World!」が表示されたら成功！</strong
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 複数バージョン管理 ===== -->
+      <div class="section-title">
+        <span class="st-icon">🔀</span>
+        複数バージョンの JDK を管理する（上級者向け）
+      </div>
+
+      <p>
+        複数のプロジェクトで異なる Java
+        バージョンを使い分けたい場合は、バージョン管理ツールが便利です。
+      </p>
+
+      <div class="terminal">
+        <div class="term-header">
+          <div class="term-dot td-red"></div>
+          <div class="term-dot td-yellow"></div>
+          <div class="term-dot td-green"></div>
+          <span class="term-title"
+            >SDKMAN!（macOS / Linux）— https://sdkman.io/</span
+          >
+        </div>
+        <pre><span class="term-comment"># SDKMAN! のインストール</span>
+<span class="term-prompt">$</span> <span class="term-cmd">curl -s "https://get.sdkman.io" | bash</span>
+<span class="term-prompt">$</span> <span class="term-cmd">source "$HOME/.sdkman/bin/sdkman-init.sh"</span>
+
+<span class="term-comment"># 利用可能な Java 一覧を表示</span>
+<span class="term-prompt">$</span> <span class="term-cmd">sdk list java</span>
+
+<span class="term-comment"># Temurin 21 をインストール</span>
+<span class="term-prompt">$</span> <span class="term-cmd">sdk install java 21.0.x-tem</span>
+
+<span class="term-comment"># デフォルトバージョンの切り替え</span>
+<span class="term-prompt">$</span> <span class="term-cmd">sdk use java 17.0.x-tem</span></pre>
+      </div>
+
+      <!-- ===== トラブルシューティング ===== -->
+      <div class="section-title">
+        <span class="st-icon">🔧</span>
+        よくあるトラブルと解決方法
+      </div>
+
+      <div class="trouble-cards">
+        <div class="trouble-card">
+          <div class="tc-q">
+            ❌ 「'java'
+            は内部コマンドまたは外部コマンドとして認識されません」（Windows）
+          </div>
+          <div class="tc-a">
+            環境変数 <code>PATH</code> に JDK の
+            <code>bin</code> フォルダが追加されていません。<br />
+            「Temurin」インストーラの場合：<code
+              >C:\Program Files\Eclipse Adoptium\jdk-21.x.x.xx-hotspot\bin</code
+            >
+            を PATH
+            に追加してください。その後コマンドプロンプトを<strong>再起動</strong>してください。
+          </div>
+        </div>
+        <div class="trouble-card">
+          <div class="tc-q">
+            ❌ 「Error: Could not find or load main class Main」
+          </div>
+          <div class="tc-a">
+            <code>javac Main.java</code> でコンパイルしてから
+            <code>java Main</code> で実行しているか確認してください。<br />
+            また
+            <strong>クラス名とファイル名が一致している</strong
+            >か（大文字小文字も）確認してください。<code>java Main.class</code>
+            ではなく <code>java Main</code>（<code>.class</code> 不要）です。
+          </div>
+        </div>
+        <div class="trouble-card">
+          <div class="tc-q">
+            ❌ 「エラー:
+            ソース・リリースXXには、ターゲット・リリースYYが必要です」
+          </div>
+          <div class="tc-a">
+            コンパイルに使った JDK と実行に使う JVM
+            のバージョンが異なっています。<br />
+            <code>java -version</code> と
+            <code>javac -version</code>
+            を両方実行して、同じバージョンを使っているか確認してください。
+          </div>
+        </div>
+        <div class="trouble-card">
+          <div class="tc-q">
+            ❌ IntelliJ IDEA で「SDK not configured」と表示される
+          </div>
+          <div class="tc-a">
+            メニューの「File」→「Project
+            Structure」→「SDKs」で「+」をクリックし、JDK
+            をインストールしたフォルダを指定してください。<br />
+            Temurin の場合（Windows）：<code
+              >C:\Program Files\Eclipse Adoptium\jdk-21.x.x.xx-hotspot</code
+            >
+          </div>
+        </div>
+        <div class="trouble-card">
+          <div class="tc-q">❌ macOS で「xcrun: error」が出る</div>
+          <div class="tc-a">
+            Xcode Command Line Tools が必要な場合があります。<br />
+            <code>xcode-select --install</code>
+            を実行してインストールしてください。
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== セットアップ完了チェックリスト ===== -->
+      <div class="section-title">
+        <span class="st-icon">✅</span>
+        セットアップ完了チェックリスト
+      </div>
+
+      <div class="checklist">
+        <div class="cl-title">以下がすべてできたらセットアップ完了です！</div>
+        <div class="cl-item">
+          <div class="cl-box">✓</div>
+          <div><code>java -version</code> でバージョンが表示される</div>
+        </div>
+        <div class="cl-item">
+          <div class="cl-box">✓</div>
+          <div>
+            <code>javac -version</code> でコンパイラのバージョンが表示される
+          </div>
+        </div>
+        <div class="cl-item">
+          <div class="cl-box">✓</div>
+          <div>
+            <code>Main.java</code> を作成して
+            <code>javac</code> でコンパイルできる
+          </div>
+        </div>
+        <div class="cl-item">
+          <div class="cl-box">✓</div>
+          <div><code>java Main</code> で「Hello, World!」が表示される</div>
+        </div>
+        <div class="cl-item">
+          <div class="cl-box">✓</div>
+          <div>
+            IDE（IntelliJ IDEA
+            など）をインストールし、プロジェクトを作成して実行できる
+          </div>
+        </div>
+      </div>
+
+      <div class="success" style="margin-top: 24px">
+        <strong>🎉 セットアップ完了！</strong><br />
+        これで Java
+        を書いて動かす準備が整いました。第1章「変数とデータ型」からコースを始めましょう！
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div style="width: 20px"></div>
+        <div class="page-button">
+          <a href="../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div style="width: 20px"></div>
+      </div>
+    </div>
+  </body>
+</html>

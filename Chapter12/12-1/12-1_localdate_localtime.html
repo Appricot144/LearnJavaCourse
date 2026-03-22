@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>12-1. LocalDate / LocalTime / LocalDateTime</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      .page-header {
+        background: linear-gradient(135deg, #234e52, #2c7a7b);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #234e52;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #81e6d9;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2c7a7b;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
+
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #e6fffa;
+        color: #234e52;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
+
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2c7a7b;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #e6fffa;
+      }
+
+      /* Type cards */
+      .type-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .type-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 14px 16px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+        border-top: 4px solid;
+      }
+      .tc-date {
+        border-color: #2c7a7b;
+      }
+      .tc-time {
+        border-color: #6b46c1;
+      }
+      .tc-datetime {
+        border-color: #c05621;
+      }
+      .type-card .tc-icon {
+        font-size: 1.8rem;
+        margin-bottom: 6px;
+      }
+      .type-card .tc-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        font-family: monospace;
+        margin-bottom: 4px;
+      }
+      .type-card .tc-desc {
+        font-size: 0.78rem;
+        color: #718096;
+      }
+      .type-card .tc-ex {
+        font-size: 0.75rem;
+        font-family: monospace;
+        margin-top: 6px;
+        color: #2c7a7b;
+        background: #e6fffa;
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
+
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #e6fffa;
+        border-bottom: 1px solid #81e6d9;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #234e52;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
+
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2c7a7b;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #234e52;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2c7a7b;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
+
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2c7a7b;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第12章 ▶ 日付・時刻（Date/Time API）</div>
+        <h1>12-1. LocalDate / LocalTime / LocalDateTime</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter11/11-3/11-3_sorted_optional_flatmap.html"
+            >＜</a
+          >
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../12-2/12-2_period_duration_formatter.html">＞</a>
+        </div>
+      </div>
+
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>Java 8 の Date/Time API とは？</h3>
+      <p>
+        Java 8 で追加された
+        <code>java.time</code> パッケージの日付・時刻クラスです。<br />
+        旧来の
+        <code>java.util.Date</code>
+        の問題点（可変・スレッド非安全・月が0始まりなど）を解決した<strong>イミュータブル</strong>な設計です。
+      </p>
+
+      <!-- 3種類のカード -->
+      <h3>主要な3クラス</h3>
+      <div class="type-grid">
+        <div class="type-card tc-date">
+          <div class="tc-icon">📅</div>
+          <div class="tc-name">LocalDate</div>
+          <div class="tc-desc">日付のみ（年・月・日）</div>
+          <div class="tc-ex">2024-03-15</div>
+        </div>
+        <div class="type-card tc-time">
+          <div class="tc-icon">🕐</div>
+          <div class="tc-name">LocalTime</div>
+          <div class="tc-desc">時刻のみ（時・分・秒）</div>
+          <div class="tc-ex">14:30:00</div>
+        </div>
+        <div class="type-card tc-datetime">
+          <div class="tc-icon">📆</div>
+          <div class="tc-name">LocalDateTime</div>
+          <div class="tc-desc">日付＋時刻（両方）</div>
+          <div class="tc-ex">2024-03-15T14:30:00</div>
+        </div>
+      </div>
+
+      <!-- インスタンス生成 -->
+      <h3>インスタンスの生成</h3>
+      <div class="code-wrap">
+        <div class="code-label">生成方法</div>
+        <pre><code>import java.time.*;
+
+// 現在の日時
+LocalDate     today   = LocalDate.now();
+LocalTime     now     = LocalTime.now();
+LocalDateTime current = LocalDateTime.now();
+
+// 指定した日時（月は1始まり！）
+LocalDate     date    = LocalDate.of(2024, 3, 15);
+LocalTime     time    = LocalTime.of(14, 30, 0);
+LocalDateTime dt      = LocalDateTime.of(2024, 3, 15, 14, 30, 0);
+
+// 文字列から生成
+LocalDate     parsed  = LocalDate.parse("2024-03-15");
+LocalTime     parsedT = LocalTime.parse("14:30:00");
+
+System.out.println(date);    // 2024-03-15
+System.out.println(time);    // 14:30
+System.out.println(dt);      // 2024-03-15T14:30</code></pre>
+      </div>
+
+      <!-- フィールドの取得 -->
+      <h3>フィールドの取得</h3>
+      <div class="code-wrap">
+        <div class="code-label">各フィールドへのアクセス</div>
+        <pre><code>LocalDate date = LocalDate.of(2024, 3, 15);
+
+System.out.println(date.getYear());        // 2024
+System.out.println(date.getMonthValue());  // 3（1始まり）
+System.out.println(date.getMonth());       // MARCH（Enum）
+System.out.println(date.getDayOfMonth());  // 15
+System.out.println(date.getDayOfWeek());   // FRIDAY（Enum）
+System.out.println(date.getDayOfYear());   // 75
+
+LocalTime time = LocalTime.of(14, 30, 45);
+System.out.println(time.getHour());        // 14
+System.out.println(time.getMinute());      // 30
+System.out.println(time.getSecond());      // 45</code></pre>
+      </div>
+
+      <!-- 日付の計算 -->
+      <h3>日付・時刻の計算（イミュータブル）</h3>
+      <p>
+        日付オブジェクトは<strong>変更不可（イミュータブル）</strong>です。加算・減算は<strong>新しいオブジェクト</strong>を返します。
+      </p>
+
+      <div class="code-wrap">
+        <div class="code-label">加算・減算メソッド</div>
+        <pre><code>LocalDate date = LocalDate.of(2024, 3, 15);
+
+LocalDate tomorrow   = date.plusDays(1);     // 2024-03-16
+LocalDate nextMonth  = date.plusMonths(1);   // 2024-04-15
+LocalDate nextYear   = date.plusYears(1);    // 2025-03-15
+LocalDate lastWeek   = date.minusWeeks(1);   // 2024-03-08
+
+System.out.println(tomorrow);   // 2024-03-16
+System.out.println(nextMonth);  // 2024-04-15
+System.out.println(lastWeek);   // 2024-03-08
+
+// 元のオブジェクトは変わらない！
+System.out.println(date);       // 2024-03-15（変わらない）</code></pre>
+      </div>
+
+      <!-- 比較 -->
+      <h3>日付の比較</h3>
+      <div class="code-wrap">
+        <div class="code-label">比較メソッド</div>
+        <pre><code>LocalDate d1 = LocalDate.of(2024, 1, 1);
+LocalDate d2 = LocalDate.of(2024, 12, 31);
+
+System.out.println(d1.isBefore(d2));     // true
+System.out.println(d1.isAfter(d2));      // false
+System.out.println(d1.isEqual(d2));      // false
+System.out.println(d1.compareTo(d2));    // 負の値（d1 < d2）
+
+// isLeapYear（うるう年判定）
+System.out.println(d1.isLeapYear());     // true（2024年はうるう年）</code></pre>
+      </div>
+
+      <!-- withメソッド -->
+      <h3>with メソッド：特定フィールドを変更した新しいオブジェクトを作る</h3>
+      <div class="code-wrap">
+        <div class="code-label">with メソッド</div>
+        <pre><code>LocalDate date = LocalDate.of(2024, 3, 15);
+
+LocalDate endOfMonth  = date.withDayOfMonth(date.lengthOfMonth()); // 3/31
+LocalDate startOfYear = date.withDayOfYear(1);    // 2024-01-01
+LocalDate nextYear    = date.withYear(2025);       // 2025-03-15
+
+System.out.println(endOfMonth);   // 2024-03-31
+System.out.println(startOfYear);  // 2024-01-01</code></pre>
+      </div>
+
+      <!-- よく使うメソッド一覧 -->
+      <h3>LocalDate のよく使うメソッド一覧</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>メソッド</th>
+            <th>説明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>now()</code></td>
+            <td>現在の日付を取得</td>
+          </tr>
+          <tr>
+            <td><code>of(y,m,d)</code></td>
+            <td>指定した日付を生成</td>
+          </tr>
+          <tr>
+            <td><code>plusDays/Months/Years(n)</code></td>
+            <td>n日/月/年後を返す</td>
+          </tr>
+          <tr>
+            <td><code>minusDays/Months/Years(n)</code></td>
+            <td>n日/月/年前を返す</td>
+          </tr>
+          <tr>
+            <td><code>isBefore/isAfter/isEqual</code></td>
+            <td>日付の前後比較</td>
+          </tr>
+          <tr>
+            <td><code>getDayOfWeek()</code></td>
+            <td>曜日（DayOfWeek Enum）</td>
+          </tr>
+          <tr>
+            <td><code>lengthOfMonth()</code></td>
+            <td>その月の日数を返す</td>
+          </tr>
+          <tr>
+            <td><code>isLeapYear()</code></td>
+            <td>うるう年かどうか</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- コード例 -->
+      <h3>コード例</h3>
+      <div class="code-wrap">
+        <div class="code-label">DateTimeExample.java</div>
+        <pre><code>import java.time.*;
+import java.time.format.DateTimeFormatter;
+
+public class DateTimeExample {
+    public static void main(String[] args) {
+        LocalDate birthday  = LocalDate.of(1995, 7, 20);
+        LocalDate today     = LocalDate.of(2024, 3, 15);
+
+        System.out.println("誕生日: " + birthday);
+        System.out.println("今日:   " + today);
+
+        // 誕生日の曜日
+        System.out.println("曜日: " + birthday.getDayOfWeek());
+
+        // 次の誕生日
+        LocalDate nextBirthday = birthday.withYear(today.getYear());
+        if (nextBirthday.isBefore(today) || nextBirthday.isEqual(today)) {
+            nextBirthday = nextBirthday.plusYears(1);
+        }
+        System.out.println("次の誕生日: " + nextBirthday);
+
+        // 日付のフォーマット
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy年MM月dd日");
+        System.out.println(today.format(fmt));
+
+        // LocalDateTime
+        LocalDateTime dt = LocalDateTime.of(today, LocalTime.of(9, 0));
+        System.out.println("会議: " + dt);
+        System.out.println("2時間後: " + dt.plusHours(2));
+    }
+}</code></pre>
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>誕生日: 1995-07-20
+今日:   2024-03-15
+曜日: THURSDAY
+次の誕生日: 2024-07-20
+2024年03月15日
+会議: 2024-03-15T09:00
+2時間後: 2024-03-15T11:00</code></pre>
+      </div>
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 12-1-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>import java.time.*;
+
+public class Q1 {
+    public static void main(String[] args) {
+        LocalDate d = LocalDate.of(2024, 2, 29);  // うるう年
+
+        System.out.println(d);
+        System.out.println(d.getYear());
+        System.out.println(d.getMonthValue());
+        System.out.println(d.getDayOfMonth());
+        System.out.println(d.getDayOfWeek());
+        System.out.println(d.isLeapYear());
+
+        LocalDate d2 = d.plusDays(1);
+        System.out.println(d2);
+
+        LocalDate d3 = d.plusMonths(1);
+        System.out.println(d3);
+
+        LocalDate d4 = d.minusYears(1);
+        System.out.println(d4.isLeapYear());
+
+        System.out.println(d.isBefore(d2));
+        System.out.println(d.isAfter(d2));
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>2024-02-29
+2024
+2
+29
+THURSDAY
+true
+2024-03-01
+2024-03-29
+false
+true
+false</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>2024-02-29 は実在する日付（2024年はうるう年）。</li>
+                <li>
+                  <code>getDayOfWeek()</code> →
+                  <code>THURSDAY</code>（木曜日）。
+                </li>
+                <li><code>plusDays(1)</code> → 2月29日の翌日は3月1日。</li>
+                <li>
+                  <code>plusMonths(1)</code> → 3月29日（2月29日の1ヶ月後）。
+                </li>
+                <li>
+                  <code>minusYears(1)</code> → 2023年はうるう年でない →
+                  <code>false</code>。
+                </li>
+                <li>
+                  <code>d.isBefore(d2)</code> → d < d2 なので
+                  <code>true</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 12-1-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>import java.time.*;
+
+public class Q2 {
+    public static void main(String[] args) {
+        LocalDateTime start = LocalDateTime.of(2024, 1, 1, 8, 0, 0);
+        LocalDateTime end   = LocalDateTime.of(2024, 1, 1, 17, 30, 0);
+
+        System.out.println(start);
+        System.out.println(end);
+
+        LocalDateTime lunch = start.plusHours(4);
+        System.out.println("昼食時間: " + lunch);
+
+        System.out.println(start.isBefore(end));
+        System.out.println(end.toLocalDate());
+        System.out.println(end.toLocalTime());
+
+        LocalDateTime nextDay = end.plusDays(1).withHour(8).withMinute(0);
+        System.out.println("翌日開始: " + nextDay);
+
+        // 1月の日数
+        System.out.println("1月の日数: " + start.toLocalDate().lengthOfMonth());
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>2024-01-01T08:00
+2024-01-01T17:30
+昼食時間: 2024-01-01T12:00
+true
+2024-01-01
+17:30
+翌日開始: 2024-01-02T08:00
+1月の日数: 31</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li><code>start.plusHours(4)</code>：8時 + 4時間 = 12時。</li>
+                <li><code>end.toLocalDate()</code>：日付部分のみ取り出す。</li>
+                <li><code>end.toLocalTime()</code>：時刻部分のみ取り出す。</li>
+                <li>
+                  <code>end.plusDays(1).withHour(8).withMinute(0)</code
+                  >：翌日の8時0分。
+                </li>
+                <li>1月は31日。</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 12-1-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たすクラスを作成してください。
+          </p>
+          <ul>
+            <li>基準日を <code>LocalDate.of(2024, 4, 1)</code> とする</li>
+            <li>以下の情報をすべて出力する</li>
+          </ul>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>出力内容</th>
+                <th>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>基準日</td>
+                <td>そのまま出力</td>
+              </tr>
+              <tr>
+                <td>曜日</td>
+                <td><code>getDayOfWeek()</code></td>
+              </tr>
+              <tr>
+                <td>100日後</td>
+                <td><code>plusDays(100)</code></td>
+              </tr>
+              <tr>
+                <td>その月の最終日</td>
+                <td><code>withDayOfMonth(lengthOfMonth())</code></td>
+              </tr>
+              <tr>
+                <td>その年の最終日</td>
+                <td><code>withDayOfYear(lengthOfYear())</code></td>
+              </tr>
+              <tr>
+                <td>うるう年かどうか</td>
+                <td><code>isLeapYear()</code></td>
+              </tr>
+              <tr>
+                <td>翌年の同日</td>
+                <td><code>plusYears(1)</code></td>
+              </tr>
+              <tr>
+                <td>1週間前</td>
+                <td><code>minusWeeks(1)</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>基準日: 2024-04-01
+曜日: MONDAY
+100日後: 2024-07-10
+その月の最終日: 2024-04-30
+その年の最終日: 2024-12-31
+うるう年: true
+翌年の同日: 2025-04-01
+1週間前: 2024-03-25</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">Main.java</div>
+                <pre><code>import java.time.*;
+
+public class Main {
+    public static void main(String[] args) {
+        LocalDate base = LocalDate.of(2024, 4, 1);
+
+        System.out.println("基準日: "       + base);
+        System.out.println("曜日: "         + base.getDayOfWeek());
+        System.out.println("100日後: "      + base.plusDays(100));
+        System.out.println("その月の最終日: " + base.withDayOfMonth(base.lengthOfMonth()));
+        System.out.println("その年の最終日: " + base.withDayOfYear(base.lengthOfYear()));
+        System.out.println("うるう年: "      + base.isLeapYear());
+        System.out.println("翌年の同日: "    + base.plusYears(1));
+        System.out.println("1週間前: "       + base.minusWeeks(1));
+    }
+}</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>2024-04-01 は月曜日（MONDAY）。</li>
+                <li><code>plusDays(100)</code>：4月1日 + 100日 = 7月10日。</li>
+                <li>
+                  <code>withDayOfMonth(lengthOfMonth())</code>：4月は30日なので
+                  2024-04-30。
+                </li>
+                <li>
+                  <code>lengthOfYear()</code>：2024年はうるう年なので366日 →
+                  12月31日。
+                </li>
+                <li><code>minusWeeks(1)</code>：4月1日の1週間前 = 3月25日。</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter11/11-3/11-3_sorted_optional_flatmap.html"></a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../12-2/12-2_period_duration_formatter.html">＞</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

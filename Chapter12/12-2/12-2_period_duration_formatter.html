@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>12-2. Period / Duration / DateTimeFormatter</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      .page-header {
+        background: linear-gradient(135deg, #234e52, #2c7a7b);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #234e52;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #81e6d9;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2c7a7b;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
+
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #e6fffa;
+        color: #234e52;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
+
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2c7a7b;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #e6fffa;
+      }
+
+      /* Compare cards */
+      .compare-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin: 14px 0;
+      }
+      .compare-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      }
+      .cc-header {
+        padding: 10px 16px;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .cc-period {
+        background: #e6fffa;
+        color: #234e52;
+      }
+      .cc-duration {
+        background: #faf5ff;
+        color: #44337a;
+      }
+
+      /* Format pattern cards */
+      .fmt-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 14px 0;
+      }
+      .fmt-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        border-left: 4px solid #2c7a7b;
+      }
+      .fmt-card .fc-header {
+        background: #e6fffa;
+        padding: 6px 14px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #234e52;
+        display: flex;
+        justify-content: space-between;
+      }
+      .fmt-card .fc-pattern {
+        font-family: monospace;
+        color: #c05621;
+      }
+
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
+
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #e6fffa;
+        border-bottom: 1px solid #81e6d9;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #234e52;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
+
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2c7a7b;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #234e52;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2c7a7b;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2c7a7b;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第12章 ▶ 日付・時刻（Date/Time API）</div>
+        <h1>12-2. Period / Duration / DateTimeFormatter</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../12-1/12-1_localdate_localtime.html">＜</a>
+        </div>
+        <div class="page-button"><a href="#">目次</a></div>
+        <div class="page-button">
+          <a href="../12-3/12-3_zoned_datetime_advanced.html">＞</a>
+        </div>
+      </div>
+
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <!-- Period vs Duration -->
+      <h3>Period と Duration：2つの「期間」クラス</h3>
+
+      <div class="compare-grid">
+        <div class="compare-card">
+          <div class="cc-header cc-period">📅 Period（日付ベースの期間）</div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre style="font-size: 0.82rem"><code>// 年・月・日 で表す
+Period p = Period.of(1, 2, 3);
+// → 1年2ヶ月3日
+
+// 2つの日付の差
+LocalDate d1 = LocalDate.of(2020, 1, 1);
+LocalDate d2 = LocalDate.of(2024, 3, 15);
+Period diff = Period.between(d1, d2);
+// diff.getYears()  → 4
+// diff.getMonths() → 2
+// diff.getDays()   → 14</code></pre>
+          </div>
+        </div>
+        <div class="compare-card">
+          <div class="cc-header cc-duration">
+            🕐 Duration（時間ベースの期間）
+          </div>
+          <div class="code-wrap" style="margin: 0; border-radius: 0">
+            <pre style="font-size: 0.82rem"><code>// 時・分・秒・ナノ秒 で表す
+Duration d = Duration.ofHours(2).plusMinutes(30);
+// → 2時間30分
+
+// 2つの時刻の差
+LocalTime t1 = LocalTime.of(9, 0);
+LocalTime t2 = LocalTime.of(17, 30);
+Duration diff = Duration.between(t1, t2);
+// diff.toHours()   → 8
+// diff.toMinutes() → 510</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Period の詳細 -->
+      <h3>Period の使い方</h3>
+      <div class="code-wrap">
+        <div class="code-label">Period の操作</div>
+        <pre><code>import java.time.*;
+
+LocalDate birthday = LocalDate.of(1995, 7, 20);
+LocalDate today    = LocalDate.of(2024, 3, 15);
+
+Period age = Period.between(birthday, today);
+System.out.println(age.getYears()  + "歳");   // 28歳
+System.out.println(age.getMonths() + "ヶ月"); // 7ヶ月
+System.out.println(age.getDays()   + "日");   // 23日
+
+// 加算
+LocalDate future = today.plus(Period.of(1, 3, 10));  // 1年3ヶ月10日後
+System.out.println(future);  // 2025-06-25
+
+// toTotalMonths()
+long months = age.toTotalMonths();
+System.out.println("経過月数: " + months);  // 343</code></pre>
+      </div>
+
+      <!-- Duration の詳細 -->
+      <h3>Duration の使い方</h3>
+      <div class="code-wrap">
+        <div class="code-label">Duration の操作</div>
+        <pre><code>import java.time.*;
+
+LocalTime start = LocalTime.of(9, 0);
+LocalTime end   = LocalTime.of(17, 30);
+
+Duration workTime = Duration.between(start, end);
+System.out.println(workTime.toHours()   + "時間");   // 8時間
+System.out.println(workTime.toMinutes() + "分");     // 510分
+System.out.println(workTime.getSeconds() + "秒");    // 30600秒
+
+// LocalDateTime での差
+LocalDateTime dt1 = LocalDateTime.of(2024, 1, 1, 9, 0);
+LocalDateTime dt2 = LocalDateTime.of(2024, 1, 3, 17, 30);
+Duration d = Duration.between(dt1, dt2);
+System.out.println("合計時間: " + d.toHours() + "時間");  // 56時間</code></pre>
+      </div>
+
+      <!-- DateTimeFormatter -->
+      <h3>DateTimeFormatter：日付のフォーマット</h3>
+      <p>
+        日付を任意の文字列形式に変換（format）したり、文字列を日付に変換（parse）したりします。
+      </p>
+
+      <!-- フォーマットパターン一覧 -->
+      <div class="fmt-cards">
+        <div class="fmt-card">
+          <div class="fc-header">
+            <span>年</span><span class="fc-pattern">y / yyyy → 2024</span>
+          </div>
+        </div>
+        <div class="fmt-card">
+          <div class="fc-header">
+            <span>月</span
+            ><span class="fc-pattern"
+              >M / MM → 3 / 03　&nbsp;&nbsp;MMM → Mar　&nbsp;&nbsp;MMMM →
+              March</span
+            >
+          </div>
+        </div>
+        <div class="fmt-card">
+          <div class="fc-header">
+            <span>日</span><span class="fc-pattern">d / dd → 5 / 05</span>
+          </div>
+        </div>
+        <div class="fmt-card">
+          <div class="fc-header">
+            <span>曜日</span
+            ><span class="fc-pattern"
+              >E / EEE → Wed　&nbsp;&nbsp;EEEE → Wednesday</span
+            >
+          </div>
+        </div>
+        <div class="fmt-card">
+          <div class="fc-header">
+            <span>時（24h）</span
+            ><span class="fc-pattern">H / HH → 9 / 09</span>
+          </div>
+        </div>
+        <div class="fmt-card">
+          <div class="fc-header">
+            <span>分・秒</span
+            ><span class="fc-pattern">mm → 05　&nbsp;&nbsp;ss → 00</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">DateTimeFormatter の使い方</div>
+        <pre><code>import java.time.*;
+import java.time.format.*;
+
+LocalDate date = LocalDate.of(2024, 3, 15);
+LocalDateTime dt = LocalDateTime.of(2024, 3, 15, 14, 30, 0);
+
+// format（日付 → 文字列）
+DateTimeFormatter f1 = DateTimeFormatter.ofPattern("yyyy年MM月dd日");
+DateTimeFormatter f2 = DateTimeFormatter.ofPattern("yyyy/MM/dd (E)");
+DateTimeFormatter f3 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+System.out.println(date.format(f1));  // 2024年03月15日
+System.out.println(date.format(f2));  // 2024/03/15 (Fri)
+System.out.println(dt.format(f3));    // 2024-03-15 14:30:00
+
+// parse（文字列 → 日付）
+LocalDate parsed1 = LocalDate.parse("2024年03月15日", f1);
+System.out.println(parsed1);  // 2024-03-15
+
+// 定義済みフォーマッタ
+System.out.println(date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+// 2024-03-15</code></pre>
+      </div>
+
+      <!-- よく使う定義済みフォーマッタ -->
+      <h3>よく使う定義済みフォーマッタ</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>定数</th>
+            <th>形式</th>
+            <th>例</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>ISO_LOCAL_DATE</code></td>
+            <td><code>yyyy-MM-dd</code></td>
+            <td>2024-03-15</td>
+          </tr>
+          <tr>
+            <td><code>ISO_LOCAL_TIME</code></td>
+            <td><code>HH:mm:ss</code></td>
+            <td>14:30:00</td>
+          </tr>
+          <tr>
+            <td><code>ISO_LOCAL_DATE_TIME</code></td>
+            <td><code>yyyy-MM-dd'T'HH:mm:ss</code></td>
+            <td>2024-03-15T14:30:00</td>
+          </tr>
+          <tr>
+            <td><code>ofLocalizedDate(FormatStyle.FULL)</code></td>
+            <td>ロケール依存の完全な日付</td>
+            <td>2024年3月15日金曜日</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- コード例 -->
+      <h3>コード例</h3>
+      <div class="code-wrap">
+        <div class="code-label">PeriodDurationExample.java</div>
+        <pre><code>import java.time.*;
+import java.time.format.*;
+
+public class PeriodDurationExample {
+    public static void main(String[] args) {
+        LocalDate  start = LocalDate.of(2024, 1, 1);
+        LocalDate  end   = LocalDate.of(2024, 12, 31);
+        LocalTime  tStart = LocalTime.of(9, 0);
+        LocalTime  tEnd   = LocalTime.of(18, 30);
+
+        // 期間
+        Period period = Period.between(start, end);
+        System.out.println("期間: " + period.getMonths() + "ヶ月"
+            + period.getDays() + "日");
+
+        // 勤務時間
+        Duration work = Duration.between(tStart, tEnd);
+        System.out.println("勤務: " + work.toHours() + "時間"
+            + (work.toMinutesPart()) + "分");
+
+        // フォーマット
+        DateTimeFormatter fmt =
+            DateTimeFormatter.ofPattern("yyyy年MM月dd日（E）");
+        System.out.println(start.format(fmt));
+        System.out.println(end.format(fmt));
+
+        // 文字列から変換
+        LocalDate deadline = LocalDate.parse("2024/06/30",
+            DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+        System.out.println("締切: " + deadline);
+    }
+}</code></pre>
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>期間: 11ヶ月30日
+勤務: 9時間30分
+2024年01月01日（Mon）
+2024年12月31日（Tue）
+締切: 2024-06-30</code></pre>
+      </div>
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 12-2-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>import java.time.*;
+import java.time.format.*;
+
+public class Q1 {
+    public static void main(String[] args) {
+        LocalDate d1 = LocalDate.of(2020, 3, 1);
+        LocalDate d2 = LocalDate.of(2024, 9, 15);
+
+        Period p = Period.between(d1, d2);
+        System.out.println(p.getYears());
+        System.out.println(p.getMonths());
+        System.out.println(p.getDays());
+        System.out.println(p.toTotalMonths());
+
+        // Duration
+        LocalTime t1 = LocalTime.of(8, 45);
+        LocalTime t2 = LocalTime.of(12, 0);
+        Duration d = Duration.between(t1, t2);
+        System.out.println(d.toHours());
+        System.out.println(d.toMinutes());
+        System.out.println(d.toMinutesPart());
+
+        // フォーマット
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        System.out.println(d2.format(fmt));
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>4
+6
+14
+54
+3
+195
+15
+15/09/2024</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>Period.between(2020-03-01, 2024-09-15)</code> →
+                  4年6ヶ月14日。<code>toTotalMonths()</code> = 4×12+6 = 54。
+                </li>
+                <li>
+                  <code>Duration.between(08:45, 12:00)</code> → 3時間15分。<code
+                    >toHours()</code
+                  >
+                  = 3、<code>toMinutes()</code> = 195、<code
+                    >toMinutesPart()</code
+                  >
+                  = 15（時間を除いた分部分）。
+                </li>
+                <li>
+                  <code>dd/MM/yyyy</code> で 2024-09-15 →
+                  <code>15/09/2024</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 12-2-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>import java.time.*;
+import java.time.format.*;
+
+public class Q2 {
+    public static void main(String[] args) {
+        // 文字列から変換
+        DateTimeFormatter f1 = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        DateTimeFormatter f2 = DateTimeFormatter.ofPattern("MM月dd日(E)");
+        DateTimeFormatter f3 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        LocalDate d = LocalDate.parse("2024/07/04", f1);
+        System.out.println(d);
+        System.out.println(d.format(f2));
+
+        LocalDateTime dt = LocalDateTime.parse("2024-07-04 10:30", f3);
+        System.out.println(dt);
+        System.out.println(dt.plusHours(90).format(f3));
+
+        // Period で次のイベントまでの日数
+        LocalDate event = LocalDate.of(2024, 12, 25);
+        Period toEvent  = Period.between(d, event);
+        System.out.println("イベントまで: "
+            + toEvent.getMonths() + "ヶ月" + toEvent.getDays() + "日");
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>2024-07-04
+07月04日(Thu)
+2024-07-04T10:30
+2024-07-08T04:30
+イベントまで: 5ヶ月21日</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>LocalDate.parse("2024/07/04", f1)</code> →
+                  2024-07-04（7月4日は木曜日）。
+                </li>
+                <li>
+                  <code>dt.plusHours(90)</code>：2024-07-04 10:30 + 90時間 =
+                  3日18時間後 → 2024-07-08 04:30。
+                </li>
+                <li>
+                  <code>Period.between(2024-07-04, 2024-12-25)</code> →
+                  5ヶ月21日。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 12-2-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たす <code>Schedule</code> クラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              <code>LocalDateTime start</code>・<code>LocalDateTime end</code>
+              フィールド
+            </li>
+            <li>
+              コンストラクタ
+              <code>(String startStr, String endStr)</code>：<code
+                >"yyyy/MM/dd HH:mm"</code
+              >
+              形式の文字列から生成
+            </li>
+            <li>
+              <code>getDuration()</code
+              >：所要時間（<code>Duration</code>）を返す
+            </li>
+            <li><code>show()</code>：以下の形式で出力する</li>
+          </ul>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>【プロジェクト会議】
+  開始: 2024年06月10日（Mon） 10:00
+  終了: 2024年06月10日（Mon） 12:30
+  所要: 2時間30分
+【合宿研修】
+  開始: 2024年08月01日（Thu） 09:00
+  終了: 2024年08月03日（Sat） 18:00
+  所要: 57時間0分</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">Main.java</div>
+                <pre><code>import java.time.*;
+import java.time.format.*;
+
+public class Main {
+
+    static class Schedule {
+        String        title;
+        LocalDateTime start;
+        LocalDateTime end;
+        static DateTimeFormatter parser =
+            DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+        static DateTimeFormatter display =
+            DateTimeFormatter.ofPattern("yyyy年MM月dd日（E） HH:mm");
+
+        Schedule(String title, String startStr, String endStr) {
+            this.title = title;
+            this.start = LocalDateTime.parse(startStr, parser);
+            this.end   = LocalDateTime.parse(endStr,   parser);
+        }
+
+        Duration getDuration() { return Duration.between(start, end); }
+
+        void show() {
+            Duration d = getDuration();
+            System.out.println("【" + title + "】");
+            System.out.println("  開始: " + start.format(display));
+            System.out.println("  終了: " + end.format(display));
+            System.out.println("  所要: " + d.toHours() + "時間"
+                + d.toMinutesPart() + "分");
+        }
+    }
+
+    public static void main(String[] args) {
+        Schedule s1 = new Schedule("プロジェクト会議",
+            "2024/06/10 10:00", "2024/06/10 12:30");
+        Schedule s2 = new Schedule("合宿研修",
+            "2024/08/01 09:00", "2024/08/03 18:00");
+
+        s1.show();
+        s2.show();
+    }
+}</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  コンストラクタで <code>parse</code> を使って文字列を
+                  <code>LocalDateTime</code> に変換します。
+                </li>
+                <li>
+                  <code>Duration.between(start, end)</code>
+                  で所要時間を取得します。
+                </li>
+                <li>
+                  <code>toHours()</code> と
+                  <code>toMinutesPart()</code>（時間を除いた分）で表示します。
+                </li>
+                <li>
+                  合宿：2024-08-01 09:00 〜 2024-08-03 18:00 = 57時間0分。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../12-1/12-1_localdate_localtime.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../12-3/12-3_zoned_datetime_advanced.html">＞</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

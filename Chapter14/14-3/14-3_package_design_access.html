@@ -1,0 +1,987 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>14-3. パッケージ設計とアクセス制御</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      .page-header {
+        background: linear-gradient(135deg, #2d3a1e, #4a5e2a);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #2d3a1e;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #c6f6d5;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #4a5e2a;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
+
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #f0fff4;
+        color: #2d3a1e;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
+
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #4a5e2a;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+        text-align: center;
+      }
+      .data-table tbody td:first-child {
+        text-align: left;
+      }
+      .data-table tbody tr:hover {
+        background: #f0fff4;
+      }
+      .ok {
+        color: #22543d;
+        font-weight: 700;
+      }
+      .ng {
+        color: #c53030;
+        font-weight: 700;
+      }
+
+      /* Package design diagram */
+      .design-diagram {
+        background: #1e2a3a;
+        border-radius: 10px;
+        padding: 20px 24px;
+        margin: 14px 0;
+        font-family: monospace;
+        font-size: 0.85rem;
+        line-height: 2;
+      }
+      .dd-root {
+        color: #fbd38d;
+        font-weight: 700;
+      }
+      .dd-pkg {
+        color: #9ae6b4;
+      }
+      .dd-class {
+        color: #90cdf4;
+      }
+      .dd-note {
+        color: #68d391;
+        font-style: italic;
+      }
+      .dd-arrow {
+        color: #718096;
+      }
+
+      /* Access levels */
+      .access-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 14px 0;
+      }
+      .ac-card {
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        display: flex;
+        align-items: stretch;
+      }
+      .ac-card .ac-level {
+        padding: 10px 16px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        font-family: monospace;
+        display: flex;
+        align-items: center;
+        min-width: 130px;
+      }
+      .ac-private {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+      .ac-pkg {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .ac-protected {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .ac-public {
+        background: #bee3f8;
+        color: #1a365d;
+      }
+      .ac-card .ac-desc {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        color: #4a5568;
+        flex: 1;
+        display: flex;
+        align-items: center;
+      }
+
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
+
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #f0fff4;
+        border-bottom: 1px solid #c6f6d5;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #2d3a1e;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
+
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #4a5e2a;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #2d3a1e;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #4a5e2a;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
+
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #4a5e2a;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第14章 ▶ パッケージ</div>
+        <h1>14-3. パッケージ設計とアクセス制御</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐☆☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../14-2/14-2_standard_library.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter15/15-1/15_java_ecosystem.html">＞</a>
+        </div>
+      </div>
+
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <!-- アクセス制御とパッケージ -->
+      <h3>アクセス修飾子とパッケージの関係</h3>
+      <p>
+        アクセス修飾子はクラス・フィールド・メソッドの「見える範囲」を制御します。<br />
+        パッケージを意識した設計において、修飾子の選択が重要になります。
+      </p>
+
+      <div class="access-cards">
+        <div class="ac-card">
+          <div class="ac-level ac-private">private</div>
+          <div class="ac-desc">
+            そのクラス内のみアクセス可能。外部に公開したくないフィールド・実装メソッドに使う。
+          </div>
+        </div>
+        <div class="ac-card">
+          <div class="ac-level ac-pkg">（なし）</div>
+          <div class="ac-desc">
+            同じパッケージ内のみアクセス可能（package-private）。パッケージ内部の連携処理に使う。
+          </div>
+        </div>
+        <div class="ac-card">
+          <div class="ac-level ac-protected">protected</div>
+          <div class="ac-desc">
+            同じパッケージ＋サブクラスからアクセス可能。継承を前提とした設計で使う。
+          </div>
+        </div>
+        <div class="ac-card">
+          <div class="ac-level ac-public">public</div>
+          <div class="ac-desc">
+            どこからでもアクセス可能。外部に公開する API に使う。
+          </div>
+        </div>
+      </div>
+
+      <!-- 修飾子一覧表 -->
+      <h3>アクセス範囲の比較</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>修飾子</th>
+            <th>同クラス</th>
+            <th>同パッケージ</th>
+            <th>サブクラス</th>
+            <th>どこでも</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>private</code></td>
+            <td class="ok">✅</td>
+            <td class="ng">❌</td>
+            <td class="ng">❌</td>
+            <td class="ng">❌</td>
+          </tr>
+          <tr>
+            <td>（なし）</td>
+            <td class="ok">✅</td>
+            <td class="ok">✅</td>
+            <td class="ng">❌</td>
+            <td class="ng">❌</td>
+          </tr>
+          <tr>
+            <td><code>protected</code></td>
+            <td class="ok">✅</td>
+            <td class="ok">✅</td>
+            <td class="ok">✅</td>
+            <td class="ng">❌</td>
+          </tr>
+          <tr>
+            <td><code>public</code></td>
+            <td class="ok">✅</td>
+            <td class="ok">✅</td>
+            <td class="ok">✅</td>
+            <td class="ok">✅</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- パッケージ設計の原則 -->
+      <h3>パッケージ設計の原則</h3>
+
+      <div class="design-diagram">
+        <span class="dd-root">com.example/</span><br />
+        <span class="dd-arrow">├─ </span><span class="dd-pkg">model/</span
+        ><span class="dd-note">　← ドメインオブジェクト（データ）</span><br />
+        <span class="dd-arrow">│&nbsp;&nbsp; ├─ </span
+        ><span class="dd-class">User.java</span><br />
+        <span class="dd-arrow">│&nbsp;&nbsp; └─ </span
+        ><span class="dd-class">Product.java</span><br />
+        <span class="dd-arrow">├─ </span><span class="dd-pkg">repository/</span
+        ><span class="dd-note">　← データアクセス層</span><br />
+        <span class="dd-arrow">│&nbsp;&nbsp; └─ </span
+        ><span class="dd-class">UserRepository.java</span><br />
+        <span class="dd-arrow">├─ </span><span class="dd-pkg">service/</span
+        ><span class="dd-note">　← ビジネスロジック層</span><br />
+        <span class="dd-arrow">│&nbsp;&nbsp; └─ </span
+        ><span class="dd-class">UserService.java</span><br />
+        <span class="dd-arrow">├─ </span><span class="dd-pkg">util/</span
+        ><span class="dd-note">　← 汎用ユーティリティ</span><br />
+        <span class="dd-arrow">│&nbsp;&nbsp; └─ </span
+        ><span class="dd-class">StringUtils.java</span><br />
+        <span class="dd-arrow">└─ </span><span class="dd-class">Main.java</span
+        ><span class="dd-note">　← エントリポイント</span>
+      </div>
+
+      <div class="hint">
+        <strong>💡 パッケージ命名の慣習</strong><br />
+        ・ドメイン名を逆順にする：<code>com.yourcompany.projectname</code><br />
+        ・すべて小文字で書く：<code>com.example.model</code>（大文字は使わない）<br />
+        ・機能や役割でサブパッケージを作る：<code>model</code>・<code>service</code>・<code
+          >util</code
+        >
+        など
+      </div>
+
+      <!-- package-private の活用 -->
+      <h3>package-private（修飾子なし）の活用</h3>
+      <p>
+        パッケージ内部でのみ使うクラスやメソッドは修飾子を省略してパッケージ内に閉じます。
+      </p>
+
+      <div class="code-wrap">
+        <div class="code-label">パッケージ内部用クラス（修飾子なし）</div>
+        <pre><code>package com.example.util;
+
+// package-private：同パッケージからしかアクセスできない
+class InternalHelper {
+    static String normalize(String s) {
+        return s.trim().toLowerCase();
+    }
+}
+
+// public：外部から使えるクラス
+public class StringUtils {
+    public static boolean isNullOrEmpty(String s) {
+        if (s == null) return true;
+        return InternalHelper.normalize(s).isEmpty();
+    }
+}</code></pre>
+      </div>
+
+      <!-- よくある設計パターン -->
+      <h3>実践的なパッケージ構成例</h3>
+      <div class="code-wrap">
+        <div class="code-label">シンプルな商品管理システムの構成</div>
+        <pre><code>// com/example/model/Product.java
+package com.example.model;
+
+public class Product {
+    private final int    id;
+    private       String name;
+    private       int    price;
+
+    public Product(int id, String name, int price) {
+        this.id    = id;
+        this.name  = name;
+        this.price = price;
+    }
+
+    public int    getId()    { return id; }
+    public String getName()  { return name; }
+    public int    getPrice() { return price; }
+    public void   setPrice(int price) { this.price = price; }
+
+    @Override
+    public String toString() {
+        return "[" + id + "] " + name + " (" + price + "円)";
+    }
+}
+
+// com/example/service/ProductService.java
+package com.example.service;
+
+import com.example.model.Product;
+import java.util.*;
+import java.util.stream.*;
+
+public class ProductService {
+    private List&lt;Product&gt; products = new ArrayList&lt;&gt;();
+
+    public void add(Product p)    { products.add(p); }
+
+    public List&lt;Product&gt; getAll() { return Collections.unmodifiableList(products); }
+
+    public Optional&lt;Product&gt; findById(int id) {
+        return products.stream()
+            .filter(p -> p.getId() == id)
+            .findFirst();
+    }
+
+    public List&lt;Product&gt; findByMaxPrice(int maxPrice) {
+        return products.stream()
+            .filter(p -> p.getPrice() &lt;= maxPrice)
+            .collect(Collectors.toList());
+    }
+}
+
+// com/example/Main.java
+package com.example;
+
+import com.example.model.Product;
+import com.example.service.ProductService;
+
+public class Main {
+    public static void main(String[] args) {
+        ProductService svc = new ProductService();
+        svc.add(new Product(1, "りんご",  150));
+        svc.add(new Product(2, "バナナ",  120));
+        svc.add(new Product(3, "メロン", 1200));
+
+        svc.findByMaxPrice(200).forEach(System.out::println);
+    }
+}</code></pre>
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>[1] りんご (150円)
+[2] バナナ (120円)</code></pre>
+      </div>
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 14-3-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java（com.example パッケージ）</div>
+            <pre><code>package com.example;
+
+import java.util.*;
+import java.util.stream.*;
+import static java.lang.Math.*;
+
+public class Q1 {
+
+    // package-private メソッド
+    static int clamp(int v, int lo, int hi) {
+        return max(lo, min(hi, v));
+    }
+
+    public static void main(String[] args) {
+        // static import で Math メソッドを使う
+        System.out.println(pow(2, 8));
+        System.out.println(sqrt(625.0));
+        System.out.println(abs(-100));
+
+        // package-private メソッド
+        System.out.println(clamp(50, 0, 100));
+        System.out.println(clamp(-5, 0, 100));
+        System.out.println(clamp(150, 0, 100));
+
+        // Stream + Math
+        List&lt;Integer&gt; nums = List.of(-3, 7, -1, 5, -9, 2);
+        int sumAbs = nums.stream()
+            .mapToInt(n -> abs(n))
+            .sum();
+        System.out.println("絶対値の合計: " + sumAbs);
+
+        long negCount = nums.stream().filter(n -> n &lt; 0).count();
+        System.out.println("負の数の個数: " + negCount);
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>256.0
+25.0
+100
+50
+0
+100
+絶対値の合計: 27
+負の数の個数: 3</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>pow(2,8)</code
+                  >=256.0、<code>sqrt(625)</code>=25.0、<code>abs(-100)</code>=100。
+                </li>
+                <li>
+                  <code>clamp(50,0,100)</code
+                  >=50（範囲内）、<code>clamp(-5,0,100)</code>=0（下限）、<code>clamp(150,0,100)</code>=100（上限）。
+                </li>
+                <li>
+                  絶対値の合計：3+7+1+5+9+2 = 27。負の数：-3,-1,-9 = 3個。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 14-3-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>import java.util.*;
+import java.util.stream.*;
+
+public class Q2 {
+
+    // 不変データクラス（record）
+    record Point(int x, int y) {
+        double distanceTo(Point other) {
+            int dx = this.x - other.x;
+            int dy = this.y - other.y;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        @Override
+        public String toString() {
+            return "(" + x + "," + y + ")";
+        }
+    }
+
+    public static void main(String[] args) {
+        List&lt;Point&gt; points = List.of(
+            new Point(0, 0),
+            new Point(3, 4),
+            new Point(1, 1),
+            new Point(6, 8)
+        );
+
+        Point origin = new Point(0, 0);
+
+        // 原点からの距離でソート
+        points.stream()
+            .sorted(Comparator.comparingDouble(
+                p -> p.distanceTo(origin)))
+            .forEach(p -> System.out.printf(
+                "%s 距離:%.1f%n", p, p.distanceTo(origin)));
+
+        System.out.println("---");
+
+        // 距離が5以上のポイント数
+        long count = points.stream()
+            .filter(p -> p.distanceTo(origin) >= 5)
+            .count();
+        System.out.println("距離5以上: " + count + "個");
+
+        // toMap で Point → 距離
+        Map&lt;String, Double&gt; distMap = points.stream()
+            .collect(Collectors.toMap(
+                Point::toString,
+                p -> p.distanceTo(origin)));
+        new TreeMap&lt;&gt;(distMap).forEach(
+            (k, v) -> System.out.printf("%s → %.2f%n", k, v));
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>(0,0) 距離:0.0
+(1,1) 距離:1.4
+(3,4) 距離:5.0
+(6,8) 距離:10.0
+---
+距離5以上: 2個
+(0,0) → 0.00
+(1,1) → 1.41
+(3,4) → 5.00
+(6,8) → 10.00</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  距離：(0,0)=0、(1,1)=√2≈1.41、(3,4)=√25=5.0、(6,8)=√100=10.0。
+                </li>
+                <li>距離5以上：(3,4)と(6,8) = 2個。</li>
+                <li>
+                  TreeMap
+                  でキー（文字列）の昇順で出力：(0,0)・(1,1)・(3,4)・(6,8)。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 3（総合） -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 14-3-3（総合問題）</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            本コースの総仕上げとして、次の条件を満たすシステムを設計してください。
+          </p>
+          <ul>
+            <li>
+              <code>com.example.model</code> パッケージに
+              <code>Student</code
+              >（<code>record</code>）を定義：<code>name</code>・<code>score</code>・<code>grade</code>（学年）フィールド
+            </li>
+            <li>
+              <code>com.example.service</code> パッケージに
+              <code>StudentService</code> を定義：<code
+                >List&lt;Student&gt;</code
+              >
+              を保持し、以下の機能を持つ
+              <ul>
+                <li><code>add(Student)</code>：学生を追加</li>
+                <li><code>getTopN(int n)</code>：点数上位 N 名を返す</li>
+                <li>
+                  <code>getAverageByGrade()</code>：学年別平均点を
+                  <code>Map&lt;Integer,Double&gt;</code> で返す
+                </li>
+                <li>
+                  <code>getPassedStudents(int threshold)</code
+                  >：閾値以上の学生名リストを返す
+                </li>
+              </ul>
+            </li>
+            <li><code>com.example.Main</code> で各機能を呼び出す</li>
+          </ul>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>=== 上位3名 ===
+Frank(95)
+Carol(91)
+Alice(85)
+=== 学年別平均 ===
+1学年: 88.0
+2学年: 75.0
+3学年: 77.5
+=== 合格者（75点以上） ===
+[Alice, Carol, Eve, Frank]</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">com/example/model/Student.java</div>
+                <pre><code>package com.example.model;
+
+public record Student(String name, int score, int grade) {
+    @Override
+    public String toString() { return name + "(" + score + ")"; }
+}</code></pre>
+              </div>
+              <div class="code-wrap">
+                <div class="code-label">
+                  com/example/service/StudentService.java
+                </div>
+                <pre><code>package com.example.service;
+
+import com.example.model.Student;
+import java.util.*;
+import java.util.stream.*;
+
+public class StudentService {
+    private List&lt;Student&gt; students = new ArrayList&lt;&gt;();
+
+    public void add(Student s) { students.add(s); }
+
+    public List&lt;Student&gt; getTopN(int n) {
+        return students.stream()
+            .sorted(Comparator.comparingInt(Student::score).reversed())
+            .limit(n)
+            .collect(Collectors.toList());
+    }
+
+    public Map&lt;Integer, Double&gt; getAverageByGrade() {
+        return students.stream()
+            .collect(Collectors.groupingBy(
+                Student::grade,
+                Collectors.averagingInt(Student::score)));
+    }
+
+    public List&lt;String&gt; getPassedStudents(int threshold) {
+        return students.stream()
+            .filter(s -> s.score() >= threshold)
+            .sorted(Comparator.comparing(Student::name))
+            .map(Student::name)
+            .collect(Collectors.toList());
+    }
+}</code></pre>
+              </div>
+              <div class="code-wrap">
+                <div class="code-label">com/example/Main.java</div>
+                <pre><code>package com.example;
+
+import com.example.model.Student;
+import com.example.service.StudentService;
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        StudentService svc = new StudentService();
+        svc.add(new Student("Alice", 85, 1));
+        svc.add(new Student("Bob",   72, 2));
+        svc.add(new Student("Carol", 91, 1));
+        svc.add(new Student("Dave",  60, 3));
+        svc.add(new Student("Eve",   78, 2));
+        svc.add(new Student("Frank", 95, 3));
+
+        System.out.println("=== 上位3名 ===");
+        svc.getTopN(3).forEach(System.out::println);
+
+        System.out.println("=== 学年別平均 ===");
+        new TreeMap&lt;&gt;(svc.getAverageByGrade()).forEach(
+            (g, avg) -> System.out.println(g + "学年: " + avg));
+
+        System.out.println("=== 合格者（75点以上） ===");
+        System.out.println(svc.getPassedStudents(75));
+    }
+}</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  パッケージ分離によって
+                  <code>model</code
+                  >（データ）・<code>service</code>（ビジネスロジック）・エントリポイントが明確に分かれます。
+                </li>
+                <li>
+                  <code>record</code> で不変のデータクラスを簡潔に定義します。
+                </li>
+                <li>
+                  <code>StudentService</code> は Stream API
+                  を活用してソート・グループ化・フィルタを行います。
+                </li>
+                <li>
+                  1学年：(85+91)/2=88.0、2学年：(72+78)/2=75.0、3学年：(60+95)/2=77.5。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../14-2/14-2_standard_library.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter15/15-1/15_java_ecosystem.html">＞</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

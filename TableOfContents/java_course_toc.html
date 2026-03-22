@@ -185,7 +185,7 @@
         padding: 3px 9px;
         font-size: 1rem;
         font-weight: bold;
-        background-color: #2b6cb0;
+        background-color: #2d3748;
         border-radius: 7px;
       }
 
@@ -197,13 +197,62 @@
         color: #fff;
         text-decoration: none;
       }
+
+      .supplement-table {
+        margin-bottom: 48px;
+        text-align: left;
+        width: 100%;
+        background: #fff;
+        border-collapse: collapse;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .supplement-table thead tr {
+        background: #2d3748;
+        color: white;
+      }
+
+      .supplement-table thead th {
+        padding: 10px 15px;
+        font-size: 0.82rem;
+        text-align: left;
+        font-weight: 600;
+      }
+
+      .supplement-table thead tr th:first-child {
+        width: 100px;
+      }
+
+      .supplement-table tbody td a {
+        color: #2b6cb0;
+        text-decoration: none;
+      }
+
+      .supplement-table tbody tr td {
+        padding: 10px 15px;
+        font-size: 0.88rem;
+      }
+
+      .supplement-table tbody tr td:first-child {
+        color: #a0aec0;
+      }
+
+      .supplement-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .supplement-table tbody tr:last-child {
+        border-bottom: none;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <header>
         <h1>☕ Java基本構文コース</h1>
-        <p>全14章 · 42節 · 139問</p>
+        <p>全15章 · 43節 · 141問</p>
       </header>
 
       <!-- 次のページ・目次・前のページ -->
@@ -214,6 +263,41 @@
           <a href="../Chapter1/1-1/1-1_basic_data_types.html">＞</a>
         </div>
       </div>
+
+      <table class="supplement-table">
+        <thead>
+          <tr>
+            <th>補足</th>
+            <th>タイトル</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>p.1</td>
+            <td>
+              <a href="../Supplement/supplement_1_setup.html"
+                >Java実行環境のセットアップ方法</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>p.2</td>
+            <td>
+              <a href="../Supplement/supplement_2_how_java_works.html"
+                >Javaはどのように動くのか</a
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>p.3</td>
+            <td>
+              <a href="../Supplement/supplement_3_ecosystem_map.html"
+                >Javaエコシステムの全体図</a
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
       <!-- 概要テーブル -->
       <table class="summary-table">
@@ -272,8 +356,8 @@
           <tr>
             <td>第7章</td>
             <td><a href="#section-table-ch7">クラスとオブジェクト</a></td>
-            <td>3節</td>
-            <td>11問</td>
+            <td>4節</td>
+            <td>13問</td>
             <td>⭐⭐⭐⭐☆</td>
           </tr>
           <tr>
@@ -329,11 +413,20 @@
             <td>9問</td>
             <td>⭐⭐⭐☆☆</td>
           </tr>
+          <tr>
+            <td>第15章</td>
+            <td>
+              <a href="#section-table-ch15">Javaを取り巻くライブラリの世界</a>
+            </td>
+            <td>1節</td>
+            <td>なし</td>
+            <td>ー</td>
+          </tr>
           <tr class="total-row">
             <td></td>
             <td>合計</td>
-            <td>42節</td>
-            <td>139問</td>
+            <td>43節</td>
+            <td>141問</td>
             <td></td>
           </tr>
         </tbody>
@@ -646,6 +739,15 @@
                 </td>
                 <td class="q-count">3問</td>
               </tr>
+              <tr>
+                <td class="section-num">7-4</td>
+                <td>
+                  <a href="../Chapter7/7-4/7-4_access_modifiers.html"
+                    >アクセス修飾子</a
+                  >
+                </td>
+                <td class="q-count">2問</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -845,17 +947,30 @@
             <tbody>
               <tr>
                 <td class="section-num">12-1</td>
-                <td><a href="#">LocalDate / LocalTime / LocalDateTime</a></td>
+                <td>
+                  <a href="../Chapter12/12-1/12-1_localdate_localtime.html"
+                    >LocalDate / LocalTime / LocalDateTime</a
+                  >
+                </td>
                 <td class="q-count">3問</td>
               </tr>
               <tr>
                 <td class="section-num">12-2</td>
-                <td><a href="#">日付の計算・比較</a></td>
+                <td>
+                  <a
+                    href="../Chapter12/12-2/12-2_period_duration_formatter.html"
+                    >日付の計算・比較</a
+                  >
+                </td>
                 <td class="q-count">3問</td>
               </tr>
               <tr>
                 <td class="section-num">12-3</td>
-                <td><a href="#">フォーマット（DateTimeFormatter）</a></td>
+                <td>
+                  <a href="../Chapter12/12-3/12-3_zoned_datetime_advanced.html"
+                    >フォーマット（DateTimeFormatter）</a
+                  >
+                </td>
                 <td class="q-count">3問</td>
               </tr>
             </tbody>
@@ -878,17 +993,29 @@
             <tbody>
               <tr>
                 <td class="section-num">13-1</td>
-                <td><a href="#">HashMap の基本操作</a></td>
+                <td>
+                  <a href="../Chapter13/13-1/13-1_hashmap_basics.html"
+                    >HashMap の基本操作</a
+                  >
+                </td>
                 <td class="q-count">4問</td>
               </tr>
               <tr>
                 <td class="section-num">13-2</td>
-                <td><a href="#">Map の繰り返し処理</a></td>
+                <td>
+                  <a href="../Chapter13/13-2/13-2_treemap_linkedhashmap.html"
+                    >Map の繰り返し処理</a
+                  >
+                </td>
                 <td class="q-count">3問</td>
               </tr>
               <tr>
                 <td class="section-num">13-3</td>
-                <td><a href="#">TreeMap / LinkedHashMap の使い分け</a></td>
+                <td>
+                  <a href="../Chapter13/13-3/13-3_map_stream_groupingby.html"
+                    >TreeMap / LinkedHashMap の使い分け</a
+                  >
+                </td>
                 <td class="q-count">3問</td>
               </tr>
             </tbody>
@@ -911,18 +1038,57 @@
             <tbody>
               <tr>
                 <td class="section-num">14-1</td>
-                <td><a href="#">パッケージの宣言とimport</a></td>
+                <td>
+                  <a href="../Chapter14/14-1/14-1_packages_import.html"
+                    >パッケージの宣言とimport</a
+                  >
+                </td>
                 <td class="q-count">3問</td>
               </tr>
               <tr>
                 <td class="section-num">14-2</td>
-                <td><a href="#">アクセス修飾子とパッケージの関係</a></td>
+                <td>
+                  <a href="../Chapter14/14-2/14-2_standard_library.html"
+                    >アクセス修飾子とパッケージの関係</a
+                  >
+                </td>
                 <td class="q-count">3問</td>
               </tr>
               <tr>
                 <td class="section-num">14-3</td>
-                <td><a href="#">標準ライブラリのパッケージ活用</a></td>
-                <td class="q-count">3問</td>
+                <td>
+                  <a href="../Chapter14/14-3/14-3_package_design_access.html"
+                    >標準ライブラリのパッケージ活用</a
+                  >
+                </td>
+                <td class="q-count">2問</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="chapter-card" id="section-table-ch15">
+          <div class="chapter-header">
+            <h2>第15章：Javaを取り巻くライブラリの世界</h2>
+            <span class="stars">ー</span>
+          </div>
+          <table class="section-table">
+            <thead>
+              <tr>
+                <th>節</th>
+                <th>タイトル</th>
+                <th>問題数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="section-num">15-1</td>
+                <td>
+                  <a href="../Chapter15/15-1/15_java_ecosystem.html"
+                    >Javaを取り巻くエコシステム</a
+                  >
+                </td>
+                <td class="q-count">なし</td>
               </tr>
             </tbody>
           </table>
@@ -931,7 +1097,7 @@
       <!-- /.chapters -->
 
       <footer>
-        <p>Java基本構文コース ― 全14章 · 42節 · 139問</p>
+        <p>Java基本構文コース ― 全15章 · 43節 · 141問</p>
       </footer>
     </div>
   </body>

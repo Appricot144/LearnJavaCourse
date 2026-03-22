@@ -1,0 +1,1252 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>補足3. Javaエコシステム全体図</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      /* Header */
+      .page-header {
+        background: linear-gradient(135deg, #1a202c, #2d3748);
+        color: white;
+        border-radius: 14px;
+        padding: 36px 40px;
+        margin-bottom: 40px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.82rem;
+        opacity: 0.65;
+        letter-spacing: 0.1em;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+      }
+      .page-header h1 {
+        font-size: 1.9rem;
+        font-weight: 800;
+        line-height: 1.3;
+        margin-bottom: 10px;
+      }
+      .page-header .subtitle {
+        font-size: 1rem;
+        opacity: 0.8;
+      }
+
+      /* Section title */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin: 44px 0 18px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #e2e8f0;
+      }
+      .section-title .st-icon {
+        font-size: 1.3rem;
+      }
+
+      p {
+        margin-bottom: 14px;
+        font-size: 0.95rem;
+      }
+      ul {
+        padding-left: 22px;
+        margin-bottom: 12px;
+      }
+      li {
+        margin-bottom: 5px;
+        font-size: 0.92rem;
+      }
+      code {
+        background: #edf2f7;
+        color: #2d3748;
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        font-size: 0.88em;
+      }
+      .info {
+        border-left: 4px solid #63b3ed;
+        background: #ebf8ff;
+        border-radius: 0 8px 8px 0;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 0.92rem;
+      }
+      .info strong {
+        color: #2b6cb0;
+      }
+
+      /* =============================================
+       MAIN ECOSYSTEM DIAGRAM
+       ============================================= */
+      .ecosystem-wrap {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+        padding: 36px 32px;
+        margin: 24px 0;
+        overflow-x: auto;
+      }
+      .eco-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 28px;
+        text-align: center;
+      }
+
+      /* --- Layer wrapper --- */
+      .eco-diagram {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-width: 660px;
+      }
+
+      /* --- Layer row --- */
+      .eco-layer {
+        border-radius: 12px;
+        padding: 16px 20px;
+        position: relative;
+      }
+      .eco-layer .el-title {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .eco-layer .el-grid {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      /* Chip (individual library / package) */
+      .chip {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        white-space: nowrap;
+        cursor: default;
+      }
+      .chip-sub {
+        font-size: 0.68rem;
+        font-weight: 400;
+        display: block;
+        opacity: 0.8;
+      }
+
+      /* Arrow between layers */
+      .eco-arrow {
+        text-align: center;
+        color: #a0aec0;
+        font-size: 1.4rem;
+        margin: -2px 0;
+        line-height: 1;
+      }
+      .eco-arrow span {
+        font-size: 0.72rem;
+        color: #a0aec0;
+        display: block;
+        line-height: 1.2;
+      }
+
+      /* ---- Layer color themes ---- */
+
+      /* L1: Your application */
+      .layer-app {
+        background: linear-gradient(135deg, #553c9a, #6b46c1);
+        color: white;
+      }
+      .layer-app .el-title {
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .layer-app .chip {
+        background: rgba(255, 255, 255, 0.18);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      /* L2: Frameworks */
+      .layer-fw {
+        background: #f0fff4;
+        border: 2px solid #9ae6b4;
+      }
+      .layer-fw .el-title {
+        color: #276749;
+      }
+      .chip-fw-web {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .chip-fw-gui {
+        background: #fbb6ce;
+        color: #702459;
+      }
+      .chip-fw-test {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .chip-fw-data {
+        background: #bee3f8;
+        color: #1a365d;
+      }
+      .chip-fw-build {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .chip-fw-util {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+
+      /* L3: Jakarta EE */
+      .layer-jakartaee {
+        background: #fffaf0;
+        border: 2px solid #f6ad55;
+      }
+      .layer-jakartaee .el-title {
+        color: #c05621;
+      }
+      .chip-jee {
+        background: #ffeeba;
+        color: #7b341e;
+      }
+
+      /* L4: JDK Standard Library */
+      .layer-stdlib {
+        background: #ebf8ff;
+        border: 2px solid #90cdf4;
+      }
+      .layer-stdlib .el-title {
+        color: #1a365d;
+      }
+      .chip-stdlib-core {
+        background: #2b6cb0;
+        color: white;
+      }
+      .chip-stdlib-used {
+        background: #bee3f8;
+        color: #1a365d;
+      }
+      .chip-stdlib-unused {
+        background: #e2e8f0;
+        color: #718096;
+      }
+
+      /* L5: JDK core */
+      .layer-jdk {
+        background: #edf2f7;
+        border: 2px solid #cbd5e0;
+      }
+      .layer-jdk .el-title {
+        color: #2d3748;
+      }
+      .chip-jdk {
+        background: #4a5568;
+        color: white;
+      }
+
+      /* L6: JVM */
+      .layer-jvm {
+        background: linear-gradient(135deg, #1a202c, #2d3748);
+        color: white;
+      }
+      .layer-jvm .el-title {
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .chip-jvm {
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+
+      /* L7: OS / Hardware */
+      .layer-os {
+        background: linear-gradient(135deg, #744210, #c05621);
+        color: white;
+      }
+      .layer-os .el-title {
+        color: rgba(255, 255, 255, 0.65);
+      }
+      .chip-os {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+
+      /* Apache Commons — special row inside L2 */
+      .layer-apache {
+        background: #fff5f5;
+        border: 2px solid #feb2b2;
+      }
+      .layer-apache .el-title {
+        color: #c53030;
+      }
+      .chip-apache {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+
+      /* "This course" badge */
+      .course-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: #fefcbf;
+        color: #744210;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 10px;
+        border: 1px solid #f6e05e;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+
+      /* Left label */
+      .eco-row {
+        display: flex;
+        gap: 12px;
+        align-items: stretch;
+      }
+      .eco-row-label {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #a0aec0;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        min-width: 20px;
+      }
+      .eco-row-content {
+        flex: 1;
+      }
+
+      /* =============================================
+       LEGEND
+       ============================================= */
+      .legend {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 18px 22px;
+        margin: 20px 0;
+      }
+      .legend-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .legend-grid {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.82rem;
+      }
+      .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        flex-shrink: 0;
+      }
+
+      /* =============================================
+       DETAIL SECTIONS
+       ============================================= */
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin: 16px 0;
+      }
+      .detail-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+      }
+      .detail-card .dc-header {
+        padding: 10px 16px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: white;
+      }
+      .detail-card .dc-body {
+        padding: 14px 16px;
+      }
+      .detail-card .dc-body ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+      .detail-card .dc-body li {
+        font-size: 0.85rem;
+        color: #4a5568;
+        margin-bottom: 4px;
+      }
+
+      /* Relation arrows detail */
+      .relation-flow {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 22px 26px;
+        margin: 16px 0;
+      }
+      .rf-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .rf-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .rf-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .rf-box {
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 700;
+      }
+      .rf-arrow {
+        color: #a0aec0;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+      .rf-note {
+        font-size: 0.78rem;
+        color: #718096;
+      }
+      .rfb-app {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .rfb-fw {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .rfb-jee {
+        background: #ffeeba;
+        color: #7b341e;
+      }
+      .rfb-stdlib {
+        background: #bee3f8;
+        color: #1a365d;
+      }
+      .rfb-jdk {
+        background: #e2e8f0;
+        color: #2d3748;
+      }
+      .rfb-jvm {
+        background: #2d3748;
+        color: white;
+      }
+      .rfb-os {
+        background: #c05621;
+        color: white;
+      }
+      .rfb-apache {
+        background: #fed7d7;
+        color: #742a2a;
+      }
+      .rfb-maven {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2d3748;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">補足 ▶ エコシステム全体図</div>
+        <h1>Javaエコシステム<br />全体図</h1>
+        <div class="subtitle">
+          JDK・Jakarta EE・Apache Commons・サードパーティライブラリ…
+          すべての位置関係を一枚で
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div style="width: 20px"></div>
+        <div class="page-button">
+          <a href="../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div style="width: 20px"></div>
+      </div>
+
+      <p>
+        これまでのコースで登場したライブラリや仕組みが、全体の中でどのような位置関係にあるのかを整理します。<br />
+        上の層ほど「あなたのコードに近い」、下の層ほど「ハードウェアに近い」構造になっています。
+      </p>
+
+      <!-- =============================================
+       MAIN DIAGRAM
+       ============================================= -->
+      <div class="ecosystem-wrap">
+        <div class="eco-title">
+          ▶ Java エコシステム
+          層構造マップ（上＝アプリ寄り、下＝ハードウェア寄り）
+        </div>
+
+        <div class="eco-diagram">
+          <!-- ① Your Application -->
+          <div class="eco-row">
+            <div class="eco-row-label">あなたのコード</div>
+            <div class="eco-row-content">
+              <div class="eco-layer layer-app">
+                <div class="el-title">🧑‍💻 あなたのアプリケーション</div>
+                <div class="el-grid">
+                  <span class="chip">Main.java</span>
+                  <span class="chip">ProductService.java</span>
+                  <span class="chip">UserRepository.java</span>
+                  <span class="chip">…（本コースで書いたすべてのコード）</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="eco-arrow">↓<span>import・依存</span></div>
+
+          <!-- ② Frameworks & Libraries -->
+          <div class="eco-row">
+            <div class="eco-row-label">フレームワーク／サードパーティ</div>
+            <div class="eco-row-content">
+              <div class="eco-layer layer-fw">
+                <div class="el-title">
+                  📦 フレームワーク・サードパーティライブラリ
+                  <span
+                    style="font-size: 0.7rem; font-weight: 400; color: #718096"
+                    >（Maven / Gradle で追加）</span
+                  >
+                </div>
+                <div class="el-grid">
+                  <span class="chip chip-fw-web">🌐 Spring Boot</span>
+                  <span class="chip chip-fw-web">🌐 Micronaut</span>
+                  <span class="chip chip-fw-web">🌐 Quarkus</span>
+                  <span class="chip chip-fw-gui">🖼️ JavaFX (OpenJFX)</span>
+                  <span class="chip chip-fw-test">🧪 JUnit 5</span>
+                  <span class="chip chip-fw-test">🧪 Mockito</span>
+                  <span class="chip chip-fw-data">🗄️ Hibernate (JPA実装)</span>
+                  <span class="chip chip-fw-data">🗄️ MyBatis</span>
+                  <span class="chip chip-fw-util">📄 Jackson (JSON)</span>
+                  <span class="chip chip-fw-util">📄 Gson</span>
+                  <span class="chip chip-fw-util">✂️ Lombok</span>
+                  <span class="chip chip-fw-util">📋 SLF4J / Logback</span>
+                  <span class="chip chip-fw-build"
+                    >🔨 （Maven / Gradle は別途）</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="eco-arrow">↓<span>仕様を実装・準拠</span></div>
+
+          <!-- ③ Jakarta EE & Apache Commons （横並び） -->
+          <div class="eco-row">
+            <div class="eco-row-label">標準仕様／共通ライブラリ</div>
+            <div
+              class="eco-row-content"
+              style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px"
+            >
+              <div class="eco-layer layer-jakartaee" style="margin: 0">
+                <div class="el-title">
+                  🏛️ Jakarta EE（旧 Java EE）<br />
+                  <span
+                    style="font-size: 0.68rem; font-weight: 400; color: #c05621"
+                    >エンタープライズ向け標準仕様群</span
+                  >
+                </div>
+                <div class="el-grid">
+                  <span class="chip chip-jee">Servlet / JSP</span>
+                  <span class="chip chip-jee">JPA（ORM仕様）</span>
+                  <span class="chip chip-jee">JAX-RS（REST API仕様）</span>
+                  <span class="chip chip-jee">CDI（DI仕様）</span>
+                  <span class="chip chip-jee">EJB</span>
+                  <span class="chip chip-jee">JMS（メッセージ）</span>
+                  <span class="chip chip-jee">Bean Validation</span>
+                </div>
+              </div>
+
+              <div class="eco-layer layer-apache" style="margin: 0">
+                <div class="el-title">
+                  🪶 Apache Commons<br />
+                  <span
+                    style="font-size: 0.68rem; font-weight: 400; color: #c53030"
+                    >汎用ユーティリティ群（Apache Software Foundation）</span
+                  >
+                </div>
+                <div class="el-grid">
+                  <span class="chip chip-apache">commons-lang3</span>
+                  <span class="chip chip-apache">commons-collections4</span>
+                  <span class="chip chip-apache">commons-io</span>
+                  <span class="chip chip-apache">commons-math3</span>
+                  <span class="chip chip-apache">commons-codec</span>
+                  <span class="chip chip-apache">commons-csv</span>
+                  <span class="chip chip-apache">commons-compress</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="eco-arrow">
+            ↓<span>import して使う（JDK に同梱）</span>
+          </div>
+
+          <!-- ④ Java Standard Library -->
+          <div class="eco-row">
+            <div class="eco-row-label">標準ライブラリ（JCL）</div>
+            <div class="eco-row-content">
+              <div class="eco-layer layer-stdlib">
+                <div class="el-title">
+                  📚 Java 標準ライブラリ（JCL: Java Class Library）
+                  <span class="course-badge">⭐ 本コースで使用</span>
+                </div>
+                <div class="el-grid">
+                  <span class="chip chip-stdlib-core"
+                    >java.lang<span class="chip-sub"
+                      >String, Math, Integer…</span
+                    ></span
+                  >
+                  <span class="chip chip-stdlib-used"
+                    >java.util<span class="chip-sub"
+                      >List, Map, Collections…</span
+                    ></span
+                  >
+                  <span class="chip chip-stdlib-used"
+                    >java.util.stream<span class="chip-sub"
+                      >Stream, Collectors…</span
+                    ></span
+                  >
+                  <span class="chip chip-stdlib-used"
+                    >java.util.function<span class="chip-sub"
+                      >Function, Predicate…</span
+                    ></span
+                  >
+                  <span class="chip chip-stdlib-used"
+                    >java.time<span class="chip-sub"
+                      >LocalDate, Period…</span
+                    ></span
+                  >
+                  <span class="chip chip-stdlib-used"
+                    >java.time.format<span class="chip-sub"
+                      >DateTimeFormatter</span
+                    ></span
+                  >
+                  <span class="chip chip-stdlib-unused"
+                    >java.io<span class="chip-sub">File, Reader…</span></span
+                  >
+                  <span class="chip chip-stdlib-unused"
+                    >java.nio.file<span class="chip-sub"
+                      >Path, Files…</span
+                    ></span
+                  >
+                  <span class="chip chip-stdlib-unused"
+                    >java.net<span class="chip-sub"
+                      >URL, HttpClient…</span
+                    ></span
+                  >
+                  <span class="chip chip-stdlib-unused"
+                    >java.math<span class="chip-sub">BigDecimal…</span></span
+                  >
+                  <span class="chip chip-stdlib-unused"
+                    >java.sql<span class="chip-sub"
+                      >JDBC, Connection…</span
+                    ></span
+                  >
+                  <span class="chip chip-stdlib-unused"
+                    >java.util.concurrent<span class="chip-sub"
+                      >ExecutorService…</span
+                    ></span
+                  >
+                  <span class="chip chip-stdlib-unused"
+                    >javax.swing<span class="chip-sub"
+                      >JFrame, JButton…</span
+                    ></span
+                  >
+                  <span class="chip chip-stdlib-unused"
+                    >java.lang.reflect<span class="chip-sub"
+                      >リフレクション</span
+                    ></span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="eco-arrow">↓<span>同梱・含む</span></div>
+
+          <!-- ⑤ JDK -->
+          <div class="eco-row">
+            <div class="eco-row-label">開発キット</div>
+            <div class="eco-row-content">
+              <div class="eco-layer layer-jdk">
+                <div class="el-title">
+                  🔧 JDK（Java Development Kit）
+                  <span
+                    style="font-size: 0.68rem; font-weight: 400; color: #718096"
+                    >　Eclipse Temurin / Oracle JDK / Amazon Corretto /
+                    Microsoft OpenJDK …</span
+                  >
+                </div>
+                <div class="el-grid">
+                  <span class="chip chip-jdk">javac（コンパイラ）</span>
+                  <span class="chip chip-jdk">java（実行コマンド）</span>
+                  <span class="chip chip-jdk">jar（アーカイブツール）</span>
+                  <span class="chip chip-jdk">javadoc（ドキュメント生成）</span>
+                  <span class="chip chip-jdk">jshell（REPL）</span>
+                  <span class="chip chip-jdk"
+                    >jlink（モジュールランタイム）</span
+                  >
+                  <span class="chip chip-jdk">jconsole（監視ツール）</span>
+                  <span class="chip chip-jdk"
+                    >+ 標準ライブラリ（上記 JCL）を同梱</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="eco-arrow">↓<span>JVM を含む・起動する</span></div>
+
+          <!-- ⑥ JVM -->
+          <div class="eco-row">
+            <div class="eco-row-label">仮想マシン</div>
+            <div class="eco-row-content">
+              <div class="eco-layer layer-jvm">
+                <div class="el-title">
+                  ⚙️ JVM（Java Virtual Machine）
+                  <span
+                    style="font-size: 0.68rem; font-weight: 400; opacity: 0.65"
+                    >　バイトコードを解釈・実行する仮想マシン</span
+                  >
+                </div>
+                <div class="el-grid">
+                  <span class="chip chip-jvm">クラスローダー</span>
+                  <span class="chip chip-jvm">バイトコードベリファイア</span>
+                  <span class="chip chip-jvm">実行エンジン</span>
+                  <span class="chip chip-jvm">JIT コンパイラ（HotSpot）</span>
+                  <span class="chip chip-jvm"
+                    >ガベージコレクター（G1 GC / ZGC）</span
+                  >
+                  <span class="chip chip-jvm"
+                    >ヒープ / スタック / メソッド領域</span
+                  >
+                  <span class="chip chip-jvm">スレッド管理</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="eco-arrow">
+            ↓<span>OS のシステムコールを呼び出す</span>
+          </div>
+
+          <!-- ⑦ OS & Hardware -->
+          <div class="eco-row">
+            <div class="eco-row-label">ハードウェア</div>
+            <div class="eco-row-content">
+              <div class="eco-layer layer-os">
+                <div class="el-title">
+                  💻 OS・ハードウェア
+                  <span
+                    style="font-size: 0.68rem; font-weight: 400; opacity: 0.65"
+                    >　JVM はどの OS でも同じバイトコードを動かす（WORA）</span
+                  >
+                </div>
+                <div class="el-grid">
+                  <span class="chip chip-os">🪟 Windows + x64 CPU</span>
+                  <span class="chip chip-os"
+                    >🍎 macOS + Apple Silicon / Intel</span
+                  >
+                  <span class="chip chip-os">🐧 Linux + x64 / ARM CPU</span>
+                  <span class="chip chip-os"
+                    >☁️ クラウド（AWS / GCP / Azure）</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /eco-diagram -->
+
+        <!-- ビルドツールは「横断的」な存在 -->
+        <div
+          style="
+            margin-top: 22px;
+            padding: 16px 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+            border: 2px dashed #e2e8f0;
+          "
+        >
+          <div
+            style="
+              font-size: 0.78rem;
+              font-weight: 700;
+              color: #718096;
+              text-transform: uppercase;
+              letter-spacing: 0.06em;
+              margin-bottom: 10px;
+            "
+          >
+            🔨 ビルドツール（層をまたぐ横断的な存在）
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              flex-wrap: wrap;
+              align-items: center;
+            "
+          >
+            <span class="chip" style="background: #e9d8fd; color: #44337a"
+              >Apache Maven</span
+            >
+            <span class="chip" style="background: #e9d8fd; color: #44337a"
+              >Gradle</span
+            >
+            <span style="font-size: 0.82rem; color: #718096"
+              >… サードパーティライブラリを Maven Central / GitHub Packages
+              からダウンロードし、JDK
+              のコンパイラ・テストランナーを呼び出して、アプリケーションをビルド・パッケージングする。<strong
+                >「層の間の配管役」。</strong
+              ></span
+            >
+          </div>
+        </div>
+      </div>
+      <!-- /ecosystem-wrap -->
+
+      <!-- Legend -->
+      <div class="legend">
+        <div class="legend-title">▶ 凡例</div>
+        <div class="legend-grid">
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #2b6cb0"></div>
+            本コースで使用した標準ライブラリ（青）
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #718096"></div>
+            標準ライブラリ（未使用・灰）
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #22543d"></div>
+            Web 開発系フレームワーク（緑）
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #702459"></div>
+            GUI ライブラリ（ピンク）
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #744210"></div>
+            テスト・ユーティリティ（黄）
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #1a365d"></div>
+            DB・データアクセス（紺）
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #742a2a"></div>
+            Apache Commons / JSON（赤）
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: #44337a"></div>
+            ビルドツール・コード生成（紫）
+          </div>
+        </div>
+      </div>
+
+      <!-- =============================================
+       DETAIL: 各層の説明
+       ============================================= -->
+      <div class="section-title">
+        <span class="st-icon">🔍</span>
+        各層の詳細解説
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-card">
+          <div class="dc-header" style="background: #6b46c1">
+            🧑‍💻 あなたのアプリケーション
+          </div>
+          <div class="dc-body">
+            <ul>
+              <li>本コースで書いたすべてのコードはここに該当します</li>
+              <li>下の全ての層の機能を <code>import</code> して利用します</li>
+              <li>パッケージ設計（第14章）でフォルダ構造を整理します</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="dc-header" style="background: #276749">
+            📦 サードパーティライブラリ
+          </div>
+          <div class="dc-body">
+            <ul>
+              <li>
+                JDK には含まれず、<strong>Maven / Gradle で追加</strong
+                >するライブラリ群
+              </li>
+              <li>
+                Maven Central（世界最大のJavaリポジトリ）から自動ダウンロード
+              </li>
+              <li>
+                Spring Boot・Hibernate・JUnit など業界の事実上の標準が多い
+              </li>
+              <li>
+                Jakarta EE の仕様を実装しているものも多い（Hibernate は JPA
+                の実装）
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="dc-header" style="background: #c05621">
+            🏛️ Jakarta EE（旧 Java EE）
+          </div>
+          <div class="dc-body">
+            <ul>
+              <li>
+                大規模エンタープライズシステム向けの<strong>標準仕様群</strong>
+              </li>
+              <li>
+                仕様（インターフェース定義）のみで、実装は各ベンダーが提供
+              </li>
+              <li>JPA という仕様を Hibernate が実装、という関係が典型例</li>
+              <li>WildFly・Payara などのアプリサーバ上で動作する</li>
+              <li>
+                「Java EE」は Oracle → Eclipse Foundation に移管され「Jakarta
+                EE」に改名
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="dc-header" style="background: #c53030">
+            🪶 Apache Commons
+          </div>
+          <div class="dc-body">
+            <ul>
+              <li>
+                Apache Software Foundation
+                が管理するオープンソース汎用ライブラリ集
+              </li>
+              <li>Java の標準ライブラリを補完する便利な機能を提供</li>
+              <li>
+                <code>commons-lang3</code>：StringUtils、NumberUtils
+                などの文字列・数値ユーティリティ
+              </li>
+              <li><code>commons-io</code>：ファイル操作を簡便にするクラス群</li>
+              <li>
+                <code>commons-collections4</code>：Bag、MultiMap
+                などの拡張コレクション
+              </li>
+              <li>Spring Boot でも内部的に多く使われている</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="dc-header" style="background: #2b6cb0">
+            📚 Java 標準ライブラリ（JCL）
+          </div>
+          <div class="dc-body">
+            <ul>
+              <li>
+                JDK に同梱。<code>import</code>
+                するだけで追加設定なしに使えるクラス群
+              </li>
+              <li>
+                <code>java.lang</code> のみ自動 import。他は明示的に
+                <code>import</code> が必要
+              </li>
+              <li>
+                本コースでは
+                <code>java.util</code>・<code>java.util.stream</code>・<code
+                  >java.time</code
+                >
+                などを多用
+              </li>
+              <li>
+                Java のバージョンアップごとに新しいクラス・メソッドが追加される
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="dc-header" style="background: #4a5568">
+            🔧 JDK（Java Development Kit）
+          </div>
+          <div class="dc-body">
+            <ul>
+              <li>開発に必要なツール一式をまとめたパッケージ</li>
+              <li>
+                <code>javac</code
+                >（コンパイラ）、<code>java</code>（実行）、<code>jar</code>（パッケージング）を含む
+              </li>
+              <li>
+                Oracle JDK・Eclipse Temurin・Amazon Corretto
+                などの「ディストリビューション」がある
+              </li>
+              <li>すべて OpenJDK をベースにしており、動作は基本的に同じ</li>
+              <li>
+                Java 11 以降は JRE（実行環境のみ）と JDK の区別がなくなった
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="dc-header" style="background: #1a202c">
+            ⚙️ JVM（Java Virtual Machine）
+          </div>
+          <div class="dc-body">
+            <ul>
+              <li>
+                バイトコードを実際の CPU・OS 命令に変換して実行する仮想マシン
+              </li>
+              <li>
+                JIT コンパイラがホットスポットを最適化し実行速度を向上させる
+              </li>
+              <li>
+                GC が不要なオブジェクトを自動解放（Stop-The-World が発生）
+              </li>
+              <li>
+                HotSpot（Oracle）・OpenJ9（IBM）・GraalVM などの実装がある
+              </li>
+              <li>Kotlin・Scala・Groovy など他言語も JVM 上で動く</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="detail-card">
+          <div class="dc-header" style="background: #c05621">
+            🔨 ビルドツール（Maven / Gradle）
+          </div>
+          <div class="dc-body">
+            <ul>
+              <li>すべての層をまたいで機能する「配管役」</li>
+              <li>サードパーティライブラリを Maven Central から自動取得</li>
+              <li>
+                <code>javac</code> を呼び出してコンパイル、<code>java</code>
+                でテスト実行を自動化
+              </li>
+              <li>
+                最終的に <code>.jar</code> や <code>.war</code> にパッケージング
+              </li>
+              <li>
+                Maven は <code>pom.xml</code>、Gradle は
+                <code>build.gradle(.kts)</code> で設定
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- =============================================
+       RELATIONSHIP ARROWS
+       ============================================= -->
+      <div class="section-title">
+        <span class="st-icon">🔗</span>
+        ライブラリ間の「依存・実装・準拠」関係
+      </div>
+
+      <div class="relation-flow">
+        <div class="rf-title">▶ 代表的な関係の例</div>
+        <div class="rf-rows">
+          <div class="rf-row">
+            <div class="rf-box rfb-fw">Spring Boot</div>
+            <div class="rf-arrow">→ 実装する</div>
+            <div class="rf-box rfb-jee">Jakarta Servlet 仕様</div>
+            <div class="rf-arrow">+</div>
+            <div class="rf-box rfb-stdlib">java.util / java.lang</div>
+            <div class="rf-note">
+              Spring Boot は Jakarta EE の Servlet
+              仕様に準拠しつつ、標準ライブラリを内部で大量に使用
+            </div>
+          </div>
+
+          <div class="rf-row">
+            <div class="rf-box rfb-fw">Hibernate</div>
+            <div class="rf-arrow">→ 実装する</div>
+            <div class="rf-box rfb-jee">JPA 仕様（Jakarta EE）</div>
+            <div class="rf-note">
+              JPA は「ORMのやり方」を定めた仕様。Hibernate・EclipseLink
+              などがその実装
+            </div>
+          </div>
+
+          <div class="rf-row">
+            <div class="rf-box rfb-fw">Spring Boot</div>
+            <div class="rf-arrow">→ 内部で使用</div>
+            <div class="rf-box rfb-apache">Apache Commons</div>
+            <div class="rf-arrow">+</div>
+            <div class="rf-box rfb-fw">Jackson</div>
+            <div class="rf-note">
+              Spring Boot は依存ライブラリとして Apache Commons や Jackson
+              を内包している
+            </div>
+          </div>
+
+          <div class="rf-row">
+            <div class="rf-box rfb-fw">JUnit 5</div>
+            <div class="rf-arrow">→ 使う</div>
+            <div class="rf-box rfb-stdlib">java.lang.reflect</div>
+            <div class="rf-note">
+              JUnit はリフレクション API を使って @Test
+              アノテーションのメソッドを検出・実行する
+            </div>
+          </div>
+
+          <div class="rf-row">
+            <div class="rf-box rfb-maven">Maven / Gradle</div>
+            <div class="rf-arrow">→ 呼び出す</div>
+            <div class="rf-box rfb-jdk">javac / java</div>
+            <div class="rf-arrow">→ 取得する</div>
+            <div class="rf-box rfb-fw">サードパーティライブラリ</div>
+            <div class="rf-note">
+              ビルドツールが JDK ツールを呼び出しつつ、依存ライブラリを管理する
+            </div>
+          </div>
+
+          <div class="rf-row">
+            <div class="rf-box rfb-stdlib">java.sql（JDBC）</div>
+            <div class="rf-arrow">→ 標準仕様を提供</div>
+            <div class="rf-box rfb-fw">MySQL Connector / PostgreSQL Driver</div>
+            <div class="rf-note">
+              JDBC は DB 接続の標準インターフェース。各 DB
+              ベンダーがドライバ（実装）を提供する
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =============================================
+       CLOSING
+       ============================================= -->
+      <div class="info" style="margin-top: 32px">
+        <strong>💡 この図の読み方まとめ</strong><br />
+        <ul style="margin-top: 8px">
+          <li>
+            <strong>上の層ほどあなたのコードに近い</strong
+            >。第1〜14章で書いたコードは一番上の層に位置します。
+          </li>
+          <li>
+            <strong>JDK（標準ライブラリ）は無条件に使える土台</strong>。<code
+              >import</code
+            >
+            するだけで利用可能です。
+          </li>
+          <li>
+            <strong
+              >Jakarta EE は「仕様書」、フレームワークはその「実装」</strong
+            >。JPA を Hibernate が実装するように、仕様と実装は分離されています。
+          </li>
+          <li>
+            <strong>Apache Commons はどの層からでも使える補助ライブラリ</strong
+            >。標準ライブラリを補完する位置づけです。
+          </li>
+          <li>
+            <strong>Maven / Gradle は「縦の配管役」</strong
+            >。層をまたいでライブラリの取得・ビルド・テストを自動化します。
+          </li>
+          <li>
+            <strong>JVM はすべての土台</strong>。どのライブラリも最終的に JVM
+            の上で動いています。
+          </li>
+        </ul>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div style="width: 20px"></div>
+        <div class="page-button">
+          <a href="../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div style="width: 20px"></div>
+      </div>
+    </div>
+  </body>
+</html>

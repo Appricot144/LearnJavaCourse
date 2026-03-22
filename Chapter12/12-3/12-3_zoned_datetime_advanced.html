@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>12-3. ZonedDateTime と日付の応用</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      .page-header {
+        background: linear-gradient(135deg, #234e52, #2c7a7b);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #234e52;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #81e6d9;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2c7a7b;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
+
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #e6fffa;
+        color: #234e52;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
+
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #2c7a7b;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #e6fffa;
+      }
+
+      /* Timezone diagram */
+      .tz-diagram {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+        overflow-x: auto;
+      }
+      .tz-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 12px;
+      }
+      .tz-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+      }
+      .tz-zone {
+        background: #e6fffa;
+        border: 2px solid #81e6d9;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #234e52;
+      }
+      .tz-time {
+        font-family: monospace;
+        font-size: 0.9rem;
+        color: #2c7a7b;
+        font-weight: 700;
+      }
+      .tz-arrow {
+        color: #a0aec0;
+        font-size: 1.1rem;
+      }
+
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
+
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #e6fffa;
+        border-bottom: 1px solid #81e6d9;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #234e52;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
+
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #2c7a7b;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #234e52;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #2c7a7b;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2c7a7b;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第12章 ▶ 日付・時刻（Date/Time API）</div>
+        <h1>12-3. ZonedDateTime と日付の応用</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../12-2/12-2_period_duration_formatter.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter13/13-1/13-1_hashmap_basics.html">＞</a>
+        </div>
+      </div>
+
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <!-- ZonedDateTime -->
+      <h3>ZonedDateTime：タイムゾーン付きの日時</h3>
+      <p>
+        <code>LocalDateTime</code> にタイムゾーン情報を加えたクラスです。<br />
+        国際的なシステムや「UTC からの差分」が必要な場面で使います。
+      </p>
+
+      <div class="tz-diagram">
+        <div class="tz-title">
+          ▶ 同じ瞬間でもタイムゾーンによって表示が異なる
+        </div>
+        <div class="tz-row">
+          <div class="tz-zone">Asia/Tokyo（UTC+9）</div>
+          <div class="tz-arrow">→</div>
+          <div class="tz-time">2024-03-15T12:00+09:00</div>
+        </div>
+        <div class="tz-row">
+          <div class="tz-zone">Europe/London（UTC+0）</div>
+          <div class="tz-arrow">→</div>
+          <div class="tz-time">2024-03-15T03:00Z</div>
+        </div>
+        <div class="tz-row">
+          <div class="tz-zone">America/New_York（UTC-5）</div>
+          <div class="tz-arrow">→</div>
+          <div class="tz-time">2024-03-14T22:00-05:00</div>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-label">ZonedDateTime の使い方</div>
+        <pre><code>import java.time.*;
+
+// 現在時刻をタイムゾーン付きで取得
+ZoneId    tokyo   = ZoneId.of("Asia/Tokyo");
+ZoneId    london  = ZoneId.of("Europe/London");
+ZoneId    ny      = ZoneId.of("America/New_York");
+
+// LocalDateTime にタイムゾーンを付与
+LocalDateTime ldt  = LocalDateTime.of(2024, 3, 15, 12, 0);
+ZonedDateTime zdtT = ldt.atZone(tokyo);
+
+System.out.println(zdtT);
+// 2024-03-15T12:00+09:00[Asia/Tokyo]
+
+// 他のタイムゾーンに変換
+ZonedDateTime zdtL = zdtT.withZoneSameInstant(london);
+ZonedDateTime zdtN = zdtT.withZoneSameInstant(ny);
+
+System.out.println(zdtL);  // 2024-03-15T03:00Z[Europe/London]
+System.out.println(zdtN);  // 2024-03-14T22:00-05:00[America/New_York]
+
+// 時刻だけ取り出す
+System.out.println("NY時刻: " + zdtN.toLocalTime());  // 22:00</code></pre>
+      </div>
+
+      <!-- ChronoUnit -->
+      <h3>ChronoUnit：期間の計算</h3>
+      <p>2つの日付・時刻の差を特定の単位で取得します。</p>
+      <div class="code-wrap">
+        <div class="code-label">ChronoUnit の使い方</div>
+        <pre><code>import java.time.*;
+import java.time.temporal.ChronoUnit;
+
+LocalDate d1 = LocalDate.of(2020, 1, 1);
+LocalDate d2 = LocalDate.of(2024, 3, 15);
+
+long years  = ChronoUnit.YEARS.between(d1, d2);
+long months = ChronoUnit.MONTHS.between(d1, d2);
+long days   = ChronoUnit.DAYS.between(d1, d2);
+long weeks  = ChronoUnit.WEEKS.between(d1, d2);
+
+System.out.println(years  + "年");    // 4年
+System.out.println(months + "ヶ月");  // 50ヶ月
+System.out.println(days   + "日");    // 1535日
+System.out.println(weeks  + "週間");  // 219週間</code></pre>
+      </div>
+
+      <!-- TemporalAdjusters -->
+      <h3>TemporalAdjusters：便利な日付調整</h3>
+      <div class="code-wrap">
+        <div class="code-label">TemporalAdjusters の使い方</div>
+        <pre><code>import java.time.*;
+import java.time.temporal.TemporalAdjusters;
+
+LocalDate date = LocalDate.of(2024, 3, 15);
+
+// 月初・月末
+LocalDate firstDay = date.with(TemporalAdjusters.firstDayOfMonth());
+LocalDate lastDay  = date.with(TemporalAdjusters.lastDayOfMonth());
+System.out.println(firstDay);  // 2024-03-01
+System.out.println(lastDay);   // 2024-03-31
+
+// 次の月曜日
+LocalDate nextMon = date.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+System.out.println(nextMon);   // 2024-03-18
+
+// 年初・年末
+LocalDate firstOfYear = date.with(TemporalAdjusters.firstDayOfYear());
+LocalDate lastOfYear  = date.with(TemporalAdjusters.lastDayOfYear());
+System.out.println(firstOfYear);  // 2024-01-01
+System.out.println(lastOfYear);   // 2024-12-31</code></pre>
+      </div>
+
+      <!-- Stream との組み合わせ -->
+      <h3>Stream と Date/Time API の組み合わせ</h3>
+      <div class="code-wrap">
+        <div class="code-label">日付リストの Stream 処理</div>
+        <pre><code>import java.time.*;
+import java.util.*;
+import java.util.stream.*;
+
+List&lt;LocalDate&gt; dates = List.of(
+    LocalDate.of(2024, 1, 15),
+    LocalDate.of(2024, 3, 20),
+    LocalDate.of(2024, 2, 10),
+    LocalDate.of(2024, 5, 5),
+    LocalDate.of(2024, 4, 1)
+);
+
+// 3月以降の日付を昇順で出力
+dates.stream()
+    .filter(d -> d.getMonthValue() >= 3)
+    .sorted()
+    .forEach(System.out::println);
+// 2024-03-20
+// 2024-04-01
+// 2024-05-05
+
+// 月ごとにグループ化
+Map&lt;Month, List&lt;LocalDate&gt;&gt; byMonth = dates.stream()
+    .collect(Collectors.groupingBy(LocalDate::getMonth));
+System.out.println(byMonth);</code></pre>
+      </div>
+
+      <!-- よく使うクラス一覧 -->
+      <h3>Date/Time API クラス一覧</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>クラス</th>
+            <th>用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>LocalDate</code></td>
+            <td>日付のみ（タイムゾーンなし）</td>
+          </tr>
+          <tr>
+            <td><code>LocalTime</code></td>
+            <td>時刻のみ（タイムゾーンなし）</td>
+          </tr>
+          <tr>
+            <td><code>LocalDateTime</code></td>
+            <td>日付＋時刻（タイムゾーンなし）</td>
+          </tr>
+          <tr>
+            <td><code>ZonedDateTime</code></td>
+            <td>日付＋時刻＋タイムゾーン</td>
+          </tr>
+          <tr>
+            <td><code>Period</code></td>
+            <td>年・月・日 単位の期間</td>
+          </tr>
+          <tr>
+            <td><code>Duration</code></td>
+            <td>時・分・秒 単位の期間</td>
+          </tr>
+          <tr>
+            <td><code>DateTimeFormatter</code></td>
+            <td>書式変換（format / parse）</td>
+          </tr>
+          <tr>
+            <td><code>ChronoUnit</code></td>
+            <td>特定単位での差の計算</td>
+          </tr>
+          <tr>
+            <td><code>TemporalAdjusters</code></td>
+            <td>月初・月末・次の曜日など</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- コード例 -->
+      <h3>コード例：営業日の計算</h3>
+      <div class="code-wrap">
+        <div class="code-label">BusinessDays.java</div>
+        <pre><code>import java.time.*;
+import java.util.stream.*;
+
+public class BusinessDays {
+
+    // 営業日かどうか（土日以外）
+    static boolean isBusinessDay(LocalDate date) {
+        DayOfWeek dow = date.getDayOfWeek();
+        return dow != DayOfWeek.SATURDAY && dow != DayOfWeek.SUNDAY;
+    }
+
+    // 指定期間内の営業日数を数える
+    static long countBusinessDays(LocalDate start, LocalDate end) {
+        return start.datesUntil(end.plusDays(1))
+            .filter(BusinessDays::isBusinessDay)
+            .count();
+    }
+
+    public static void main(String[] args) {
+        LocalDate start = LocalDate.of(2024, 1, 1);
+        LocalDate end   = LocalDate.of(2024, 1, 31);
+
+        System.out.println("2024年1月の営業日数: "
+            + countBusinessDays(start, end));
+
+        // 次の営業日
+        LocalDate today = LocalDate.of(2024, 3, 15);  // 金曜日
+        LocalDate next  = today.plusDays(1);
+        while (!isBusinessDay(next)) next = next.plusDays(1);
+        System.out.println("次の営業日: " + next);
+    }
+}</code></pre>
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>2024年1月の営業日数: 23
+次の営業日: 2024-03-18</code></pre>
+      </div>
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 12-3-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>import java.time.*;
+import java.time.temporal.*;
+
+public class Q1 {
+    public static void main(String[] args) {
+        LocalDate d1 = LocalDate.of(2023, 4, 1);
+        LocalDate d2 = LocalDate.of(2024, 3, 31);
+
+        System.out.println(ChronoUnit.YEARS.between(d1, d2));
+        System.out.println(ChronoUnit.MONTHS.between(d1, d2));
+        System.out.println(ChronoUnit.DAYS.between(d1, d2));
+
+        // TemporalAdjusters
+        LocalDate date = LocalDate.of(2024, 6, 15);
+        System.out.println(date.with(TemporalAdjusters.firstDayOfMonth()));
+        System.out.println(date.with(TemporalAdjusters.lastDayOfMonth()));
+        System.out.println(date.with(TemporalAdjusters.firstDayOfYear()));
+        System.out.println(date.with(
+            TemporalAdjusters.next(DayOfWeek.MONDAY)));
+        System.out.println(date.with(
+            TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)));
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>0
+11
+365
+2024-06-01
+2024-06-30
+2024-01-01
+2024-06-17
+2024-06-15</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>YEARS.between(2023-04-01, 2024-03-31)</code
+                  >：1年未満のため <code>0</code>。
+                </li>
+                <li><code>MONTHS.between</code>：11ヶ月。</li>
+                <li>
+                  <code>DAYS.between</code
+                  >：365日（2024年はうるう年だが期間に2/29が含まれるかで変わる。4/1〜3/31
+                  = 365日）。
+                </li>
+                <li>
+                  2024-06-15 は土曜日。<code>next(MONDAY)</code> →
+                  6月17日（月）。<code>nextOrSame(SATURDAY)</code> →
+                  今日自体が土曜日なのでそのまま 6月15日。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 12-3-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>import java.time.*;
+import java.util.*;
+import java.util.stream.*;
+
+public class Q2 {
+    public static void main(String[] args) {
+        List&lt;LocalDate&gt; dates = List.of(
+            LocalDate.of(2024, 3, 4),   // 月
+            LocalDate.of(2024, 3, 9),   // 土
+            LocalDate.of(2024, 3, 10),  // 日
+            LocalDate.of(2024, 3, 15),  // 金
+            LocalDate.of(2024, 3, 18)   // 月
+        );
+
+        // 平日だけフィルタ
+        dates.stream()
+            .filter(d -> d.getDayOfWeek() != DayOfWeek.SATURDAY
+                      && d.getDayOfWeek() != DayOfWeek.SUNDAY)
+            .forEach(d -> System.out.println(
+                d + " (" + d.getDayOfWeek() + ")"));
+
+        System.out.println("---");
+
+        // 月ごとの件数（全て3月なので1グループ）
+        dates.stream()
+            .collect(Collectors.groupingBy(
+                LocalDate::getMonth, Collectors.counting()))
+            .forEach((m, c) -> System.out.println(m + ": " + c + "件"));
+
+        System.out.println("---");
+
+        // 最も遅い日付
+        dates.stream()
+            .max(Comparator.naturalOrder())
+            .ifPresent(System.out::println);
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>2024-03-04 (MONDAY)
+2024-03-15 (FRIDAY)
+2024-03-18 (MONDAY)
+---
+MARCH: 5件
+---
+2024-03-18</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  土曜日（3/9）と日曜日（3/10）を除いた平日は
+                  3/4（月）・3/15（金）・3/18（月）の3日。
+                </li>
+                <li>
+                  全て3月なので <code>groupingBy</code> は
+                  <code>MARCH: 5件</code> の1グループ。
+                </li>
+                <li>
+                  <code>max(Comparator.naturalOrder())</code> で最も遅い日付 =
+                  3/18。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 12-3-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たす
+            <code>EventPlanner</code> クラスを作成してください。
+          </p>
+          <ul>
+            <li>基準日を <code>2024-04-01</code> とする</li>
+            <li>以下の処理をすべて行い出力する</li>
+          </ul>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>処理</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>月末の営業日</td>
+                <td>
+                  4月の月末（4/30）が平日かどうか確認し、土日なら前の金曜日を返す
+                </td>
+              </tr>
+              <tr>
+                <td>四半期末</td>
+                <td>
+                  第1四半期（1〜3月）の末日（<code>TemporalAdjusters</code>使用）
+                </td>
+              </tr>
+              <tr>
+                <td>残り営業日数</td>
+                <td>
+                  基準日から月末まで（4/1〜4/30）の平日の数を
+                  <code>datesUntil</code> で数える
+                </td>
+              </tr>
+              <tr>
+                <td>次の月曜日</td>
+                <td>基準日以降の最初の月曜日（<code>nextOrSame</code>）</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>月末営業日: 2024-04-30
+第1四半期末: 2024-03-31
+4月の残り営業日数: 22
+次の月曜日: 2024-04-01</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">EventPlanner.java</div>
+                <pre><code>import java.time.*;
+import java.time.temporal.*;
+
+public class EventPlanner {
+
+    static boolean isWeekend(LocalDate d) {
+        return d.getDayOfWeek() == DayOfWeek.SATURDAY
+            || d.getDayOfWeek() == DayOfWeek.SUNDAY;
+    }
+
+    public static void main(String[] args) {
+        LocalDate base = LocalDate.of(2024, 4, 1);
+
+        // 月末の営業日（月末が土日なら前の金曜日）
+        LocalDate monthEnd = base.with(TemporalAdjusters.lastDayOfMonth());
+        while (isWeekend(monthEnd)) monthEnd = monthEnd.minusDays(1);
+        System.out.println("月末営業日: " + monthEnd);
+
+        // 第1四半期末（3月末）
+        LocalDate q1End = base.withMonth(3)
+            .with(TemporalAdjusters.lastDayOfMonth());
+        System.out.println("第1四半期末: " + q1End);
+
+        // 残り営業日数（4/1〜4/30）
+        LocalDate end = base.with(TemporalAdjusters.lastDayOfMonth());
+        long bizDays = base.datesUntil(end.plusDays(1))
+            .filter(d -> !isWeekend(d))
+            .count();
+        System.out.println("4月の残り営業日数: " + bizDays);
+
+        // 次の月曜日（基準日以降）
+        LocalDate nextMon = base.with(
+            TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
+        System.out.println("次の月曜日: " + nextMon);
+    }
+}</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>2024-04-30 は火曜日なのでそのまま月末営業日。</li>
+                <li>
+                  第1四半期末：<code>withMonth(3).with(lastDayOfMonth())</code>
+                  → 2024-03-31。
+                </li>
+                <li>
+                  4月の平日数：4/1（月）〜4/30（火）で土日は6日（4/6,7,13,14,20,21,27,28）=
+                  8日。30-8=22日。
+                </li>
+                <li>
+                  2024-04-01 は月曜日なので <code>nextOrSame(MONDAY)</code> =
+                  4/1 自体。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../12-2/12-2_period_duration_formatter.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../../Chapter13/13-1/13-1_hashmap_basics.html">＞</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

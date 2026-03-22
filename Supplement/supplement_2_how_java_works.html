@@ -1,0 +1,1468 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>補足2. Javaはどのように動くのか</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      /* Header */
+      .page-header {
+        background: linear-gradient(135deg, #1a202c, #2d3748);
+        color: white;
+        border-radius: 14px;
+        padding: 36px 40px;
+        margin-bottom: 40px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.82rem;
+        opacity: 0.65;
+        letter-spacing: 0.1em;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+      }
+      .page-header h1 {
+        font-size: 1.9rem;
+        font-weight: 800;
+        line-height: 1.3;
+        margin-bottom: 10px;
+      }
+      .page-header .subtitle {
+        font-size: 1rem;
+        opacity: 0.8;
+      }
+
+      /* Section title */
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin: 52px 0 20px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #e2e8f0;
+      }
+      .section-title .st-icon {
+        font-size: 1.4rem;
+      }
+
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 28px 0 10px;
+      }
+      h4 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #4a5568;
+        margin: 16px 0 8px;
+      }
+      p {
+        margin-bottom: 14px;
+        font-size: 0.95rem;
+      }
+      ul,
+      ol {
+        padding-left: 22px;
+        margin-bottom: 12px;
+      }
+      li {
+        margin-bottom: 6px;
+        font-size: 0.92rem;
+      }
+
+      code {
+        background: #edf2f7;
+        color: #2d3748;
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        font-size: 0.88em;
+      }
+
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 0.92rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .info {
+        border-left: 4px solid #63b3ed;
+        background: #ebf8ff;
+        border-radius: 0 8px 8px 0;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 0.92rem;
+      }
+      .info strong {
+        color: #2b6cb0;
+      }
+      .success {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 0.92rem;
+      }
+      .success strong {
+        color: #276749;
+      }
+
+      /* Code blocks */
+      .code-block {
+        background: #1e2a3a;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-block .cb-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 6px 16px;
+        letter-spacing: 0.05em;
+      }
+      .code-block pre {
+        padding: 16px 20px;
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        font-size: 0.87rem;
+        line-height: 1.7;
+        color: #e2e8f0;
+        overflow-x: auto;
+      }
+
+      /* ===== DIAGRAMS ===== */
+
+      /* 1. Program execution analogy */
+      .analogy-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin: 16px 0;
+      }
+      .analogy-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 18px 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      }
+      .analogy-card .ac-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        margin-bottom: 8px;
+      }
+      .ac-recipe {
+        border-top: 4px solid #c05621;
+      }
+      .ac-recipe .ac-label {
+        color: #c05621;
+      }
+      .ac-java {
+        border-top: 4px solid #2b6cb0;
+      }
+      .ac-java .ac-label {
+        color: #2b6cb0;
+      }
+      .analogy-card .ac-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .analogy-card .ac-rows {
+        font-size: 0.88rem;
+      }
+      .ac-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 6px;
+        align-items: flex-start;
+      }
+      .ac-row .ar-icon {
+        font-size: 1rem;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+      .ac-row .ar-text {
+        color: #4a5568;
+      }
+
+      /* 2. Compile/run pipeline */
+      .pipeline-diagram {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        padding: 28px 32px;
+        margin: 20px 0;
+      }
+      .pd-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 22px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .pd-flow {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+      }
+      .pd-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        flex-shrink: 0;
+      }
+      .pd-box {
+        padding: 12px 16px;
+        border-radius: 10px;
+        width: 110px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        line-height: 1.4;
+      }
+      .pd-sub {
+        font-size: 0.68rem;
+        color: #718096;
+        margin-top: 5px;
+        font-family: monospace;
+      }
+      .pdb-src {
+        background: #ebf8ff;
+        color: #1a365d;
+        border: 2px solid #90cdf4;
+      }
+      .pdb-compiler {
+        background: #fefcbf;
+        color: #744210;
+        border: 2px solid #f6e05e;
+      }
+      .pdb-byte {
+        background: #e9d8fd;
+        color: #44337a;
+        border: 2px solid #d6bcfa;
+      }
+      .pdb-jvm {
+        background: #c6f6d5;
+        color: #22543d;
+        border: 2px solid #9ae6b4;
+      }
+      .pdb-os {
+        background: #fed7d7;
+        color: #742a2a;
+        border: 2px solid #fc8181;
+      }
+      .pdb-cpu {
+        background: #2d3748;
+        color: white;
+      }
+      .pd-arrow {
+        color: #a0aec0;
+        font-size: 1.6rem;
+        padding: 0 4px;
+        flex-shrink: 0;
+        padding-bottom: 18px;
+      }
+      .pd-label {
+        font-size: 0.72rem;
+        color: #718096;
+        margin-top: 3px;
+      }
+
+      /* 3. JVM internal structure */
+      .jvm-diagram {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        padding: 28px 32px;
+        margin: 20px 0;
+      }
+      .jd-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .jvm-outer {
+        border: 3px solid #276749;
+        border-radius: 12px;
+        padding: 20px;
+        background: #f0fff4;
+        position: relative;
+      }
+      .jvm-outer-label {
+        position: absolute;
+        top: -13px;
+        left: 16px;
+        background: #276749;
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 2px 12px;
+        border-radius: 10px;
+      }
+      .jvm-inner-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .jvm-box {
+        background: #fff;
+        border-radius: 8px;
+        padding: 12px 14px;
+        border: 2px solid #e2e8f0;
+      }
+      .jvm-box .jb-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #276749;
+        margin-bottom: 4px;
+      }
+      .jvm-box .jb-desc {
+        font-size: 0.78rem;
+        color: #718096;
+      }
+      .jvm-exec-box {
+        background: #276749;
+        color: white;
+        border-radius: 8px;
+        padding: 12px 14px;
+        text-align: center;
+      }
+      .jvm-exec-box .je-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+      }
+      .jvm-exec-box .je-desc {
+        font-size: 0.78rem;
+        opacity: 0.85;
+      }
+      .jvm-jit {
+        background: #fefcbf;
+        border: 2px solid #f6e05e;
+        border-radius: 8px;
+        padding: 12px 14px;
+        margin-top: 10px;
+      }
+      .jvm-jit .jj-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #744210;
+        margin-bottom: 4px;
+      }
+      .jvm-jit .jj-desc {
+        font-size: 0.78rem;
+        color: #744210;
+      }
+
+      /* 4. WORA diagram */
+      .wora-diagram {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        padding: 28px 32px;
+        margin: 20px 0;
+      }
+      .wd-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 18px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .wd-source {
+        background: #2d3748;
+        color: white;
+        border-radius: 10px;
+        padding: 12px 20px;
+        text-align: center;
+        font-family: monospace;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-block;
+        margin-bottom: 16px;
+      }
+      .wd-byte {
+        background: #e9d8fd;
+        border: 2px solid #d6bcfa;
+        border-radius: 10px;
+        padding: 12px 20px;
+        text-align: center;
+        font-family: monospace;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #44337a;
+        display: block;
+        margin-bottom: 16px;
+      }
+      .wd-platforms {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .wd-platform {
+        border-radius: 10px;
+        padding: 12px 18px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        flex: 1;
+        min-width: 120px;
+      }
+      .wd-win {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        border: 2px solid #bee3f8;
+      }
+      .wd-mac {
+        background: #f0fff4;
+        color: #276749;
+        border: 2px solid #9ae6b4;
+      }
+      .wd-linux {
+        background: #fefcbf;
+        color: #744210;
+        border: 2px solid #f6e05e;
+      }
+      .wd-label {
+        font-size: 0.7rem;
+        font-weight: 400;
+        margin-top: 3px;
+      }
+      .wd-arrow-down {
+        text-align: center;
+        color: #a0aec0;
+        font-size: 1.4rem;
+        margin: 4px 0;
+      }
+      .wd-arrow-fan {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        color: #a0aec0;
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+      }
+
+      /* 5. Memory model */
+      .memory-diagram {
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        padding: 28px 32px;
+        margin: 20px 0;
+      }
+      .md-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .md-areas {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+      }
+      .md-area {
+        border-radius: 8px;
+        padding: 12px 14px;
+      }
+      .mda-heap {
+        background: #ebf8ff;
+        border: 2px solid #90cdf4;
+      }
+      .mda-stack {
+        background: #fefcbf;
+        border: 2px solid #f6e05e;
+      }
+      .mda-method {
+        background: #e9d8fd;
+        border: 2px solid #d6bcfa;
+      }
+      .md-area .ma-name {
+        font-weight: 700;
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+      }
+      .mda-heap .ma-name {
+        color: #2b6cb0;
+      }
+      .mda-stack .ma-name {
+        color: #744210;
+      }
+      .mda-method .ma-name {
+        color: #44337a;
+      }
+      .md-area .ma-desc {
+        font-size: 0.78rem;
+        color: #4a5568;
+      }
+      .md-area .ma-ex {
+        font-family: monospace;
+        font-size: 0.75rem;
+        margin-top: 6px;
+        color: #718096;
+      }
+
+      /* 6. GC visual */
+      .gc-visual {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+      }
+      .gc-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 12px;
+      }
+      .gc-heap {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .gc-obj {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+      .gc-alive {
+        background: #c6f6d5;
+        color: #22543d;
+        border: 2px solid #9ae6b4;
+      }
+      .gc-dead {
+        background: #fed7d7;
+        color: #c53030;
+        border: 2px dashed #fc8181;
+        text-decoration: line-through;
+      }
+      .gc-empty {
+        background: #edf2f7;
+        color: #a0aec0;
+        border: 2px dashed #e2e8f0;
+      }
+      .gc-arrow {
+        color: #a0aec0;
+        font-size: 1.4rem;
+      }
+      .gc-label {
+        font-size: 0.75rem;
+        color: #718096;
+        margin-top: 8px;
+      }
+
+      /* 7. JIT comparison */
+      .jit-compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin: 16px 0;
+      }
+      .jit-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      }
+      .jit-card .jc-header {
+        padding: 10px 16px;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .jc-interp {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .jc-jit {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .jit-card .jc-body {
+        padding: 12px 16px;
+        font-size: 0.85rem;
+        color: #4a5568;
+      }
+
+      /* 8. Java vs C comparison */
+      .lang-compare {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+        margin: 16px 0;
+      }
+      .lc-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .lc-header div {
+        padding: 10px 14px;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+      .lc-h-item {
+        background: #2d3748;
+        color: white;
+      }
+      .lc-h-java {
+        background: #2b6cb0;
+        color: white;
+      }
+      .lc-h-c {
+        background: #c05621;
+        color: white;
+      }
+      .lc-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .lc-row:last-child {
+        border-bottom: none;
+      }
+      .lc-row div {
+        padding: 9px 14px;
+        font-size: 0.85rem;
+      }
+      .lc-row div:first-child {
+        font-weight: 600;
+        color: #4a5568;
+      }
+      .lc-row:nth-child(even) {
+        background: #f7fafc;
+      }
+      .ok {
+        color: #22543d;
+        font-weight: 700;
+      }
+      .ng {
+        color: #c53030;
+      }
+      .mid {
+        color: #744210;
+      }
+
+      /* Thread diagram */
+      .thread-diagram {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 18px 22px;
+        margin: 14px 0;
+      }
+      .td-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 12px;
+      }
+      .td-process {
+        border: 2px solid #2d3748;
+        border-radius: 10px;
+        padding: 14px 18px;
+        background: #f7fafc;
+      }
+      .td-process-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 10px;
+      }
+      .td-shared {
+        background: #ebf8ff;
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin-bottom: 10px;
+        font-size: 0.82rem;
+        color: #2b6cb0;
+        font-weight: 600;
+        text-align: center;
+      }
+      .td-threads {
+        display: flex;
+        gap: 8px;
+      }
+      .td-thread {
+        background: #e9d8fd;
+        border: 2px solid #d6bcfa;
+        border-radius: 8px;
+        padding: 8px 12px;
+        flex: 1;
+        text-align: center;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #44337a;
+      }
+      .td-thread .tt-stack {
+        background: #fefcbf;
+        border-radius: 4px;
+        padding: 3px 6px;
+        font-size: 0.72rem;
+        color: #744210;
+        margin-top: 4px;
+        font-weight: 400;
+      }
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #2d3748;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="chapter-label">補足 ▶ Java の仕組み</div>
+        <h1>Javaはどのように<br />動くのか</h1>
+        <div class="subtitle">
+          コンパイル・バイトコード・JVM・メモリ管理 — Java
+          とコンピュータの関係を理解する
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div style="width: 20px"></div>
+        <div class="page-button">
+          <a href="../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div style="width: 20px"></div>
+      </div>
+
+      <!-- ===== 1. プログラムが動くとはどういうことか ===== -->
+      <div class="section-title">
+        <span class="st-icon">🤔</span>
+        そもそも「プログラムが動く」とはどういうことか
+      </div>
+
+      <p>
+        コンピュータの CPU が理解できるのは
+        <strong>0と1の機械語（マシンコード）</strong> だけです。<br />
+        私たちが書く Java
+        のコードは人間が読みやすい形で書かれており、そのままでは CPU
+        は実行できません。
+      </p>
+
+      <p>
+        Java がどのように CPU
+        で動くのかを理解するために、まず料理のレシピに例えて考えてみましょう。
+      </p>
+
+      <div class="analogy-grid">
+        <div class="analogy-card ac-recipe">
+          <div class="ac-label">🍳 料理のたとえ</div>
+          <div class="ac-title">レシピを料理に変える</div>
+          <div class="ac-rows">
+            <div class="ac-row">
+              <span class="ar-icon">📝</span
+              ><span class="ar-text"
+                ><strong>レシピ（日本語）</strong>：人間が読める手順書</span
+              >
+            </div>
+            <div class="ac-row">
+              <span class="ar-icon">👨‍🍳</span
+              ><span class="ar-text"
+                ><strong>シェフ</strong>：レシピを解釈して実際に調理する</span
+              >
+            </div>
+            <div class="ac-row">
+              <span class="ar-icon">🍽️</span
+              ><span class="ar-text"
+                ><strong>完成した料理</strong>：実際に食べられる結果</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="analogy-card ac-java">
+          <div class="ac-label">☕ Java の場合</div>
+          <div class="ac-title">コードをプログラムに変える</div>
+          <div class="ac-rows">
+            <div class="ac-row">
+              <span class="ar-icon">📝</span
+              ><span class="ar-text"
+                ><strong>Java ソースコード（.java）</strong
+                >：人間が読める命令</span
+              >
+            </div>
+            <div class="ac-row">
+              <span class="ar-icon">⚙️</span
+              ><span class="ar-text"
+                ><strong>JVM</strong>：コードを解釈して実際に実行する</span
+              >
+            </div>
+            <div class="ac-row">
+              <span class="ar-icon">💻</span
+              ><span class="ar-text"
+                ><strong>プログラムの動作</strong>：実際に動く結果</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 2. コンパイルと実行の流れ ===== -->
+      <div class="section-title">
+        <span class="st-icon">⚙️</span>
+        コンパイルと実行の詳細な流れ
+      </div>
+
+      <p>
+        Java のプログラムが実行されるまでには、大きく
+        <strong>2つのフェーズ</strong>（コンパイルと実行）があります。
+      </p>
+
+      <div class="pipeline-diagram">
+        <div class="pd-title">
+          ▶ Java プログラムが CPU で動くまでの全ステップ
+        </div>
+        <div class="pd-flow">
+          <div class="pd-step">
+            <div class="pd-box pdb-src">📝<br />ソースコード</div>
+            <div class="pd-sub">Main.java</div>
+            <div class="pd-label">人間が書く</div>
+          </div>
+          <div class="pd-arrow">→</div>
+          <div class="pd-step">
+            <div class="pd-box pdb-compiler">
+              ⚙️<br />javac<br />（コンパイラ）
+            </div>
+            <div class="pd-sub">変換処理</div>
+            <div class="pd-label">文法チェック＋変換</div>
+          </div>
+          <div class="pd-arrow">→</div>
+          <div class="pd-step">
+            <div class="pd-box pdb-byte">📦<br />バイトコード</div>
+            <div class="pd-sub">Main.class</div>
+            <div class="pd-label">中間コード</div>
+          </div>
+          <div class="pd-arrow">→</div>
+          <div class="pd-step">
+            <div class="pd-box pdb-jvm">▶️<br />JVM<br />（仮想マシン）</div>
+            <div class="pd-sub">解釈・実行</div>
+            <div class="pd-label">OS依存の処理を吸収</div>
+          </div>
+          <div class="pd-arrow">→</div>
+          <div class="pd-step">
+            <div class="pd-box pdb-os">🖥️<br />OS</div>
+            <div class="pd-sub">Windows/macOS<br />/Linux</div>
+            <div class="pd-label">システムコール</div>
+          </div>
+          <div class="pd-arrow">→</div>
+          <div class="pd-step">
+            <div class="pd-box pdb-cpu">⚡<br />CPU</div>
+            <div class="pd-sub">機械語を実行</div>
+            <div class="pd-label">0と1の演算</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>フェーズ1：コンパイル（javac）</h3>
+      <p>
+        <code>javac Main.java</code>
+        を実行すると、Javaコンパイラが以下を行います。
+      </p>
+      <ul>
+        <li>
+          <strong>文法チェック</strong
+          >：括弧の対応・型の不一致・未定義の変数などのエラーをここで検出する
+        </li>
+        <li>
+          <strong>バイトコードへの変換</strong
+          >：人間が読めるソースコードを「バイトコード」という中間形式に変換する
+        </li>
+        <li>
+          <strong>.class ファイルの生成</strong>：<code>Main.class</code>
+          というファイルが生成される
+        </li>
+      </ul>
+
+      <div class="code-block">
+        <div class="cb-label">
+          ソースコード（人間が読める）→ バイトコード（機械寄りの中間コード）
+        </div>
+        <pre><span style="color:#9ae6b4;">// Java ソースコード（Main.java）</span>
+<span style="color:#e2e8f0;">System.out.println(</span><span style="color:#fc8181;">"Hello"</span><span style="color:#e2e8f0;">);</span>
+
+<span style="color:#9ae6b4;">// ↓ javac でコンパイル後のバイトコード（javap -c Main で確認できる）</span>
+<span style="color:#a0aec0;">0: getstatic     #7   // Field java/lang/System.out:Ljava/io/PrintStream;
+3: ldc           #13  // String Hello
+5: invokevirtual #15  // Method println:(Ljava/lang/String;)V
+8: return</span>
+
+<span style="color:#68d391;">// バイトコードは「JVMへの命令書」。OSや CPU の種類には依存しない</span></pre>
+      </div>
+
+      <h3>フェーズ2：実行（java / JVM）</h3>
+      <p>
+        <code>java Main</code> を実行すると、JVM（Java Virtual Machine）が
+        <code>Main.class</code> を読み込んで実行します。
+      </p>
+
+      <!-- ===== 3. JVM とは何か ===== -->
+      <div class="section-title">
+        <span class="st-icon">🏗️</span>
+        JVM（Java Virtual Machine）の内部構造
+      </div>
+
+      <p>
+        JVM
+        は「仮想的なコンピュータ」です。バイトコードを受け取り、実際に動いている
+        OS・CPU の命令に変換して実行します。
+      </p>
+
+      <div class="jvm-diagram">
+        <div class="jd-title">▶ JVM の主要コンポーネント</div>
+        <div class="jvm-outer">
+          <div class="jvm-outer-label">JVM（Java Virtual Machine）</div>
+          <div class="jvm-inner-grid">
+            <div class="jvm-box">
+              <div class="jb-name">📥 クラスローダー（Class Loader）</div>
+              <div class="jb-desc">
+                <code>.class</code>
+                ファイルをメモリに読み込む。必要なクラスを動的にロードする仕組み
+              </div>
+            </div>
+            <div class="jvm-box">
+              <div class="jb-name">🔍 バイトコードベリファイア</div>
+              <div class="jb-desc">
+                読み込んだバイトコードが安全かどうかを検証する。不正な操作を防ぐセキュリティ機構
+              </div>
+            </div>
+            <div class="jvm-box">
+              <div class="jb-name">📚 ランタイムデータ領域</div>
+              <div class="jb-desc">
+                ヒープ（オブジェクト）・スタック（メソッド呼び出し）・メソッド領域（クラス情報）など
+              </div>
+            </div>
+            <div class="jvm-box">
+              <div class="jb-name">🗑️ ガベージコレクター（GC）</div>
+              <div class="jb-desc">
+                不要になったオブジェクトを自動的にメモリから解放する。C言語のような手動メモリ管理は不要
+              </div>
+            </div>
+          </div>
+          <div class="jvm-exec-box">
+            <div class="je-name">▶️ 実行エンジン（Execution Engine）</div>
+            <div class="je-desc">
+              バイトコードを実際に実行する核心部分。インタープリタと JIT
+              コンパイラを含む
+            </div>
+          </div>
+          <div class="jvm-jit">
+            <div class="jj-name">
+              ⚡ JIT コンパイラ（Just-In-Time Compiler）
+            </div>
+            <div class="jj-desc">
+              頻繁に実行されるバイトコードをネイティブコード（機械語）に変換してキャッシュする。これにより実行が高速化する
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 4. Write Once, Run Anywhere ===== -->
+      <div class="section-title">
+        <span class="st-icon">🌏</span>
+        なぜどのOSでも動くのか — Write Once, Run Anywhere
+      </div>
+
+      <p>
+        Java の有名なキャッチフレーズ「<strong>Write Once, Run Anywhere</strong
+        >」（一度書けば、どこでも動く）の秘密はバイトコードにあります。
+      </p>
+
+      <div class="wora-diagram">
+        <div class="wd-title">▶ バイトコードが「橋渡し役」になる</div>
+        <div style="text-align: center">
+          <div class="wd-source">
+            📝 Main.java<br /><small>（一度書くだけ）</small>
+          </div>
+          <div class="wd-arrow-down">↓ javac でコンパイル</div>
+          <div class="wd-byte">
+            📦 Main.class（バイトコード）<br /><small
+              >どのOSでも同じファイルが使える</small
+            >
+          </div>
+          <div class="wd-arrow-fan">
+            <span>↙</span><span>↓</span><span>↘</span>
+          </div>
+        </div>
+        <div class="wd-platforms">
+          <div class="wd-platform wd-win">
+            🪟 Windows<br />
+            <span class="wd-label">Windows用JVM</span>
+          </div>
+          <div class="wd-platform wd-mac">
+            🍎 macOS<br />
+            <span class="wd-label">macOS用JVM</span>
+          </div>
+          <div class="wd-platform wd-linux">
+            🐧 Linux<br />
+            <span class="wd-label">Linux用JVM</span>
+          </div>
+        </div>
+        <p
+          style="
+            text-align: center;
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 12px;
+          "
+        >
+          各OS用の JVM
+          がバイトコードをそれぞれのOSのネイティブコードに変換して実行する
+        </p>
+      </div>
+
+      <p>
+        C言語や C++ の場合、Windows 用・macOS 用・Linux
+        用にそれぞれ別々にコンパイルし直す必要があります。Java
+        はバイトコードという「中間層」を挟むことで、1回コンパイルしたファイルをどこでも動かせます。
+      </p>
+
+      <div class="lang-compare">
+        <div class="lc-header">
+          <div class="lc-h-item">比較項目</div>
+          <div class="lc-h-java">☕ Java</div>
+          <div class="lc-h-c">⚙️ C / C++</div>
+        </div>
+        <div class="lc-row">
+          <div>コンパイル結果</div>
+          <div class="ok">バイトコード（OS非依存）</div>
+          <div class="ng">ネイティブコード（OS依存）</div>
+        </div>
+        <div class="lc-row">
+          <div>OS をまたいで動くか</div>
+          <div class="ok">✅ 同じ .class ファイルで動く</div>
+          <div class="ng">❌ OS ごとに再コンパイルが必要</div>
+        </div>
+        <div class="lc-row">
+          <div>実行速度</div>
+          <div class="mid">△ JVM 起動のオーバーヘッドあり（JIT で改善）</div>
+          <div class="ok">✅ 直接 CPU で動くため高速</div>
+        </div>
+        <div class="lc-row">
+          <div>メモリ管理</div>
+          <div class="ok">✅ GC が自動管理（楽）</div>
+          <div class="ng">⚠️ 手動管理が必要（バグの原因になりやすい）</div>
+        </div>
+        <div class="lc-row">
+          <div>セキュリティ</div>
+          <div class="ok">✅ JVM がサンドボックスで保護</div>
+          <div class="mid">△ メモリ境界の誤りが脆弱性になりやすい</div>
+        </div>
+      </div>
+
+      <!-- ===== 5. JIT コンパイラ ===== -->
+      <div class="section-title">
+        <span class="st-icon">⚡</span>
+        JIT コンパイラ — 実行しながら高速化する仕組み
+      </div>
+
+      <p>JVM がバイトコードを実行する方法は2つあります。</p>
+
+      <div class="jit-compare">
+        <div class="jit-card">
+          <div class="jc-header jc-interp">
+            🐢 インタープリタ方式（起動直後）
+          </div>
+          <div class="jc-body">
+            バイトコードを1行ずつ読んでその場で実行する。<br />
+            起動は速いが、繰り返し実行される処理は毎回変換が走るため遅い。
+          </div>
+        </div>
+        <div class="jit-card">
+          <div class="jc-header jc-jit">
+            🐇 JIT コンパイル方式（ホットスポット検出後）
+          </div>
+          <div class="jc-body">
+            頻繁に実行されるコード（ホットスポット）を検出し、ネイティブコードに変換してキャッシュする。<br />
+            2回目以降は直接 CPU が実行するため大幅に高速化。
+          </div>
+        </div>
+      </div>
+
+      <div class="info">
+        <strong>💡 JVM の実装「HotSpot」とは</strong><br />
+        Oracle（および OpenJDK）が開発した JVM
+        の実装名が「<strong>HotSpot</strong>」です。<br />
+        頻繁に実行されるコード（ホットスポット）を検出して JIT
+        コンパイルする技術から命名されました。<br />
+        <code>java -version</code> を実行したときに「HotSpot
+        VM」と表示されるのがこれです。
+      </div>
+
+      <!-- ===== 6. メモリ管理とガベージコレクション ===== -->
+      <div class="section-title">
+        <span class="st-icon">🧹</span>
+        メモリ管理とガベージコレクション（GC）
+      </div>
+
+      <p>
+        Java プログラムが実行されるとき、JVM
+        はメモリをいくつかの領域に分けて管理しています。
+      </p>
+
+      <div class="memory-diagram">
+        <div class="md-title">▶ JVM のメモリ領域</div>
+        <div class="md-areas">
+          <div class="md-area mda-heap">
+            <div class="ma-name">🏔️ ヒープ（Heap）</div>
+            <div class="ma-desc">
+              <code>new</code> で生成したオブジェクトが置かれる場所。<br />
+              GC が管理し、参照されなくなったオブジェクトを自動解放する。
+            </div>
+            <div class="ma-ex">new Dog(), new ArrayList&lt;&gt;(), …</div>
+          </div>
+          <div class="md-area mda-stack">
+            <div class="ma-name">📚 スタック（Stack）</div>
+            <div class="ma-desc">
+              メソッド呼び出しのたびに「フレーム」が積まれる。<br />
+              ローカル変数・引数・戻り先アドレスが保存される。メソッド終了で自動解放。
+            </div>
+            <div class="ma-ex">int x = 5; の x など</div>
+          </div>
+          <div class="md-area mda-method">
+            <div class="ma-name">📖 メソッド領域</div>
+            <div class="ma-desc">
+              クラスの定義情報（フィールド名・メソッドのバイトコードなど）が格納される。<br />
+              static フィールドもここに置かれる。
+            </div>
+            <div class="ma-ex">static int count; など</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>ガベージコレクション（GC）の仕組み</h3>
+      <p>
+        Java では<strong
+          >どこからも参照されなくなったオブジェクトを GC
+          が自動的にメモリから解放</strong
+        >します。<br />
+        C言語のように手動で <code>free()</code> を呼ぶ必要がありません。
+      </p>
+
+      <div class="gc-visual">
+        <div class="gc-title">▶ GC 実行前後のヒープのイメージ</div>
+        <div
+          style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap"
+        >
+          <div>
+            <div style="font-size: 0.75rem; color: #718096; margin-bottom: 6px">
+              GC 前（不要なオブジェクトが残っている）
+            </div>
+            <div class="gc-heap">
+              <div class="gc-obj gc-alive">A</div>
+              <div class="gc-obj gc-dead">B</div>
+              <div class="gc-obj gc-alive">C</div>
+              <div class="gc-obj gc-dead">D</div>
+              <div class="gc-obj gc-alive">E</div>
+              <div class="gc-obj gc-dead">F</div>
+            </div>
+            <div class="gc-label">
+              🔴 赤 = 参照なし（不要）　🟢 緑 = まだ使われている
+            </div>
+          </div>
+          <div class="gc-arrow">
+            →<br /><small style="font-size: 0.7rem; color: #718096"
+              >GC実行</small
+            >
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; color: #718096; margin-bottom: 6px">
+              GC 後（不要なオブジェクトが解放）
+            </div>
+            <div class="gc-heap">
+              <div class="gc-obj gc-alive">A</div>
+              <div class="gc-obj gc-empty"></div>
+              <div class="gc-obj gc-alive">C</div>
+              <div class="gc-obj gc-empty"></div>
+              <div class="gc-obj gc-alive">E</div>
+              <div class="gc-obj gc-empty"></div>
+            </div>
+            <div class="gc-label">⬜ 白 = 解放された（再利用可能）</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>⚠️ GC のデメリット — STW（Stop The World）</strong><br />
+        GC が実行される瞬間、一時的にアプリケーションの処理が止まります（Stop
+        The World）。<br />
+        これが「Java は遅い」と言われる原因の一つです。ただし現代の JVM（G1
+        GC・ZGC など）は<br />
+        この停止時間を数ミリ秒以下に抑えるよう最適化されており、多くのケースで問題になりません。
+      </div>
+
+      <!-- ===== 7. スレッドとマルチスレッド ===== -->
+      <div class="section-title">
+        <span class="st-icon">🧵</span>
+        スレッド — 並列処理の仕組み
+      </div>
+
+      <p>
+        プログラムは通常1本の「実行の流れ（スレッド）」で動いています。<br />
+        Java の JVM
+        は<strong>複数のスレッドを同時に動かす（マルチスレッド）</strong>ことができます。
+      </p>
+
+      <div class="thread-diagram">
+        <div class="td-title">▶ 1つのJVMプロセス内での複数スレッド</div>
+        <div class="td-process">
+          <div class="td-process-label">
+            JVMプロセス（java コマンドで起動した1つのプログラム）
+          </div>
+          <div class="td-shared">
+            📦 ヒープ（全スレッドで共有）　　📖 メソッド領域（全スレッドで共有）
+          </div>
+          <div class="td-threads">
+            <div class="td-thread">
+              Thread-1<br />（main スレッド）
+              <div class="tt-stack">📚 専用スタック</div>
+            </div>
+            <div class="td-thread">
+              Thread-2
+              <div class="tt-stack">📚 専用スタック</div>
+            </div>
+            <div class="td-thread">
+              Thread-3<br />（GC スレッド）
+              <div class="tt-stack">📚 専用スタック</div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size: 0.8rem; color: #718096; margin-top: 10px">
+          ヒープは共有されるため複数スレッドが同じオブジェクトを触れる →
+          <strong>同期処理（synchronized）が重要になる</strong>
+        </p>
+      </div>
+
+      <div class="code-block">
+        <div class="cb-label">マルチスレッドの簡単な例</div>
+        <pre><span style="color:#9ae6b4;">// 新しいスレッドを作って並行処理</span>
+<span style="color:#e2e8f0;">Thread t = </span><span style="color:#9ae6b4;">new</span> <span style="color:#fbd38d;">Thread</span><span style="color:#e2e8f0;">(() -> {</span>
+<span style="color:#e2e8f0;">    System.out.println(</span><span style="color:#fc8181;">"別スレッドで実行！"</span><span style="color:#e2e8f0;">);</span>
+<span style="color:#e2e8f0;">});</span>
+<span style="color:#e2e8f0;">t.start();  </span><span style="color:#9ae6b4;">// 新しいスレッドが起動する</span>
+<span style="color:#e2e8f0;">System.out.println(</span><span style="color:#fc8181;">"メインスレッドで実行！"</span><span style="color:#e2e8f0;">);</span>
+
+<span style="color:#a0aec0;">// どちらが先に出力されるかは実行タイミング次第（非決定的）</span></pre>
+      </div>
+
+      <!-- ===== 8. Java のバージョンと進化 ===== -->
+      <div class="section-title">
+        <span class="st-icon">🕰️</span>
+        Java のバージョンと主要な進化
+      </div>
+
+      <p>
+        Java は 1995年の誕生から約30年間、継続的に進化してきました。<br />
+        本コースで学んだ機能がどのバージョンで追加されたかを知ると、歴史の流れが見えます。
+      </p>
+
+      <div class="lang-compare">
+        <div class="lc-header">
+          <div class="lc-h-item">バージョン（年）</div>
+          <div class="lc-h-java" style="background: #4a5e2a">主な追加機能</div>
+          <div class="lc-h-c" style="background: #4a5568">本コースとの関連</div>
+        </div>
+        <div class="lc-row">
+          <div>Java 1.0（1996）</div>
+          <div>Java 誕生。基本的な言語仕様・AWT・Applet</div>
+          <div>第1〜7章の基礎部分</div>
+        </div>
+        <div class="lc-row">
+          <div>Java 5（2004）</div>
+          <div>
+            ジェネリクス（<code>List&lt;T&gt;</code>）、Enum、Autoboxing、拡張
+            for 文
+          </div>
+          <div>第5章・第9章（Enum）</div>
+        </div>
+        <div class="lc-row">
+          <div>Java 8（2014）</div>
+          <div>
+            <strong
+              >ラムダ式、Stream API、Optional、Date/Time
+              API、関数型インターフェース</strong
+            >
+          </div>
+          <div>第10〜12章（大変革）</div>
+        </div>
+        <div class="lc-row">
+          <div>Java 11（2018）LTS</div>
+          <div>
+            <code>var</code
+            >（ローカル変数の型推論）、<code>String.isBlank()</code>、HttpClient
+          </div>
+          <div>第14章・補足</div>
+        </div>
+        <div class="lc-row">
+          <div>Java 14（2020）</div>
+          <div>
+            <code>record</code>（不変データクラス）、テキストブロック（""" """）
+          </div>
+          <div>第13〜14章で使用</div>
+        </div>
+        <div class="lc-row">
+          <div>Java 17（2021）LTS</div>
+          <div>
+            sealed クラス、パターンマッチング（instanceof）、乱数 API 改善
+          </div>
+          <div>—</div>
+        </div>
+        <div class="lc-row">
+          <div><strong>Java 21（2023）LTS</strong></div>
+          <div>
+            仮想スレッド（Project Loom）、レコードパターン、switch
+            パターンマッチング
+          </div>
+          <div>本コース推奨バージョン</div>
+        </div>
+      </div>
+
+      <div class="success">
+        <strong>✅ Java 8 は特別なマイルストーン</strong><br />
+        ラムダ式・Stream API・Date/Time API が Java 8
+        で一気に導入されました。<br />
+        本コースの後半（第10〜12章）で学んだ内容はほぼすべて Java 8
+        以降の機能です。<br />
+        Java 8 以前のコードと以後のコードでは書き方が大きく変わるため、「Java 8
+        前後」を意識すると歴史の理解が深まります。
+      </div>
+
+      <!-- ===== まとめ ===== -->
+      <div class="section-title">
+        <span class="st-icon">📌</span>
+        まとめ：Java とコンピュータの関係
+      </div>
+
+      <div class="lang-compare">
+        <div class="lc-header">
+          <div class="lc-h-item" style="grid-column: span 1">キーワード</div>
+          <div
+            class="lc-h-java"
+            style="background: #2d3748; grid-column: span 2"
+          >
+            ひとことで言うと
+          </div>
+        </div>
+        <div class="lc-row" style="grid-template-columns: 1fr 2fr">
+          <div><strong>コンパイル</strong></div>
+          <div>
+            人間が読めるソースコードを、JVM
+            が読めるバイトコードに変換すること（<code>javac</code>）
+          </div>
+        </div>
+        <div class="lc-row" style="grid-template-columns: 1fr 2fr">
+          <div><strong>バイトコード</strong></div>
+          <div>
+            CPU に依存しない中間形式の命令。<code>.class</code>
+            ファイルとして保存される
+          </div>
+        </div>
+        <div class="lc-row" style="grid-template-columns: 1fr 2fr">
+          <div><strong>JVM</strong></div>
+          <div>
+            バイトコードを受け取り、実際の CPU・OS
+            の命令に変換して実行する仮想マシン
+          </div>
+        </div>
+        <div class="lc-row" style="grid-template-columns: 1fr 2fr">
+          <div><strong>JIT コンパイラ</strong></div>
+          <div>
+            頻繁に実行されるバイトコードを機械語に変換してキャッシュし、実行を高速化する仕組み
+          </div>
+        </div>
+        <div class="lc-row" style="grid-template-columns: 1fr 2fr">
+          <div><strong>ガベージコレクション</strong></div>
+          <div>
+            不要になったオブジェクトを自動でメモリから解放する仕組み。手動管理が不要
+          </div>
+        </div>
+        <div class="lc-row" style="grid-template-columns: 1fr 2fr">
+          <div><strong>WORA</strong></div>
+          <div>
+            Write Once, Run Anywhere。バイトコードがどの OS
+            でも動くことで実現される Java の特徴
+          </div>
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div style="width: 20px"></div>
+        <div class="page-button">
+          <a href="../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div style="width: 20px"></div>
+      </div>
+    </div>
+  </body>
+</html>

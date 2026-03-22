@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>13-2. TreeMap / LinkedHashMap と Map の応用</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      .page-header {
+        background: linear-gradient(135deg, #702459, #b83280);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #702459;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #fbb6ce;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #b83280;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
+
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #fff5f7;
+        color: #702459;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
+
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #b83280;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #fff5f7;
+      }
+
+      /* Three-way comparison */
+      .three-compare {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .tc-card {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      }
+      .tc-header {
+        padding: 9px 14px;
+        font-weight: 700;
+        font-size: 0.88rem;
+        font-family: monospace;
+      }
+      .tc-hash {
+        background: #fff5f7;
+        color: #702459;
+      }
+      .tc-tree {
+        background: #f0fff4;
+        color: #22543d;
+      }
+      .tc-linked {
+        background: #ebf8ff;
+        color: #1a365d;
+      }
+      .tc-body {
+        padding: 10px 14px;
+        font-size: 0.82rem;
+        color: #718096;
+      }
+      .tc-tag {
+        display: inline-block;
+        padding: 1px 8px;
+        border-radius: 10px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .tag-fast {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .tag-sorted {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .tag-order {
+        background: #bee3f8;
+        color: #1a365d;
+      }
+
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
+
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #fff5f7;
+        border-bottom: 1px solid #fbb6ce;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #702459;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
+
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #b83280;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #702459;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #b83280;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
+
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #b83280;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第13章 ▶ Map</div>
+        <h1>13-2. TreeMap / LinkedHashMap と Map の応用</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐☆　|　問題数：3問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../13-1/13-1_hashmap_basics.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../13-3/13-3_map_stream_groupingby.html">＞</a>
+        </div>
+      </div>
+
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <!-- 3種比較 -->
+      <h3>HashMap / TreeMap / LinkedHashMap の比較</h3>
+      <div class="three-compare">
+        <div class="tc-card">
+          <div class="tc-header tc-hash">HashMap</div>
+          <div class="tc-body">
+            <div class="tc-tag tag-fast">⚡ 最速</div>
+            <p>
+              ハッシュテーブルで実装。<br />順序の保証なし。null キー・値OK。
+            </p>
+          </div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-header tc-tree">TreeMap</div>
+          <div class="tc-body">
+            <div class="tc-tag tag-sorted">🔤 キー昇順</div>
+            <p>赤黒木で実装。キーが常に昇順。firstKey/lastKey などが使える。</p>
+          </div>
+        </div>
+        <div class="tc-card">
+          <div class="tc-header tc-linked">LinkedHashMap</div>
+          <div class="tc-body">
+            <div class="tc-tag tag-order">📋 挿入順保持</div>
+            <p>ハッシュ＋双方向リスト。追加した順序でイテレートされる。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TreeMap -->
+      <h3>TreeMap：キーがソートされる Map</h3>
+      <div class="code-wrap">
+        <div class="code-label">TreeMap の使い方</div>
+        <pre><code>import java.util.*;
+
+TreeMap&lt;String, Integer&gt; tree = new TreeMap&lt;&gt;();
+tree.put("banana", 120);
+tree.put("apple",  150);
+tree.put("cherry", 800);
+tree.put("date",   200);
+
+// 自動的にキー昇順
+tree.forEach((k, v) -> System.out.println(k + ": " + v));
+// apple: 150, banana: 120, cherry: 800, date: 200
+
+// TreeMap 固有のメソッド
+System.out.println(tree.firstKey());        // apple（最小キー）
+System.out.println(tree.lastKey());         // date（最大キー）
+System.out.println(tree.lowerKey("cherry")); // banana（cherryより小さい最大キー）
+System.out.println(tree.higherKey("banana")); // cherry
+
+// headMap：指定キー未満のサブマップ
+System.out.println(tree.headMap("cherry")); // {apple=150, banana=120}
+
+// tailMap：指定キー以上のサブマップ
+System.out.println(tree.tailMap("cherry")); // {cherry=800, date=200}</code></pre>
+      </div>
+
+      <!-- LinkedHashMap -->
+      <h3>LinkedHashMap：挿入順を保持する Map</h3>
+      <div class="code-wrap">
+        <div class="code-label">LinkedHashMap の使い方</div>
+        <pre><code>import java.util.*;
+
+// 挿入順
+Map&lt;String, Integer&gt; linked = new LinkedHashMap&lt;&gt;();
+linked.put("banana", 120);
+linked.put("apple",  150);
+linked.put("cherry", 800);
+
+// 挿入した順番で出力される
+linked.forEach((k, v) -> System.out.println(k + ": " + v));
+// banana: 120 → apple: 150 → cherry: 800
+
+// アクセス順モード（LRUキャッシュなどに使用）
+Map&lt;String, Integer&gt; lru = new LinkedHashMap&lt;&gt;(16, 0.75f, true);
+lru.put("a", 1);
+lru.put("b", 2);
+lru.put("c", 3);
+lru.get("a");   // a にアクセス → a が末尾へ
+lru.forEach((k, v) -> System.out.print(k + " "));
+// b c a（アクセス順）</code></pre>
+      </div>
+
+      <!-- Map と Stream の組み合わせ -->
+      <h3>Map と Stream API の組み合わせ</h3>
+      <div class="code-wrap">
+        <div class="code-label">entrySet().stream() で処理</div>
+        <pre><code>import java.util.*;
+import java.util.stream.*;
+
+Map&lt;String, Integer&gt; scores = Map.of(
+    "Alice", 85, "Bob", 72, "Carol", 91,
+    "Dave", 60, "Eve", 88
+);
+
+// 80点以上の名前を昇順で取得
+List&lt;String&gt; passed = scores.entrySet().stream()
+    .filter(e -> e.getValue() >= 80)
+    .map(Map.Entry::getKey)
+    .sorted()
+    .collect(Collectors.toList());
+System.out.println(passed);  // [Alice, Carol, Eve]
+
+// 点数の平均
+double avg = scores.values().stream()
+    .mapToInt(Integer::intValue)
+    .average()
+    .orElse(0);
+System.out.printf("平均: %.1f%n", avg);  // 79.2
+
+// 点数降順に並べた Map（LinkedHashMap で順序保持）
+Map&lt;String, Integer&gt; sorted = scores.entrySet().stream()
+    .sorted(Map.Entry.&lt;String,Integer&gt;comparingByValue().reversed())
+    .collect(Collectors.toMap(
+        Map.Entry::getKey,
+        Map.Entry::getValue,
+        (a, b) -> a,
+        LinkedHashMap::new
+    ));
+sorted.forEach((k, v) -> System.out.println(k + ": " + v));</code></pre>
+      </div>
+
+      <!-- Map&lt;String, List&lt;T&gt;&gt; -->
+      <h3>値がリストの Map（グループ化）</h3>
+      <div class="code-wrap">
+        <div class="code-label">Map&lt;String, List&gt; の操作</div>
+        <pre><code>import java.util.*;
+
+// 学年ごとの学生リスト
+Map&lt;Integer, List&lt;String&gt;&gt; byGrade = new HashMap&lt;&gt;();
+
+// computeIfAbsent でリストを自動生成
+byGrade.computeIfAbsent(1, k -> new ArrayList&lt;&gt;()).add("Alice");
+byGrade.computeIfAbsent(1, k -> new ArrayList&lt;&gt;()).add("Bob");
+byGrade.computeIfAbsent(2, k -> new ArrayList&lt;&gt;()).add("Carol");
+byGrade.computeIfAbsent(3, k -> new ArrayList&lt;&gt;()).add("Dave");
+byGrade.computeIfAbsent(3, k -> new ArrayList&lt;&gt;()).add("Eve");
+
+new TreeMap&lt;&gt;(byGrade).forEach(
+    (g, list) -> System.out.println(g + "年: " + list)
+);
+// 1年: [Alice, Bob]
+// 2年: [Carol]
+// 3年: [Dave, Eve]</code></pre>
+      </div>
+
+      <!-- コード例 -->
+      <h3>コード例：成績管理システム</h3>
+      <div class="code-wrap">
+        <div class="code-label">GradeManager.java</div>
+        <pre><code>import java.util.*;
+import java.util.stream.*;
+
+public class GradeManager {
+    public static void main(String[] args) {
+        Map&lt;String, List&lt;Integer&gt;&gt; grades = new LinkedHashMap&lt;&gt;();
+        grades.put("Alice", List.of(85, 92, 78));
+        grades.put("Bob",   List.of(70, 65, 80));
+        grades.put("Carol", List.of(95, 88, 91));
+
+        // 各生徒の平均点
+        grades.forEach((name, scores) -> {
+            double avg = scores.stream()
+                .mapToInt(Integer::intValue).average().orElse(0);
+            System.out.printf("%s: 平均%.1f点%n", name, avg);
+        });
+
+        System.out.println("---");
+
+        // 平均点でランキング
+        grades.entrySet().stream()
+            .sorted(Comparator.comparingDouble(
+                (Map.Entry&lt;String, List&lt;Integer&gt;&gt; e) ->
+                    e.getValue().stream().mapToInt(Integer::intValue).average().orElse(0)
+            ).reversed())
+            .forEach(e -> System.out.println(e.getKey()));
+    }
+}</code></pre>
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>Alice: 平均85.0点
+Bob: 平均71.7点
+Carol: 平均91.3点
+---
+Carol
+Alice
+Bob</code></pre>
+      </div>
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 13-2-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>import java.util.*;
+
+public class Q1 {
+    public static void main(String[] args) {
+        // TreeMap（キー昇順）
+        TreeMap&lt;Integer, String&gt; tree = new TreeMap&lt;&gt;();
+        tree.put(3, "three");
+        tree.put(1, "one");
+        tree.put(5, "five");
+        tree.put(2, "two");
+        tree.put(4, "four");
+
+        System.out.println(tree.firstKey());
+        System.out.println(tree.lastKey());
+        System.out.println(tree.lowerKey(3));
+        System.out.println(tree.higherKey(3));
+        System.out.println(tree.headMap(3));
+        System.out.println(tree.tailMap(3));
+
+        System.out.println("---");
+
+        // LinkedHashMap（挿入順）
+        Map&lt;String, Integer&gt; linked = new LinkedHashMap&lt;&gt;();
+        linked.put("c", 3);
+        linked.put("a", 1);
+        linked.put("b", 2);
+        linked.forEach((k, v) -> System.out.print(k + " "));
+        System.out.println();
+
+        // 同じデータをHashMapに入れて出力（順不定なので確定しないが）
+        // TreeMapで出力
+        new TreeMap&lt;&gt;(linked).forEach((k, v) -> System.out.print(k + " "));
+        System.out.println();
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>1
+5
+2
+4
+{1=one, 2=two}
+{3=three, 4=four, 5=five}
+---
+c a b 
+a b c </code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>firstKey()</code> = 1（最小）、<code>lastKey()</code> =
+                  5（最大）。
+                </li>
+                <li>
+                  <code>lowerKey(3)</code> = 2（3より小さい最大キー）、<code
+                    >higherKey(3)</code
+                  >
+                  = 4（3より大きい最小キー）。
+                </li>
+                <li>
+                  <code>headMap(3)</code>：3未満のサブマップ → {1=one, 2=two}。
+                </li>
+                <li>
+                  <code>tailMap(3)</code>：3以上のサブマップ → {3=three, 4=four,
+                  5=five}。
+                </li>
+                <li>
+                  LinkedHashMap は挿入順（c→a→b）で出力。TreeMap
+                  に変換するとキー昇順（a→b→c）。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 13-2-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>import java.util.*;
+import java.util.stream.*;
+
+public class Q2 {
+    public static void main(String[] args) {
+        Map&lt;String, Integer&gt; stock = new LinkedHashMap&lt;&gt;();
+        stock.put("りんご",  100);
+        stock.put("バナナ",   50);
+        stock.put("メロン",   10);
+        stock.put("いちご",   30);
+        stock.put("みかん",   80);
+
+        // 在庫30以下の商品名を出力（挿入順）
+        stock.entrySet().stream()
+            .filter(e -> e.getValue() &lt;= 30)
+            .forEach(e -> System.out.println(
+                e.getKey() + ": " + e.getValue()));
+
+        System.out.println("---");
+
+        // 在庫の合計と平均
+        IntSummaryStatistics stats = stock.values().stream()
+            .mapToInt(Integer::intValue)
+            .summaryStatistics();
+        System.out.println("合計: " + stats.getSum());
+        System.out.println("平均: " + stats.getAverage());
+
+        System.out.println("---");
+
+        // computeIfAbsent で在庫0の商品を追加
+        stock.computeIfAbsent("ぶどう", k -> 0);
+        System.out.println(stock.get("ぶどう"));
+        System.out.println(stock.size());
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>メロン: 10
+いちご: 30
+---
+合計: 270
+平均: 54.0
+---
+0
+6</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  在庫30以下：メロン(10)・いちご(30)。LinkedHashMap
+                  なので挿入順で出力。
+                </li>
+                <li>合計：100+50+10+30+80 = 270、平均：270/5 = 54.0。</li>
+                <li>
+                  <code>computeIfAbsent("ぶどう", k → 0)</code
+                  >：ぶどうは未登録なので 0 が追加。size は 6 になる。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 13-2-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たすクラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              <code>Map&lt;String, List&lt;Integer&gt;&gt;</code>（科目名 →
+              点数リスト）を使って複数学生の成績を管理する
+            </li>
+            <li>
+              以下の成績データを登録する（<code>computeIfAbsent</code> を使って
+              List を自動生成する）
+            </li>
+          </ul>
+          <table class="data-table" style="margin-top: 10px">
+            <thead>
+              <tr>
+                <th>科目</th>
+                <th>点数リスト</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>数学</td>
+                <td>85, 72, 91, 60</td>
+              </tr>
+              <tr>
+                <td>英語</td>
+                <td>78, 88, 65, 95</td>
+              </tr>
+              <tr>
+                <td>国語</td>
+                <td>90, 70, 80, 75</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>国語: 平均78.8点 最高90点 最低70点
+数学: 平均77.0点 最高91点 最低60点
+英語: 平均81.5点 最高95点 最低65点
+---
+全科目で80点以上の科目数: 1
+最高平均科目: 英語</code></pre>
+          </div>
+          <div class="hint" style="margin-top: 10px">
+            <strong>💡 ヒント</strong>：科目の統計は
+            <code>summaryStatistics()</code> で取得します。<br />
+            TreeMap で科目名昇順に出力します。
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">Main.java</div>
+                <pre><code>import java.util.*;
+import java.util.stream.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Map&lt;String, List&lt;Integer&gt;&gt; grades = new HashMap&lt;&gt;();
+
+        int[][] data = {{85,72,91,60},{78,88,65,95},{90,70,80,75}};
+        String[] subjects = {"数学", "英語", "国語"};
+
+        for (int i = 0; i &lt; subjects.length; i++) {
+            List&lt;Integer&gt; list = grades.computeIfAbsent(
+                subjects[i], k -> new ArrayList&lt;&gt;());
+            for (int score : data[i]) list.add(score);
+        }
+
+        // 科目名昇順で統計表示
+        new TreeMap&lt;&gt;(grades).forEach((subj, scores) -> {
+            IntSummaryStatistics s = scores.stream()
+                .mapToInt(Integer::intValue).summaryStatistics();
+            System.out.printf("%s: 平均%.1f点 最高%d点 最低%d点%n",
+                subj, s.getAverage(), s.getMax(), s.getMin());
+        });
+
+        System.out.println("---");
+
+        // 平均80点以上の科目数
+        long highCount = grades.values().stream()
+            .filter(scores -> scores.stream()
+                .mapToInt(Integer::intValue).average().orElse(0) >= 80)
+            .count();
+        System.out.println("全科目で80点以上の科目数: " + highCount);
+
+        // 最高平均科目
+        String best = grades.entrySet().stream()
+            .max(Comparator.comparingDouble(e ->
+                e.getValue().stream().mapToInt(Integer::intValue).average().orElse(0)))
+            .map(Map.Entry::getKey).orElse("");
+        System.out.println("最高平均科目: " + best);
+    }
+}</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>国語：(90+70+80+75)/4 = 78.75 → 78.8、最高90、最低70。</li>
+                <li>
+                  数学：(85+72+91+60)/4 = 77.0。英語：(78+88+65+95)/4 = 81.5。
+                </li>
+                <li>平均80点以上の科目：英語(81.5)のみ = 1科目。</li>
+                <li>最高平均は英語(81.5)。</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../13-1/13-1_hashmap_basics.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../13-3/13-3_map_stream_groupingby.html">＞</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1085 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>13-1. HashMapの基本操作</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+          sans-serif;
+        background: #f4f6f9;
+        color: #2d3748;
+        padding: 40px 20px;
+        line-height: 1.8;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      .page-header {
+        background: linear-gradient(135deg, #702459, #b83280);
+        color: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 36px;
+      }
+      .page-header .chapter-label {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .page-header h1 {
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .page-header .meta {
+        margin-top: 10px;
+        font-size: 0.85rem;
+        opacity: 0.8;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #702459;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #fbb6ce;
+      }
+      h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #b83280;
+        margin: 24px 0 10px;
+      }
+      p {
+        margin-bottom: 12px;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+      li {
+        margin-bottom: 4px;
+        font-size: 0.9rem;
+      }
+
+      .code-wrap {
+        background: #1e2a3a;
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 14px 0;
+      }
+      .code-wrap .code-label {
+        background: #2d3f55;
+        color: #a0aec0;
+        font-size: 0.75rem;
+        padding: 5px 14px;
+      }
+      pre {
+        padding: 16px 18px;
+        overflow-x: auto;
+        font-size: 0.88rem;
+        line-height: 1.6;
+      }
+      code {
+        font-family: "Fira Code", "Consolas", "Monaco", monospace;
+        color: #e2e8f0;
+      }
+      p code,
+      li code,
+      td code {
+        background: #fff5f7;
+        color: #702459;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-size: 0.88em;
+      }
+
+      .callout {
+        border-left: 4px solid #f6ad55;
+        background: #fffaf0;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .callout strong {
+        color: #c05621;
+      }
+      .hint {
+        border-left: 4px solid #68d391;
+        background: #f0fff4;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        margin: 14px 0;
+        font-size: 0.88rem;
+      }
+      .hint strong {
+        color: #276749;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        margin: 14px 0 20px;
+        font-size: 0.88rem;
+      }
+      .data-table thead {
+        background: #b83280;
+        color: white;
+      }
+      .data-table thead th {
+        padding: 10px 14px;
+        text-align: left;
+      }
+      .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .data-table tbody tr:last-child {
+        border-bottom: none;
+      }
+      .data-table tbody td {
+        padding: 9px 14px;
+      }
+      .data-table tbody tr:hover {
+        background: #fff5f7;
+      }
+
+      /* Map visual */
+      .map-visual {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+        padding: 20px 24px;
+        margin: 14px 0;
+      }
+      .mv-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #718096;
+        margin-bottom: 14px;
+      }
+      .mv-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .mv-row {
+        display: flex;
+        align-items: center;
+        gap: 0;
+      }
+      .mv-key {
+        background: #b83280;
+        color: white;
+        padding: 8px 16px;
+        font-family: monospace;
+        font-weight: 700;
+        font-size: 0.88rem;
+        border-radius: 8px 0 0 8px;
+        min-width: 120px;
+        text-align: center;
+      }
+      .mv-arrow {
+        background: #fed7e2;
+        color: #702459;
+        padding: 8px 10px;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      .mv-value {
+        background: #fff5f7;
+        color: #702459;
+        padding: 8px 16px;
+        font-family: monospace;
+        font-weight: 600;
+        font-size: 0.88rem;
+        border-radius: 0 8px 8px 0;
+        border: 2px solid #fbb6ce;
+        border-left: none;
+        flex: 1;
+      }
+
+      /* Map types */
+      .map-types {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 14px 0;
+      }
+      .mt-card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 14px 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+        border-top: 4px solid;
+      }
+      .mt-hashmap {
+        border-color: #b83280;
+      }
+      .mt-treemap {
+        border-color: #276749;
+      }
+      .mt-linkedmap {
+        border-color: #2b6cb0;
+      }
+      .mt-card .mc-name {
+        font-weight: 700;
+        font-size: 0.88rem;
+        font-family: monospace;
+        margin-bottom: 4px;
+      }
+      .mt-card .mc-desc {
+        font-size: 0.78rem;
+        color: #718096;
+      }
+      .mt-card .mc-note {
+        font-size: 0.75rem;
+        margin-top: 6px;
+        color: #b83280;
+      }
+
+      .output-box {
+        background: #1e2a3a;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 10px 0;
+      }
+      .output-box .output-label {
+        color: #68d391;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .output-box pre {
+        padding: 0;
+      }
+
+      .problem-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 28px;
+        overflow: hidden;
+      }
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        background: #fff5f7;
+        border-bottom: 1px solid #fbb6ce;
+      }
+      .problem-header .problem-num {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #702459;
+      }
+      .problem-header .badges {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .badge-type-output {
+        background: #c6f6d5;
+        color: #22543d;
+      }
+      .badge-type-code {
+        background: #fefcbf;
+        color: #744210;
+      }
+      .badge-level {
+        background: #e9d8fd;
+        color: #44337a;
+      }
+      .problem-body {
+        padding: 18px 20px;
+      }
+      .problem-body .question-text {
+        font-size: 0.95rem;
+        margin-bottom: 14px;
+      }
+
+      .answer-toggle {
+        margin-top: 16px;
+      }
+      .answer-toggle summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        background: #b83280;
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        user-select: none;
+      }
+      .answer-toggle summary:hover,
+      .answer-toggle[open] summary {
+        background: #702459;
+      }
+      .answer-body {
+        margin-top: 12px;
+        background: #f7fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 14px 16px;
+        font-size: 0.88rem;
+      }
+      .answer-body .explain-title {
+        font-weight: 700;
+        color: #b83280;
+        margin: 12px 0 6px;
+        font-size: 0.88rem;
+      }
+
+      .pagenation-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .page-button {
+        padding: 3px 9px;
+        font-size: 1rem;
+        font-weight: bold;
+        background-color: #b83280;
+        border-radius: 7px;
+      }
+
+      .page-button:hover {
+        opacity: 90%;
+      }
+
+      .page-button a {
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <div class="chapter-label">第13章 ▶ Map</div>
+        <h1>13-1. HashMapの基本操作</h1>
+        <div class="meta">
+          難易度：⭐⭐⭐⭐☆　|　問題数：4問　|　形式：出力を答える・コード記述
+        </div>
+      </div>
+
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter12/12-3/12-3_zoned_datetime_advanced.html"
+            >＜</a
+          >
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../13-2/13-2_treemap_linkedhashmap.html">＞</a>
+        </div>
+      </div>
+
+      <div class="section-title"><span>📖</span> 解説</div>
+
+      <h3>Map とは？</h3>
+      <p>
+        <strong>キー（Key）と値（Value）のペアを管理するデータ構造</strong
+        >です。<br />
+        キーから値を高速に検索できます。キーの重複は許可されません。
+      </p>
+
+      <!-- Map の図 -->
+      <div class="map-visual">
+        <div class="mv-title">▶ HashMap のイメージ（キー → 値）</div>
+        <div class="mv-rows">
+          <div class="mv-row">
+            <div class="mv-key">"apple"</div>
+            <div class="mv-arrow">→</div>
+            <div class="mv-value">150</div>
+          </div>
+          <div class="mv-row">
+            <div class="mv-key">"banana"</div>
+            <div class="mv-arrow">→</div>
+            <div class="mv-value">120</div>
+          </div>
+          <div class="mv-row">
+            <div class="mv-key">"cherry"</div>
+            <div class="mv-arrow">→</div>
+            <div class="mv-value">800</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3種類の Map -->
+      <h3>主要な Map の種類</h3>
+      <div class="map-types">
+        <div class="mt-card mt-hashmap">
+          <div class="mc-name">HashMap</div>
+          <div class="mc-desc">最も高速。順序は保証されない</div>
+          <div class="mc-note">最もよく使われる</div>
+        </div>
+        <div class="mt-card mt-treemap">
+          <div class="mc-name">TreeMap</div>
+          <div class="mc-desc">キーが自然順（昇順）でソートされる</div>
+          <div class="mc-note">ソートが必要なとき</div>
+        </div>
+        <div class="mt-card mt-linkedmap">
+          <div class="mc-name">LinkedHashMap</div>
+          <div class="mc-desc">追加した順序を保持する</div>
+          <div class="mc-note">挿入順が重要なとき</div>
+        </div>
+      </div>
+
+      <!-- 基本操作 -->
+      <h3>HashMap の基本操作</h3>
+      <div class="code-wrap">
+        <div class="code-label">生成・追加・取得・削除</div>
+        <pre><code>import java.util.HashMap;
+import java.util.Map;
+
+Map&lt;String, Integer&gt; prices = new HashMap&lt;&gt;();
+
+// put：追加・上書き
+prices.put("apple",  150);
+prices.put("banana", 120);
+prices.put("cherry", 800);
+
+// get：取得（キーがなければ null）
+System.out.println(prices.get("apple"));    // 150
+System.out.println(prices.get("grape"));    // null
+
+// getOrDefault：デフォルト値付き取得
+System.out.println(prices.getOrDefault("grape", 0));  // 0
+
+// containsKey / containsValue：存在確認
+System.out.println(prices.containsKey("banana"));    // true
+System.out.println(prices.containsValue(800));        // true
+
+// remove：削除
+prices.remove("banana");
+System.out.println(prices.containsKey("banana"));    // false
+
+// size：件数
+System.out.println(prices.size());  // 2</code></pre>
+      </div>
+
+      <!-- ループ処理 -->
+      <h3>Map のループ処理</h3>
+      <div class="code-wrap">
+        <div class="code-label">3通りのループ方法</div>
+        <pre><code>Map&lt;String, Integer&gt; prices = new HashMap&lt;&gt;();
+prices.put("apple",  150);
+prices.put("banana", 120);
+prices.put("cherry", 800);
+
+// 方法1：entrySet（キーと値の両方）
+for (Map.Entry&lt;String, Integer&gt; entry : prices.entrySet()) {
+    System.out.println(entry.getKey() + " : " + entry.getValue());
+}
+
+// 方法2：keySet（キーだけ）
+for (String key : prices.keySet()) {
+    System.out.println(key + " → " + prices.get(key));
+}
+
+// 方法3：forEach（ラムダ式）← 最も簡潔
+prices.forEach((k, v) -> System.out.println(k + " : " + v));</code></pre>
+      </div>
+
+      <!-- putIfAbsent / computeIfAbsent -->
+      <h3>便利なメソッド</h3>
+      <div class="code-wrap">
+        <div class="code-label">putIfAbsent / merge / compute</div>
+        <pre><code>Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();
+map.put("a", 1);
+
+// putIfAbsent：キーがない場合だけ追加
+map.putIfAbsent("a", 99);  // a はすでにあるので変わらない
+map.putIfAbsent("b", 2);   // b は新規追加
+System.out.println(map.get("a"));  // 1
+System.out.println(map.get("b"));  // 2
+
+// merge：値を累積（カウントなどに便利）
+Map&lt;String, Integer&gt; counter = new HashMap&lt;&gt;();
+String[] words = {"apple", "banana", "apple", "cherry", "apple"};
+for (String w : words) {
+    counter.merge(w, 1, Integer::sum);
+}
+System.out.println(counter);
+// {apple=3, banana=1, cherry=1}</code></pre>
+      </div>
+
+      <!-- Map.of -->
+      <h3>不変 Map の生成（Map.of）</h3>
+      <div class="code-wrap">
+        <div class="code-label">Map.of と Map.ofEntries</div>
+        <pre><code>// Map.of（10件以下・順序不定）
+Map&lt;String, Integer&gt; m = Map.of(
+    "apple", 150,
+    "banana", 120,
+    "cherry", 800
+);
+// 変更しようとすると UnsupportedOperationException！
+
+// HashMap にコピーして変更可能にする
+Map&lt;String, Integer&gt; mutable = new HashMap&lt;&gt;(m);
+mutable.put("grape", 200);</code></pre>
+      </div>
+
+      <!-- よく使うメソッド一覧 -->
+      <h3>HashMap のよく使うメソッド一覧</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>メソッド</th>
+            <th>説明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>put(k, v)</code></td>
+            <td>キーと値を追加（上書き）。古い値を返す</td>
+          </tr>
+          <tr>
+            <td><code>get(k)</code></td>
+            <td>キーから値を取得。なければ null</td>
+          </tr>
+          <tr>
+            <td><code>getOrDefault(k, def)</code></td>
+            <td>キーがなければ def を返す</td>
+          </tr>
+          <tr>
+            <td><code>remove(k)</code></td>
+            <td>キーのエントリを削除</td>
+          </tr>
+          <tr>
+            <td><code>containsKey(k)</code></td>
+            <td>キーの存在確認</td>
+          </tr>
+          <tr>
+            <td><code>containsValue(v)</code></td>
+            <td>値の存在確認</td>
+          </tr>
+          <tr>
+            <td><code>putIfAbsent(k, v)</code></td>
+            <td>キーがない場合だけ追加</td>
+          </tr>
+          <tr>
+            <td><code>merge(k, v, f)</code></td>
+            <td>値を f でマージ（累積に便利）</td>
+          </tr>
+          <tr>
+            <td><code>entrySet()</code></td>
+            <td>キー+値のセット（ループに使用）</td>
+          </tr>
+          <tr>
+            <td><code>keySet()</code></td>
+            <td>キーのセット</td>
+          </tr>
+          <tr>
+            <td><code>values()</code></td>
+            <td>値のコレクション</td>
+          </tr>
+          <tr>
+            <td><code>size()</code></td>
+            <td>エントリ数</td>
+          </tr>
+          <tr>
+            <td><code>isEmpty()</code></td>
+            <td>空かどうか</td>
+          </tr>
+          <tr>
+            <td><code>clear()</code></td>
+            <td>全エントリを削除</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- コード例 -->
+      <h3>コード例：単語カウンター</h3>
+      <div class="code-wrap">
+        <div class="code-label">WordCounter.java</div>
+        <pre><code>import java.util.*;
+
+public class WordCounter {
+    public static void main(String[] args) {
+        String text = "the quick brown fox jumps over the lazy dog the fox";
+        String[] words = text.split(" ");
+
+        Map&lt;String, Integer&gt; counter = new HashMap&lt;&gt;();
+        for (String w : words) {
+            counter.merge(w, 1, Integer::sum);
+        }
+
+        System.out.println("単語数: " + counter.size());
+
+        // TreeMap でソート出力
+        new TreeMap&lt;&gt;(counter).forEach(
+            (w, c) -> System.out.println(w + ": " + c)
+        );
+
+        // 最多単語を探す
+        String maxWord = null;
+        int    maxCount = 0;
+        for (Map.Entry&lt;String, Integer&gt; e : counter.entrySet()) {
+            if (e.getValue() > maxCount) {
+                maxWord  = e.getKey();
+                maxCount = e.getValue();
+            }
+        }
+        System.out.println("最多: " + maxWord + "(" + maxCount + "回)");
+    }
+}</code></pre>
+      </div>
+      <div class="output-box">
+        <div class="output-label">▶ 出力結果</div>
+        <pre><code>単語数: 8
+brown: 1
+dog: 1
+fox: 2
+jumps: 1
+lazy: 1
+over: 1
+quick: 1
+the: 3
+最多: the(3回)</code></pre>
+      </div>
+
+      <div class="section-title"><span>✏️</span> 問題</div>
+
+      <!-- 問題 1 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 13-1-1</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐☆</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q1.java</div>
+            <pre><code>import java.util.*;
+
+public class Q1 {
+    public static void main(String[] args) {
+        Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();
+        map.put("x", 10);
+        map.put("y", 20);
+        map.put("z", 30);
+
+        System.out.println(map.get("x"));
+        System.out.println(map.get("w"));
+        System.out.println(map.getOrDefault("w", -1));
+        System.out.println(map.containsKey("y"));
+        System.out.println(map.containsValue(99));
+        System.out.println(map.size());
+
+        map.put("x", 100);  // 上書き
+        System.out.println(map.get("x"));
+
+        map.remove("z");
+        System.out.println(map.size());
+
+        map.putIfAbsent("y", 999);  // y は既にあるので変わらない
+        map.putIfAbsent("w", 40);
+        System.out.println(map.get("y"));
+        System.out.println(map.get("w"));
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>10
+null
+-1
+true
+false
+3
+100
+2
+20
+40</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>get("w")</code>：存在しないキーは <code>null</code>。
+                </li>
+                <li>
+                  <code>getOrDefault("w", -1)</code>：存在しないので
+                  <code>-1</code>。
+                </li>
+                <li>
+                  <code>put("x", 100)</code>：上書きされ <code>100</code>。
+                </li>
+                <li><code>remove("z")</code> → サイズ 2。</li>
+                <li>
+                  <code>putIfAbsent("y", 999)</code>：y はすでにあるので変わらず
+                  <code>20</code>。
+                </li>
+                <li>
+                  <code>putIfAbsent("w", 40)</code>：w は新規追加 →
+                  <code>40</code>。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 2 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 13-1-2</span>
+          <div class="badges">
+            <span class="badge badge-type-output">出力を答える</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次のコードを実行したとき、出力される結果を答えてください。
+          </p>
+          <div class="code-wrap">
+            <div class="code-label">Q2.java</div>
+            <pre><code>import java.util.*;
+
+public class Q2 {
+    public static void main(String[] args) {
+        String[] fruits = {"apple","banana","apple","cherry",
+                           "banana","apple","cherry","cherry"};
+
+        // merge でカウント
+        Map&lt;String, Integer&gt; count = new HashMap&lt;&gt;();
+        for (String f : fruits) {
+            count.merge(f, 1, Integer::sum);
+        }
+
+        // TreeMap でソートして出力
+        new TreeMap&lt;&gt;(count).forEach(
+            (k, v) -> System.out.println(k + ": " + v)
+        );
+
+        System.out.println("---");
+
+        // 値の合計
+        int total = 0;
+        for (int v : count.values()) total += v;
+        System.out.println("合計: " + total);
+
+        // 最多の果物
+        String maxFruit = count.entrySet().stream()
+            .max(Map.Entry.comparingByValue())
+            .map(Map.Entry::getKey)
+            .orElse("");
+        System.out.println("最多: " + maxFruit);
+    }
+}</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="output-box">
+                <div class="output-label">▶ 出力結果</div>
+                <pre><code>apple: 3
+banana: 2
+cherry: 3
+---
+合計: 8
+最多: apple</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>apple 3回、banana 2回、cherry 3回。TreeMap で昇順出力。</li>
+                <li>合計：3+2+3 = 8。</li>
+                <li>
+                  <code>max(Map.Entry.comparingByValue())</code
+                  >：値が最大のエントリを返す。apple と cherry
+                  が同数（3）の場合、Stream の順序依存で apple または cherry
+                  が返ります（実際の結果は apple）。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 3 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 13-1-3</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たす
+            <code>PhoneBook</code>（電話帳）クラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              <code>HashMap&lt;String, String&gt;</code>
+              をフィールドに持つ（名前 → 電話番号）
+            </li>
+            <li>
+              <code>add(String name, String number)</code
+              >：登録。同名が既存の場合は
+              <code>"[name] は既に登録済みです"</code> を出力
+            </li>
+            <li>
+              <code>find(String name)</code>：検索。なければ
+              <code>"[name] は登録されていません"</code>
+              を出力、あれば番号を出力
+            </li>
+            <li>
+              <code>update(String name, String number)</code
+              >：番号を更新。なければ
+              <code>"[name] は存在しません"</code> を出力
+            </li>
+            <li><code>showAll()</code>：全件を名前の昇順で出力</li>
+          </ul>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>田中: 090-1111-2222
+佐藤: 080-3333-4444
+田中 は既に登録済みです
+鈴木: 070-5555-6666
+---
+佐藤: 080-3333-4444
+田中: 090-1111-2222
+鈴木: 070-5555-6666
+---
+田中: 090-9999-0000
+山田 は存在しません</code></pre>
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">PhoneBook.java + Main</div>
+                <pre><code>import java.util.*;
+
+class PhoneBook {
+    private Map&lt;String, String&gt; book = new HashMap&lt;&gt;();
+
+    public void add(String name, String number) {
+        if (book.containsKey(name)) {
+            System.out.println(name + " は既に登録済みです");
+        } else {
+            book.put(name, number);
+            System.out.println(name + ": " + number);
+        }
+    }
+
+    public void find(String name) {
+        String num = book.get(name);
+        if (num == null) {
+            System.out.println(name + " は登録されていません");
+        } else {
+            System.out.println(name + ": " + num);
+        }
+    }
+
+    public void update(String name, String number) {
+        if (!book.containsKey(name)) {
+            System.out.println(name + " は存在しません");
+        } else {
+            book.put(name, number);
+            System.out.println(name + ": " + number);
+        }
+    }
+
+    public void showAll() {
+        new TreeMap&lt;&gt;(book).forEach(
+            (k, v) -> System.out.println(k + ": " + v));
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        PhoneBook pb = new PhoneBook();
+        pb.add("田中", "090-1111-2222");
+        pb.add("佐藤", "080-3333-4444");
+        pb.add("田中", "090-9999-0000");  // 重複
+        pb.add("鈴木", "070-5555-6666");
+        System.out.println("---");
+        pb.showAll();
+        System.out.println("---");
+        pb.update("田中", "090-9999-0000");
+        pb.update("山田", "000-0000-0000");
+    }
+}</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>
+                  <code>add</code>：<code>containsKey</code>
+                  で重複チェック、なければ <code>put</code> で追加。
+                </li>
+                <li>
+                  <code>update</code>：<code>containsKey</code> で存在確認後
+                  <code>put</code> で上書き。
+                </li>
+                <li>
+                  <code>showAll</code>：<code>TreeMap</code>
+                  に変換してキー昇順で出力。
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 問題 4 -->
+      <div class="problem-card">
+        <div class="problem-header">
+          <span class="problem-num">問題 13-1-4</span>
+          <div class="badges">
+            <span class="badge badge-type-code">コード記述</span>
+            <span class="badge badge-level">⭐⭐⭐</span>
+          </div>
+        </div>
+        <div class="problem-body">
+          <p class="question-text">
+            次の条件を満たすクラスを作成してください。
+          </p>
+          <ul>
+            <li>
+              文字列配列
+              <code
+                >{"Java", "Python", "Java", "C", "Python", "Java", "Go",
+                "C"}</code
+              >
+              を処理する
+            </li>
+            <li><code>merge</code> で各言語の出現回数を集計する</li>
+            <li>
+              出現回数を降順（同数の場合はアルファベット昇順）でソートして出力する
+            </li>
+            <li>
+              出現回数が2以上の言語名を
+              <code>","</code> 区切りでアルファベット昇順に出力する
+            </li>
+          </ul>
+          <div class="output-box" style="margin-top: 12px">
+            <div class="output-label">▶ 期待される出力</div>
+            <pre><code>Java: 3回
+C: 2回
+Python: 2回
+Go: 1回
+---
+複数回: C, Java, Python</code></pre>
+          </div>
+          <div class="hint" style="margin-top: 10px">
+            <strong>💡 ヒント</strong>：降順ソートは
+            <code>entrySet().stream()</code> を使い、<br />
+            <code
+              >Comparator.comparingByValue(Comparator.reverseOrder()).thenComparing(Map.Entry.comparingByKey())</code
+            >
+            で並べます。
+          </div>
+          <details class="answer-toggle">
+            <summary>▶ 答えを見る</summary>
+            <div class="answer-body">
+              <div class="code-wrap">
+                <div class="code-label">Main.java</div>
+                <pre><code>import java.util.*;
+import java.util.stream.*;
+
+public class Main {
+    public static void main(String[] args) {
+        String[] langs = {"Java","Python","Java","C","Python","Java","Go","C"};
+
+        Map&lt;String, Integer&gt; count = new HashMap&lt;&gt;();
+        for (String l : langs) count.merge(l, 1, Integer::sum);
+
+        // 出現回数降順 → アルファベット昇順
+        count.entrySet().stream()
+            .sorted(Map.Entry.&lt;String,Integer&gt;comparingByValue(
+                        Comparator.reverseOrder())
+                    .thenComparing(Map.Entry.comparingByKey()))
+            .forEach(e -> System.out.println(e.getKey() + ": " + e.getValue() + "回"));
+
+        System.out.println("---");
+
+        // 2回以上の言語をアルファベット昇順
+        String multi = count.entrySet().stream()
+            .filter(e -> e.getValue() >= 2)
+            .map(Map.Entry::getKey)
+            .sorted()
+            .collect(Collectors.joining(", "));
+        System.out.println("複数回: " + multi);
+    }
+}</code></pre>
+              </div>
+              <div class="explain-title">解説</div>
+              <ul>
+                <li>Java:3、Python:2、C:2、Go:1 の順に集計されます。</li>
+                <li>
+                  降順ソート後、同数（C=Python=2）はアルファベット昇順でC→Python。
+                </li>
+                <li>2回以上のアルファベット昇順：C, Java, Python。</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter12/12-3/12-3_zoned_datetime_advanced.html"
+            >＜</a
+          >
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../13-2/13-2_treemap_linkedhashmap.html">＞</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
