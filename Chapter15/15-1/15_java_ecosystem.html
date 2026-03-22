@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="../../scripts/highlight/styles/github-dark-dimmed.min.css"
+    />
+    <script src="../../scripts/highlight.min.js"></script>
+    <script>
+      hljs.highlightAll();
+      document
+        .querySelectorAll("li-code")
+        .forEach((e) => e.setAttribute("class", "java"));
+    </script>
     <title>第15章. Javaを取り巻くライブラリの世界</title>
     <style>
       * {

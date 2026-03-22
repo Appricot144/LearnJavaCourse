@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="../../scripts/highlight/styles/github-dark-dimmed.min.css"
+    />
+    <script src="../../scripts/highlight.min.js"></script>
+    <script>
+      hljs.highlightAll();
+      document
+        .querySelectorAll("code")
+        .forEach((e) => e.setAttribute("class", "java"));
+    </script>
     <title>10-1. ラムダ式の基本構文</title>
     <style>
       * {
@@ -78,13 +89,13 @@
       }
 
       .code-wrap {
-        background: #1e2a3a;
+        background: #22272e;
         border-radius: 8px;
         overflow: hidden;
         margin: 14px 0;
       }
       .code-wrap .code-label {
-        background: #2d3f55;
+        background: #282f39;
         color: #a0aec0;
         font-size: 0.75rem;
         padding: 5px 14px;
@@ -101,6 +112,8 @@
       }
       p code,
       li code,
+      .callout code,
+      .hint code,
       td code {
         background: #fffaf0;
         color: #c05621;
@@ -889,17 +902,17 @@ WORLD!
             </div>
           </details>
         </div>
-        <!-- 次のページ・目次・前のページ -->
-        <div class="pagenation-bar">
-          <div class="page-button">
-            <a href="../../Chapter9/9-3/9-3_enum.html">＜</a>
-          </div>
-          <div class="page-button">
-            <a href="../../TableOfContents/java_course_toc.html">目次</a>
-          </div>
-          <div class="page-button">
-            <a href="../10-2/10-2_functional_interfaces.html">＞</a>
-          </div>
+      </div>
+      <!-- 次のページ・目次・前のページ -->
+      <div class="pagenation-bar">
+        <div class="page-button">
+          <a href="../../Chapter9/9-3/9-3_enum.html">＜</a>
+        </div>
+        <div class="page-button">
+          <a href="../../TableOfContents/java_course_toc.html">目次</a>
+        </div>
+        <div class="page-button">
+          <a href="../10-2/10-2_functional_interfaces.html">＞</a>
         </div>
       </div>
     </div>

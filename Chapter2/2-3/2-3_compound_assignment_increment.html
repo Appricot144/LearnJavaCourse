@@ -3,6 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="../../scripts/highlight/styles/github-dark-dimmed.min.css"
+    />
+    <script src="../../scripts/highlight.min.js"></script>
+    <script>
+      hljs.highlightAll();
+      document
+        .querySelectorAll("code")
+        .forEach((e) => e.setAttribute("class", "java"));
+    </script>
     <title>2-3. 複合代入演算子・インクリメント</title>
     <style>
       * {
@@ -80,13 +91,13 @@
 
       /* Code */
       .code-wrap {
-        background: #1e2a3a;
+        background: #22272e;
         border-radius: 8px;
         overflow: hidden;
         margin: 14px 0;
       }
       .code-wrap .code-label {
-        background: #2d3f55;
+        background: #282f39;
         color: #a0aec0;
         font-size: 0.75rem;
         padding: 5px 14px;
@@ -104,6 +115,7 @@
       }
       p code,
       li code,
+      .callout code,
       td code {
         background: #ebf8ff;
         color: #2b6cb0;

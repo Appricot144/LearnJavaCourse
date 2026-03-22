@@ -1,0 +1,318 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    "Segoe UI", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+  background: #f4f6f9;
+  color: #2d3748;
+  padding: 40px 20px;
+  line-height: 1.8;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* ---- Header ---- */
+.page-header {
+  background: linear-gradient(135deg, #1a365d, #2b6cb0);
+  color: white;
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin-bottom: 36px;
+}
+.page-header .chapter-label {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.page-header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+.page-header .meta {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* ---- Section titles ---- */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a365d;
+  margin: 36px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #bee3f8;
+}
+.section-title .icon {
+  font-size: 1.3rem;
+}
+
+h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2b6cb0;
+  margin: 24px 0 10px;
+}
+
+p {
+  margin-bottom: 12px;
+}
+
+/* ---- Code blocks ---- */
+.code-wrap {
+  background: #22272e;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 14px 0;
+}
+.code-wrap .code-label {
+  background: #282f39;
+  color: #a0aec0;
+  font-size: 0.75rem;
+  padding: 5px 14px;
+  letter-spacing: 0.05em;
+}
+pre {
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+code {
+  font-family: "Fira Code", "Consolas", "Monaco", monospace;
+  color: #e2e8f0;
+}
+
+/* inline code */
+p code,
+li code,
+td code {
+  background: #ebf8ff;
+  color: #2b6cb0;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+/* ---- Table ---- */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  margin: 14px 0 20px;
+  font-size: 0.88rem;
+}
+.data-table thead {
+  background: #2b6cb0;
+  color: white;
+}
+.data-table thead th {
+  padding: 10px 14px;
+  text-align: left;
+}
+.data-table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+}
+.data-table tbody tr:last-child {
+  border-bottom: none;
+}
+.data-table tbody td {
+  padding: 9px 14px;
+}
+.data-table tbody tr:hover {
+  background: #ebf8ff;
+}
+
+/* ---- Callout ---- */
+.callout {
+  border-left: 4px solid #f6ad55;
+  background: #fffaf0;
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+  margin: 14px 0;
+  font-size: 0.88rem;
+}
+.callout strong {
+  color: #c05621;
+}
+
+/* ---- Pattern boxes ---- */
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.pattern-box {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.85rem;
+}
+.pattern-box .pattern-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #2b6cb0;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ---- Problems ---- */
+.problem-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+.problem-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #ebf8ff;
+  border-bottom: 1px solid #bee3f8;
+}
+.problem-header .problem-num {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a365d;
+}
+.problem-header .badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.badge {
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.badge-type-output {
+  background: #c6f6d5;
+  color: #22543d;
+}
+.badge-type-code {
+  background: #fefcbf;
+  color: #744210;
+}
+.badge-level {
+  background: #e9d8fd;
+  color: #44337a;
+}
+
+.problem-body {
+  padding: 18px 20px;
+}
+.problem-body .question-text {
+  font-size: 0.95rem;
+  margin-bottom: 14px;
+}
+
+/* ---- Answer toggle ---- */
+.answer-toggle {
+  margin-top: 16px;
+}
+.answer-toggle summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  background: #2b6cb0;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  user-select: none;
+}
+.answer-toggle summary:hover {
+  background: #2c5282;
+}
+.answer-toggle[open] summary {
+  background: #2c5282;
+}
+.answer-body {
+  margin-top: 12px;
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 0.88rem;
+}
+.answer-body .explain-title {
+  font-weight: 700;
+  color: #2b6cb0;
+  margin: 12px 0 6px;
+  font-size: 0.88rem;
+}
+
+/* ---- Output result box ---- */
+.output-box {
+  background: #22272e;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 10px 0;
+}
+.output-box .output-label {
+  color: #68d391;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.output-box pre {
+  padding: 0;
+}
+
+ul {
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+li {
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.pagenation-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.page-button {
+  padding: 3px 9px;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #2b6cb0;
+  border-radius: 7px;
+}
+
+.page-button:hover {
+  opacity: 90%;
+}
+
+.page-button a {
+  color: #fff;
+  text-decoration: none;
+}
